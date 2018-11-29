@@ -63,6 +63,8 @@ THIRD_PARTY_APPS = [
     "projectroles.apps.ProjectrolesConfig",
     # SODAR Timeline app
     "timeline.apps.TimelineConfig",
+    # SODAR Filesfolders app
+    "filesfolders.apps.FilesfoldersConfig",
     # User Profile site app
     "userprofile.apps.UserprofileConfig",
     # Admin Alerts site app
@@ -366,6 +368,13 @@ ENABLED_BACKEND_PLUGINS = env.list(
 # General API settings
 SODAR_API_DEFAULT_VERSION = "0.1"
 SODAR_API_MEDIA_TYPE = "application/vnd.bihealth.sodar+json"
+
+# Filesfolders app settings
+FILESFOLDERS_MAX_UPLOAD_SIZE = env.int('FILESFOLDERS_MAX_UPLOAD_SIZE', 10485760)
+FILESFOLDERS_MAX_ARCHIVE_SIZE = env.int(
+    'FILESFOLDERS_MAX_ARCHIVE_SIZE', 52428800)
+FILESFOLDERS_SERVE_AS_ATTACHMENT = False
+FILESFOLDERS_LINK_BAD_REQUEST_MSG = 'Invalid request'
 
 
 # Projectroles app settings
