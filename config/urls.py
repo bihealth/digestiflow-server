@@ -21,6 +21,8 @@ urlpatterns = [
     url(r"api/auth/", include("knox.urls")),
     # Projectroles URLs
     url(r"^project/", include("projectroles.urls")),
+    # Filesfolders URLs
+    url(r'^filesfolders/', include('filesfolders.urls')),
     # Timeline URLs
     url(r"^timeline/", include("timeline.urls")),
     # User Profile URLs
