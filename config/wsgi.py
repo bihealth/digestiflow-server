@@ -19,6 +19,6 @@ import sys
 from django.core.wsgi import get_wsgi_application
 
 # This allows easy placement of apps within the interior site directory.
-app_path = os.path.dirname(os.path.abspath(__file__)).replace('/config', '')
-sys.path.append(os.path.join(app_path, 'digestiflow'))
+app_path = os.path.dirname(os.path.abspath(__file__)).replace("/config", "")
+sys.path.append(os.path.join(app_path, "digestiflow"))
 application = get_wsgi_application()

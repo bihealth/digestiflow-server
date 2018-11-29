@@ -8,14 +8,12 @@ import uuid
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('users', '0003_rename_uuid'),
-    ]
+    dependencies = [("users", "0003_rename_uuid")]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='sodar_uuid',
-            field=models.UUIDField(default=uuid.uuid4, help_text='User SODAR UUID', unique=True),
-        ),
+            model_name="user",
+            name="sodar_uuid",
+            field=models.UUIDField(default=uuid.uuid4, help_text="User SODAR UUID", unique=True),
+        )
     ]

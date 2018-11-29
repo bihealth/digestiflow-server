@@ -17,7 +17,7 @@ shell:
 	python manage.py shell
 
 black:
-	python manage.py black
+	black -l 100 .
 
 serve:
 	python manage.py runserver
