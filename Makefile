@@ -1,4 +1,4 @@
-.PHONY: default migrate shell dbshell black test celery
+.PHONY: default migrate shell dbshell black test celery serve
 
 default:
 	@echo "USAGE: make migrate|shell|dbshell|black|test"
@@ -19,6 +19,9 @@ shell:
 black:
 	python manage.py black
 
+serve:
+	python manage.py runserver
+
 test:
-	coverage run manage.py test -v2 --settings=config.settings.test
+	coverage run --rcfile=setup.cfg manage.py test -v2 --settings=config.settings.test
 	coverage report
