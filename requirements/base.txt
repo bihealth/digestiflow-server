@@ -1,3 +1,6 @@
+# Read .env files in Django.
+python-dotenv ==0.9.1
+
 # Wheel 0.25+ needed to install certain packages on CPython 3.5+
 # like Pillow and psycopg2
 # See http://bitly.com/wheel-building-fails-CPython-35
@@ -68,4 +71,4 @@ mistune==0.8.3
 -e git://github.com/mikkonie/django-plugins.git@1bc07181e6ab68b0f9ed3a00382eb1f6519e1009#egg=django-plugins
 
 # SODAR Core
--e git+ssh://git@cubi-gitlab.bihealth.org/CUBI_Engineering/CUBI_Data_Mgmt/sodar_core.git@v0.3.0#egg=django-sodar-core
+-e git+ssh://git@cubi-gitlab.bihealth.org/CUBI_Engineering/CUBI_Data_Mgmt/sodar_core.git@2a501f118c6e277c698d6221b28054846342897e#egg=django-sodar-core
