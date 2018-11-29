@@ -1,0 +1,71 @@
+# Wheel 0.25+ needed to install certain packages on CPython 3.5+
+# like Pillow and psycopg2
+# See http://bitly.com/wheel-building-fails-CPython-35
+# Verified bug on Python 3.5.1
+wheel==0.30.0
+
+# Conservative Django
+django==1.11.16 # pyup: <2.0
+
+# Configuration
+django-environ==0.4.5
+
+# Forms
+django-crispy-forms==1.7.2
+
+# Models
+django-model-utils==3.1.2
+
+# Images
+Pillow==5.2.0
+
+# Password storage
+argon2-cffi==18.3.0
+
+# Python-PostgreSQL Database Adapter
+psycopg2-binary==2.7.5
+
+# Unicode slugification
+awesome-slugify==1.6.5
+
+# Time zones support
+pytz==2018.5
+
+# Profiling
+django-cprofile-middleware==1.0
+
+# Versioning
+versioneer==0.18
+
+# Online documentation via django-docs.
+Sphinx==1.7.9
+django-docs==0.3.0
+sphinx-rtd-theme==0.4.1
+
+#####################
+# SODAR Core imports
+#####################
+
+django-auth-ldap==1.2.8
+pyldap==2.4.25.1
+
+# Rules for permissions
+rules==2.0
+
+# REST framework
+djangorestframework==3.8.2
+
+# Token authentication
+django-rest-knox==3.1.5
+
+# Markdown field support
+markdown==2.6.11
+django-markupfield==1.5.0
+django-pagedown==1.0.6
+mistune==0.8.3
+
+# Django-plugins (with self-made Django 1.10 support)
+-e git://github.com/mikkonie/django-plugins.git@1bc07181e6ab68b0f9ed3a00382eb1f6519e1009#egg=django-plugins
+
+# SODAR Core
+-e git+ssh://git@cubi-gitlab.bihealth.org/CUBI_Engineering/CUBI_Data_Mgmt/sodar_core.git@v0.3.0#egg=django-sodar-core

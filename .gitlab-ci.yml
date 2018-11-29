@@ -1,0 +1,32 @@
+image: python:3.6
+
+services:
+  - postgres:9.4
+
+variables:
+  POSTGRES_DB: sodar_django_site
+  POSTGRES_USER: sodar_django_site
+  POSTGRES_PASSWORD: sodar_django_site
+  DATABASE_URL: postgres://sodar_django_site:sodar_django_site@postgres/sodar_django_site
+
+before_script:
+  # SSH setup taken from https://gitlab.com/gitlab-examples/ssh-private-key
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - mkdir -p ~/.ssh
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+
+  - sh ./utility/install_os_gitlab.sh
+  - sh ./utility/install_chrome_gitlab.sh
+  - pip3 install virtualenv
+  - virtualenv env
+  - source env/bin/activate
+  - sh ./utility/install_python_dependencies.sh
+
+all_tests:
+  script:
+    - python3 manage.py collectstatic --noinput
+    - coverage run --source="." manage.py test -v 2 --settings=config.settings.test
+    - coverage report
+  when: on_success
