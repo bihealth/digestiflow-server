@@ -1,13 +1,13 @@
 image: python:3.6
 
 services:
-  - postgres:9.4
+  - postgres:9.5
 
 variables:
-  POSTGRES_DB: sodar_django_site
-  POSTGRES_USER: sodar_django_site
-  POSTGRES_PASSWORD: sodar_django_site
-  DATABASE_URL: postgres://sodar_django_site:sodar_django_site@postgres/sodar_django_site
+  POSTGRES_DB: digestiflow_web
+  POSTGRES_USER: digestiflow_web
+  POSTGRES_PASSWORD: digestiflow_web
+  DATABASE_URL: postgres://digestiflow_web:digestiflow_web@postgres/digestiflow_web
 
 before_script:
   # SSH setup taken from https://gitlab.com/gitlab-examples/ssh-private-key

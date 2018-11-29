@@ -1,3 +1,3 @@
 include README.rst
 include versioneer.py
-include sodar_django_site/_version.py
+include digestiflow/_version.py

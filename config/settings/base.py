@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 """
 import environ
 
-SITE_PACKAGE = 'sodar_django_site'
+SITE_PACKAGE = 'digestiflow'
 
 ROOT_DIR = environ.Path(__file__) - 3
 APPS_DIR = ROOT_DIR.path(SITE_PACKAGE)
@@ -77,7 +77,7 @@ THIRD_PARTY_APPS = [
 # Project apps
 LOCAL_APPS = [
     # Custom users app
-    'sodar_django_site.users.apps.UsersConfig',
+    'digestiflow.users.apps.UsersConfig',
 
     # TODO: Add your local apps here
 ]
@@ -99,7 +99,7 @@ MIDDLEWARE = [
 # MIGRATIONS CONFIGURATION
 # ------------------------------------------------------------------------------
 MIGRATION_MODULES = {
-    'sites': 'sodar_django_site.contrib.sites.migrations'
+    'sites': 'digestiflow.contrib.sites.migrations'
 }
 
 # DEBUG
