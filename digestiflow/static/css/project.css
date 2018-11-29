@@ -20,3 +20,21 @@
 [hidden][style="display: block;"] {
   display: block !important;
 }
+
+/* Change title bar, sidebar and project navbar colours */
+
+.sodar-base-navbar {
+  background-color: #094903 !important;
+}
+
+.sodar-pr-sidebar {
+  background-color: #094903 !important;
+}
+
+.sodar-pr-sidebar-nav {
+  background-color: #094903 !important;
+}
+
+.sodar-pr-navbar {
+  background-color: #0c6604 !important;
+}
