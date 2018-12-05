@@ -1,0 +1,22 @@
+{% if up %}
+  <div class="row">
+    <div class="btn-group dropup ml-auto" id="sodar-ff-buttons-list-up">
+{% else %}
+  <div class="btn-group ml-auto" id="sodar-ff-buttons-list">
+{% endif %}
+  <button class="btn btn-primary dropdown-toggle"
+          type="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+    Sequencer Operations
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+
+    {# Folder #}
+    <a class="dropdown-item" href="{% url 'sequencers:sequencer-create' project=project.sodar_uuid %}">
+      <i class="fa fa-fw fa-square-o"></i> Add Sequencer
+    </a>
+  </div>
+</div>
+{% if up %}
+  </div>
+{% endif %}

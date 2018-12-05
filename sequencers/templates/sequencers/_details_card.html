@@ -1,0 +1,25 @@
+{% load sequencers %}
+
+<table class="table table-striped sodar-card-table">
+  <thead>
+    <tr>
+      <th style="width:10px">#</th>
+      <th class="col-lg-2 col-sm-3">Created</th>
+      <th class="col-lg-2 col-sm-3">Vendor ID</th>
+      <th class="col-lg-2 col-sm-3">Label</th>
+      <th class="col-lg-6 col-sm-3">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% get_details_sequencers project as sequencers %}
+    {% if sequencers.count > 0 %}
+      {% for sequencer in sequencers %}
+        {% include 'sequencers/_sequencer_item.html' with item=sequencer details_card_mode=True %}
+      {% endfor %}
+    {% else %}
+        <tr>
+          <td class="bg-faded font-italic text-center" colspan="4">No sequencing machines (yet)</td>
+        </tr>
+    {% endif %}
+  </tbody>
+</table>

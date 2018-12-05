@@ -1,0 +1,27 @@
+{% extends "projectroles/project_base.html" %}
+
+{% block navi_sub_project_extend %}
+  <li class="breadcrumb-item">
+    <a href="{% url 'sequencers:sequencer-list' project=project.sodar_uuid %}">Sequencers</a>
+  </li>
+    <li class="breadcrumb-item active">
+      {{ object.vendor_id }} ({{ object.label }})
+  </li>
+{% endblock %}
+
+{% block projectroles %}
+  <div class="row sodar-pr-content-title pb-2">
+    {# Project menu dropdown, only visible if browser width < X and sidebar is hidden #}
+    {% include 'projectroles/_project_menu_btn.html' %}
+
+    <h2 class="sodar-pr-content-title">
+      Sequencing Machine &quot;{{ object.vendor_id }}&quot; ({{ object.label }})
+    </h2>
+    {% include "sequencers/_sequencer_detail_buttons.html" %}
+  </div>
+
+  <div class="container-fluid sodar-page-container">
+    {% include "sequencers/_sequencer_properties.html" %}
+  </div>
+
+{% endblock %}

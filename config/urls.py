@@ -19,17 +19,19 @@ urlpatterns = [
     url(r"^logout/$", auth_views.logout_then_login, name="logout"),
     # Auth
     url(r"api/auth/", include("knox.urls")),
+    ## SODAR-core
     # Projectroles URLs
     url(r"^project/", include("projectroles.urls")),
     # Filesfolders URLs
-    url(r'^filesfolders/', include('filesfolders.urls')),
+    url(r"^filesfolders/", include("filesfolders.urls")),
     # Timeline URLs
     url(r"^timeline/", include("timeline.urls")),
     # User Profile URLs
     url(r"^user/", include("userprofile.urls")),
     # Admin Alerts URLs
     url(r"^alerts/", include("adminalerts.urls")),
-    # TODO: Add URLs of your own apps here
+    ## Local Apps
+    url(r"^sequencers/", include("sequencers.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

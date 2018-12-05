@@ -17,7 +17,7 @@ shell:
 	python manage.py shell
 
 black:
-	black -l 100 .
+	black -l 100 . --exclude src
 
 serve:
 	python manage.py runserver

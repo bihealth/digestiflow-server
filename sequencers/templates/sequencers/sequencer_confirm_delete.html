@@ -1,0 +1,47 @@
+{% extends "projectroles/project_base.html" %}
+
+{% block navi_sub_project_extend %}
+  <li class="breadcrumb-item">
+    <a href="{% url 'sequencers:sequencer-list' project=project.sodar_uuid %}">Sequencers</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="{% url 'sequencers:sequencer-detail' project=project.sodar_uuid sequencer=object.sodar_uuid %}">
+        {{ object.vendor_id }}
+    </a>
+  </li>
+  <li class="breadcrumb-item active">Delete</li>
+{% endblock %}
+
+{% block title %}
+  Confirm Removal Sequencing Machine {{ object.vendor_id }} ({{ object.label }})
+{% endblock title %}
+
+{% block projectroles %}
+  <div class="row sodar-pr-content-title pb-2">
+    {# Project menu dropdown, only visible if browser width < X and sidebar is hidden #}
+    {% include 'projectroles/_project_menu_btn.html' %}
+
+    <h2 class="sodar-pr-content-title">
+      Really Delete Sequencer &quot;{{ object.vendor_id }}&quot;?
+    </h2>
+  </div>
+
+  <div class="container-fluid sodar-page-container">
+
+    {% include "sequencers/_sequencer_properties.html" %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="btn-group pull-right">
+        <a role="button" class="btn btn-secondary"
+            href="{{ request.session.real_referer }}">
+          <i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Cancel
+        </a>
+        <button type="submit" class="btn btn-danger">
+          <i class="fa fa-times" aria-hidden="true"></i> Remove
+        </button>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

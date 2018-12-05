@@ -1,0 +1,31 @@
+<dl>
+  <dt>UUID</dt>
+  <dd>{{ object.sodar_uuid }}</dd>
+
+  <dt>Project</dt>
+  <dd>{{ object.project.title }}</dd>
+
+  <dt>Created</dt>
+  <dd>{{ object.date_created }}</dd>
+
+  <dt>Last Modified</dt>
+  <dd>{{ object.date_modified }}</dd>
+
+  <dt>Vendor ID</dt>
+  <dd>{{ object.vendor_id }}</dd>
+
+  <dt>Label</dt>
+  <dd>{{ object.label|default:"-" }}</dd>
+
+  <dt>Description</dt>
+  <dd>{{ object.description|default:"-" }}</dd>
+
+  <dt>Machine Model</dt>
+  <dd>{{ object.machine_model }}</dd>
+
+  <dt>Slot Count</dt>
+  <dd>{{ object.slot_count }}</dd>
+
+  <dt>Dual Indexing Workflow</dt>
+  <dd>{{ object.dual_index_workflow }}</dd>
+</dl>
