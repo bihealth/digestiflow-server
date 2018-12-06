@@ -82,6 +82,7 @@ LOCAL_APPS = [
     "sequencers.apps.SequencersConfig",
     "barcodes.apps.BarcodesConfig",
     "flowcells.apps.FlowcellsConfig",
+    "tokens.apps.TokensConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
