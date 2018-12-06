@@ -2,10 +2,10 @@
 
 {% block navi_sub_project_extend %}
   <li class="breadcrumb-item">
-    <a href="{% url 'sequencers:sequencer-list' project=project.sodar_uuid %}">Sequencers</a>
+    <a href="{% url 'barcodes:barcodeset-list' project=project.sodar_uuid %}">Sequencers</a>
   </li>
   <li class="breadcrumb-item">
-    <a href="{% url 'sequencers:sequencer-detail' project=project.sodar_uuid sequencer=object.sodar_uuid %}">
+    <a href="{% url 'barcodes:barcodeset-detail' project=project.sodar_uuid barcodeset=object.sodar_uuid %}">
         {{ object.vendor_id }}
     </a>
   </li>
@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block title %}
-  Confirm Removal of Sequencing Machine {{ object.vendor_id }} ({{ object.label }})
+  Confirm Removal of Barcode Set {{ object.name }} ({{ object.short_name }})
 {% endblock title %}
 
 {% block projectroles %}
@@ -28,7 +28,7 @@
 
   <div class="container-fluid sodar-page-container">
 
-    {% include "sequencers/_sequencer_properties.html" %}
+    {% include "barcodes/_barcodeset_properties.html" %}
 
     <form method="post">
       {% csrf_token %}

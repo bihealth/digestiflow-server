@@ -1,0 +1,15 @@
+<tr>
+  <td class="text-right text-muted">{{ forloop.counter }}</td>
+  <td class="text-nowrap">{{ item.date_created|date:"Y/m/d H:i" }}</td>
+  <td>
+    <a href="{{ item.get_absolute_url }}">
+      {{ item.name }} ({{ item.short_name }})
+    </a>
+  </td>
+  <td>
+    {{ item.description|default:"-" }}
+    {% if not details_card_mode %}
+      {% include "barcodes/_barcodeset_item_buttons.html" %}
+    {% endif %}
+  </td>
+</tr>

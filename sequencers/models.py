@@ -2,9 +2,9 @@
 
 import uuid as uuid_object
 
-from django import forms
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Q
 
 from projectroles.models import Project
 
@@ -79,17 +79,17 @@ class SequencingMachineManager(models.Manager):
     # TODO: properly test searching..
 
     def find(self, search_term, _keywords=None):
-        """
-        Return objects or links matching the query.
+        """Return objects or links matching the query.
+
         :param search_term: Search term (string)
         :param keywords: Optional search keywords as key/value pairs (dict)
         :return: Python list of BaseFilesfolderClass objects
         """
-        objects = super().get_queryset().order_by("name")
+        objects = super().get_queryset()
         objects = objects.filter(
-            Q(label__icontains=search_term)
+            Q(vendor_id__icontains=search_term)
+            | Q(label__icontains=search_term)
             | Q(description__icontains=search_term)
-            | Q(vendor_id__icontains=[search_term])
         )
         return objects
 
@@ -108,7 +108,7 @@ class SequencingMachine(models.Model):
         default=uuid_object.uuid4, unique=True, help_text="Machine SODAR UUID"
     )
 
-    #: The project containing this case.
+    #: The project containing this sequencer.
     project = models.ForeignKey(Project, help_text="Project in which this objects belongs")
 
     #: Vendor ID of the machine, reflected in file names and read names later on.
@@ -142,6 +142,9 @@ class SequencingMachine(models.Model):
 
     #: Search-enabled manager.
     objects = SequencingMachineManager()
+
+    class Meta:
+        ordering = ["vendor_id"]
 
     def get_absolute_url(self):
         """Return URL for displaying the sequencer details."""

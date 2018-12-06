@@ -1,0 +1,25 @@
+<dl>
+  <dt>UUID</dt>
+  <dd>{{ object.sodar_uuid }}</dd>
+
+  <dt>Project</dt>
+  <dd>{{ object.project.title }}</dd>
+
+  <dt>Created</dt>
+  <dd>{{ object.date_created }}</dd>
+
+  <dt>Last Modified</dt>
+  <dd>{{ object.date_modified }}</dd>
+
+  <dt>Name</dt>
+  <dd>{{ object.name }}</dd>
+
+  <dt>Short Name</dt>
+  <dd>{{ object.short_name }}</dd>
+
+  <dt>Description</dt>
+  <dd>{{ object.description|default:"-" }}</dd>
+
+  <dt>Barcode Set Type</dt>
+  <dd>{{ object.set_type|default:"-" }}</dd>
+</dl>

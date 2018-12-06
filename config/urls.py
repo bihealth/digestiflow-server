@@ -32,6 +32,7 @@ urlpatterns = [
     url(r"^alerts/", include("adminalerts.urls")),
     ## Local Apps
     url(r"^sequencers/", include("sequencers.urls")),
+    url(r"^barcodes/", include("barcodes.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

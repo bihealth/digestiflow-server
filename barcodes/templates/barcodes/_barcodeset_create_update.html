@@ -1,0 +1,338 @@
+{% extends "projectroles/project_base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block navi_sub_project_extend %}
+  <li class="breadcrumb-item">
+    <a href="{% url 'barcodes:barcodeset-list' project=project.sodar_uuid %}">Barcode Set</a>
+  </li>
+  {% if object.pk %}
+    <li class="breadcrumb-item">
+      <a href="{% url 'barcodes:barcodeset-detail' project=project.sodar_uuid barcodeset=object.sodar_uuid %}">
+        {{ object.name }} ({{ object.short_name }})
+      </a>
+    </li>
+    <li class="breadcrumb-item active">
+      Update
+    </li>
+  {% else %}
+    <li class="breadcrumb-item active">
+      Create
+    </li>
+  {% endif %}
+{% endblock %}
+
+{% block title %}
+  {% if object.pk %}
+    Updating {{ object.name }} ({{ vendor.short_name }})
+  {% else %}
+    Create new Barcode Set in {{ project.title }}
+  {% endif %}
+{% endblock title %}
+
+{% block projectroles %}
+  <div class="row sodar-pr-content-title pb-2">
+    {# Project menu dropdown, only visible if browser width < X and sidebar is hidden #}
+    {% include 'projectroles/_project_menu_btn.html' %}
+
+    <h2 class="sodar-pr-content-title">
+      {% if object.pk %}
+        Update
+      {% else %}
+        Create
+      {% endif %}
+      Sequencing Machine
+    </h2>
+  </div>
+
+  <div class="container-fluid sodar-page-container">
+    <form method="post">{% csrf_token %}
+      {% if object.pk %}
+        <div class="form-group">
+          <label class="form-control-label">UUID</label>
+          <div>
+            <input type="text" readonly class="form-control-plaintext" value="{{ object.sodar_uuid }}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-control-label">Project</label>
+          <div>
+            <input type="text" readonly class="form-control-plaintext" value="{{ object.project.title }}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-control-label">Created</label>
+          <div>
+            <input type="text" readonly class="form-control-plaintext" value="{{ object.date_created }}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-control-label">Last Update</label>
+          <div>
+            <input type="text" readonly class="form-control-plaintext" value="{{ object.date_modified }}">
+          </div>
+        </div>
+      {% endif %}
+
+      {{ form|crispy }}
+
+      <h5>Barcode Set Entries</h5>
+
+      <p class="text-muted">
+        <small>
+          Enter the barcode names and sequences.
+          In the case of paired indexing, enter the sequence of the second sequence as in &quot;Workflow A&quot;.
+          That is, enter it as it has to be entered for MiSeq, HiSeq 2000, HiSeq 2500, or NovaSeq 6000.
+          DigestiFlow will automatically use the index as entered or its reverse complement based on the properties of the sequencing machine used.
+        </small>
+      </p>
+
+      <div class="row">
+        <div class="col pl-5 mr-2 mb-3">
+          <button type="button" class="btn btn-secondary btn-sm" id="id-btn-revcomp-seq"
+              data-toggle="tooltip" title="Reverse-complement selected sequence cells">
+            Reverse-Complement
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div id="grid-container" class="col-6 pl-5 pr-2" style="height:200px;">
+          <div id="barcodeSetEntryGrid" style="height: 100%; width: 100%; background-color: #f0f0f0; overflow: auto;"></div>
+        </div>
+        <div class="col-6">
+          <div id="preview" style="height:200x;">
+            <div style="height: 100%; width: 100%; overflow: auto;">
+              <h6>Action preview</h6>
+              <div id="id-action-preview"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-right my-3">
+        <div class="btn-group" role="group">
+          <a role="button" class="btn btn-secondary"
+            {% if object.pk %}
+              href="{% url 'barcodes:barcodeset-detail' project=project.sodar_uuid barcodeset=object.sodar_uuid %}">
+            {% else %}
+              href="{% url 'barcodes:barcodeset-list' project=project.sodar_uuid %}">
+            {% endif %}
+            <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+            Cancel
+          </a>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa fa-check" aria-hidden="true"></i>
+            {% if object.pk %}
+              Update
+            {% else %}
+              Create
+            {% endif %}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}
+
+
+{% block javascript %}
+  {{ block.super }}
+
+  <script type="text/javascript" charset="utf-8">
+    $(function() {
+      $("#grid-container").resizable();
+    });
+    $(function() {
+      console.log("orig data", $("#id_entries_json").val());
+    });
+
+    // We need quite a bit of state for this so we create an anonymous function for keeping it around.
+    $(function() {
+        /* Original data from the server, kept as a frozen copy in origData;
+         *
+         * uuid -- UUID from original data, if any
+         * name -- Name of the barcode
+         * sequence -- Sequence of the barcode
+         * status -- One of "unchanged", "changed", "added", "to-remove", "empty"
+         */
+        var data = JSON.parse($("#id_entries_json").val());
+
+        // Get immutable copy of data into origData.  We need to get this from the Django template because on
+        // browser reload, the form field value remains the same once changed.
+        const origData = JSON.parse("{{ form.entries_json.value|escapejs }}");
+        Object.freeze(origData);
+        origData.map(Object.freeze);
+
+        // Variable for storing Handsontable in.
+        var hot;
+
+        /**
+         * Update the Handsontable and model, update UUID.
+         */
+        function updateHot() {
+            // Collect UUIDs in data and origData
+            var dataUuids = data.filter(elem => elem.name).map(elem => elem.uuid).filter(x => x !== null);
+            const origDataUuids = origData.map(elem => elem.uuid);
+            // Get data by UUID
+            var dataByUuid = {};
+            for (var i = 0; i < data.length; ++i) {
+                dataByUuid[data[i].uuid] = data[i];
+            }
+            // Get orig data by name and UUID
+            var origDataByUuid = {};
+            var origDataByName = {};
+            for (var i = 0; i < origData.length; ++i) {
+                origDataByName[origData[i].name] = origData[i];
+                origDataByUuid[origData[i].uuid] = origData[i];
+            }
+
+            // Try to match back UUIDs to data based on name, prevent assignment of duplicate
+            for (var i = 0; i < data.length; ++i) {
+                if (!data[i].uuid && data[i].name) {
+                    const candidateOrig = origDataByName[data[i].name];  // candidate in origData
+                    if (candidateOrig && !dataUuids.includes(candidateOrig.uuid)) {  // UUID free in data?
+                        dataByUuid[candidateOrig.uuid].uuid = null;  // assigned to data[i] now!
+                        data[i].uuid = candidateOrig.uuid;
+                        dataUuids.push(candidateOrig.uuid);
+                    }
+                }
+            }
+            // Update "status" column
+            for (var i = 0; i < data.length; ++i) {
+                if (data[i].uuid && data[i].name) {
+                    if (origDataByUuid[data[i].uuid].name != data[i].name ||
+                        origDataByUuid[data[i].uuid].sequence != data[i].sequence) {
+                        data[i].status = "changed";
+                    } else {
+                        data[i].status = "unchanged";
+                    }
+                } else if (data[i].uuid && !data[i].name) {
+                    data[i].status = "to-remove"
+                } else if (!data[i].uuid && data[i].name) {
+                    data[i].status = "added";
+                } else if (!data[i].uuid && !data[i].name) {
+                    data[i].status = null;
+                }
+            }
+
+            if (hot) {
+                hot.render();
+            }
+        }
+
+        function updateActionPreview() {
+            var origDataByUuid = {};
+            for (var i = 0; i < origData.length; ++i) {
+                origDataByUuid[origData[i].uuid] = origData[i];
+            }
+
+            var ul = $("<ul></ul>");
+            for (var i = 0; i < data.length; ++i) {
+                if (data[i].status == "empty" || data[i].status == "unchanged") {
+                    // no-op
+                } else if (data[i].status == "changed") {
+                    console.log("i = " + i + " changed");
+                    const curr = data[i];
+                    const orig = origDataByUuid[curr.uuid];
+                    var txt = "Will update barcode \"" + orig.name + "\".";
+                    if (curr.name != orig.name) {
+                        txt += " Will set name to \"" + curr.name + "\".";
+                    }
+                    if (curr.sequence != orig.sequence) {
+                        txt += " Will set sequence to \"" + curr.sequence + "\".";
+                    }
+                    ul.append($("<li></li>").text(txt));
+                } else if (data[i].status == "added") {
+                    ul.append($("<li></li>").text("Will add barcode " + data[i].name + " with sequence \"" + data[i].sequence + "\""));
+                } else if (data[i].status == "to-remove") {
+                    ul.append($("<li></li>").text("Will remove barcode \"" + origDataByUuid[data[i].uuid] + "\""))
+                }
+            }
+
+            // Add empty list entry.
+            if (!ul.children().length) {
+                ul.append($("<li></li>").text("No change to barcodes"))
+            }
+
+            $("#id-action-preview").html(ul);
+        }
+
+        // Guard against calling `onChangeHandler()` twice.
+        var onChangeRunning = false;
+
+        function onChangeHandler() {
+            // Prevent on-change handler from firing recursively.
+            if (onChangeRunning) {
+                return;
+            }
+            onChangeRunning = true;
+
+            updateHot();
+            updateActionPreview();
+            writeData();
+
+            onChangeRunning = false;
+        }
+
+        /**
+         * Initialize Handsontable
+         */
+        const container = document.getElementById('barcodeSetEntryGrid');
+        hot = new Handsontable(container, {
+            data: data,
+            dataSchema: {uuid: null, name: null, sequence: null, status: null},
+            colHeaders: ['name', 'sequence', 'status'],
+            columns: [
+                {data: 'name'},
+                {data: 'sequence'},
+                {data: 'status', editor: false}
+            ],
+            minSpareRows: 3,
+            columnSorting: true,
+            manualColumnResize: true,
+            outsideClickDeselects: false,
+            rowHeaders: true,
+            afterInit: onChangeHandler,
+            afterChange: onChangeHandler
+        });
+
+        /**
+         * Reverse-complement string.
+         */
+        function revComp(seq) {
+            function complement(a) {
+                return {A: 'T', T: 'A', G: 'C', C: 'G'}[a];
+            }
+
+            return seq.split('').reverse().map(complement).join('');
+        }
+
+        /**
+         *  Reverse-complement selected sequences on click of button.
+         */
+        $("#id-btn-revcomp-seq").click(function () {
+            let sel = hot.getSelectedRange();
+            for (var i = 0; i < sel.length; ++i) {
+                let frm = sel[i].from;
+                let to = sel[i].to;
+                if (frm.col <= 1 && to.col >= 1) {
+                    for (var row = frm.row; row <= to.row; ++row) {
+                        let oldValue = hot.getDataAtCell(row, 1);
+                        hot.setDataAtCell(row, 1, revComp(oldValue));
+                    }
+                }
+            }
+        });
+
+        /**
+         * Write data to hidden field.
+         */
+        function writeData() {
+            const nonEmpty = data.filter(elem => elem.name);
+            $("#id_entries_json").val(JSON.stringify(nonEmpty));
+        }
+    });
+  </script>
+{% endblock %}

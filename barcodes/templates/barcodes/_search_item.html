@@ -1,0 +1,42 @@
+{# Projectroles dependency #}
+{% load projectroles_common_tags %}
+
+<tr class="sodar-ff-search-item" id="sodar-ff-search-item-{{ item.sodar_uuid }}">
+  {# Name & link column #}
+  <td>
+    <div class="sodar-overflow-container">
+      <a href="{{ item.get_absolute_url }}">
+        {% autoescape off %}
+          {% highlight_search_term item.name search_term %} ({% highlight_search_term item.short_namesearch_term %})
+        {% endautoescape %}
+      </a>
+    </div>
+  </td>
+  <td>
+    {% if item.barcode_set %}
+      Barcode
+    {% else %}
+      Barcode Set
+    {% endif %}
+  </td>
+  {# Project column #}
+  <td>
+    <div class="sodar-overflow-container">
+      {% if item.project %}
+        <a href="{% url 'projectroles:detail' project=item.project.sodar_uuid %}">
+      {% else %}
+        <a href="{% url 'projectroles:detail' project=item.barcode_set.project.sodar_uuid %}">
+      {% endif %}
+        {% autoescape off %}
+          {# NOTE: No highlight here as project is not searched for here #}
+          {{ item.project.title }}
+        {% endautoescape %}
+      </a>
+    </div>
+  </td>
+  <td class="sodar-overflow-container">
+    {% autoescape off %}
+      {% highlight_search_term item.description search_term %}
+    {% endautoescape %}
+  </td>
+</tr>

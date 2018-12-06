@@ -1,0 +1,25 @@
+{# define CSS class sodar-ss-search-table-barcodeset? #}
+
+{% if search_results.all.items|length > 0 %}
+
+  {% include 'projectroles/_search_header.html' with search_title=search_results.all.title result_count=search_results.all.items|length %}
+
+  <table class="table table-striped sodar-card-table sodar-search-table" id="sodar-ss-search-table-sequencers">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Project</th>
+        <th>Description </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in search_results.all.items %}
+        {% include 'barcodes/_search_item.html' with item=item %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% include 'projectroles/_search_footer.html' %}
+
+{% endif %}

@@ -1,0 +1,24 @@
+{% load barcodes %}
+
+<table class="table table-striped sodar-card-table">
+  <thead>
+    <tr>
+      <th style="width:10px">#</th>
+      <th class="col-lg-2 col-sm-3">Created</th>
+      <th class="col-lg-4 col-sm-3">Name (Short)</th>
+      <th class="col-lg-6 col-sm-6">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% get_details_barcodesets project as barcodesets %}
+    {% if barcodesets.count > 0 %}
+      {% for barcodeset in barcodesets %}
+        {% include 'barcodes/_barcodeset_item.html' with item=barcodeset details_card_mode=True %}
+      {% endfor %}
+    {% else %}
+        <tr>
+          <td class="bg-faded font-italic text-center" colspan="4">No barcode sets (yet)</td>
+        </tr>
+    {% endif %}
+  </tbody>
+</table>

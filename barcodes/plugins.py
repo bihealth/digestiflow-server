@@ -1,40 +1,40 @@
 from projectroles.plugins import ProjectAppPluginPoint
 
 from digestiflow.utils import humanize_dict
-from .models import SequencingMachine
+from .models import BarcodeSet, BarcodeSetEntry
 from .urls import urlpatterns
 
 
 class ProjectAppPlugin(ProjectAppPluginPoint):
     """Plugin for registering app with Projectroles"""
 
-    name = "sequencers"
-    title = "Sequencers"
+    name = "barcodes"
+    title = "Barcodes"
     urls = urlpatterns
 
-    icon = "square-o"
+    icon = "barcode"
 
-    entry_point_url_id = "sequencers:sequencer-list"
+    entry_point_url_id = "barcodes:barcodeset-list"
 
-    description = "Management of sequencing machines"
+    description = "Management of barcodes and barcode sets"
 
     #: Required permission for accessing the app
-    app_permission = "sequencers.view_data"
+    app_permission = "barcodes.view_data"
 
     #: Enable or disable general search from project title bar
     search_enable = True
 
     #: List of search object types for the app
-    search_types = ["sequencing_machine"]
+    search_types = ["barcodeset", "barcodesetentry"]
 
     #: Search results template
-    search_template = "sequencers/_search_results.html"
+    search_template = "barcodes/_search_results.html"
 
     #: App card template for the project details page
-    details_template = "sequencers/_details_card.html"
+    details_template = "barcodes/_details_card.html"
 
     #: App card title for the project details page
-    details_title = "Sequencing Machines"
+    details_title = "Barcode Sets"
 
     #: Position in plugin ordering
     plugin_ordering = 10
@@ -52,24 +52,27 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
         items = []
 
         if not search_type:
-            sequencers = SequencingMachine.objects.find(search_term, keywords)
-            items = list(sequencers)
-            items.sort(key=lambda x: x.vendor_id.lower())
-        elif search_type == "sequencer":
-            items = SequencingMachine.objects.find(search_term, keywords)
+            barcode_sets = BarcodeSet.objects.find(search_term, keywords)
+            barcode_set_entries = BarcodeSetEntry.objects.find(search_term, keywords)
+            items = list(barcode_sets) + list(barcode_set_entries)
+            items.sort(key=lambda x: x.name.lower())
+        elif search_type == "barcodeset":
+            items = BarcodeSetEntry.objects.find(search_term, keywords)
+        elif search_type == "barcodesetentry":
+            items = BarcodeSetEntry.objects.find(search_term, keywords)
 
         return {
             "all": {
-                "title": "Sequencing Machines",
-                "search_types": ["sequencing_machine"],
+                "title": "Barcodes and Barcode Sets",
+                "search_types": ["barcodeset", "barcodesetentry"],
                 "items": items,
             }
         }
 
     def get_extra_data_link(self, extra_data, name):
         """Return link for the given label that started with ``"extra-"``."""
-        if name == "extra-sequencer_dict":
-            return humanize_dict(extra_data["sequencer_dict"])
+        if name == "extra-barcodeset_dict":
+            return humanize_dict(extra_data["barcodeset_dict"])
         else:
             return "(unknown %s)" % name
 
@@ -83,7 +86,9 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
         """
         obj = self.get_object(eval(model_str), uuid)
 
-        if isinstance(obj, SequencingMachine):
-            return {"url": obj.get_absolute_url(), "label": obj.vendor_id}
+        if isinstance(obj, BarcodeSet):
+            return {"url": obj.get_absolute_url(), "label": obj.name}
+        elif isinstance(obj, BarcodeSetEntry):
+            return {"url": obj.barcode_set.get_absolute_url(), "label": obj.barcode_set.name}
 
         return None

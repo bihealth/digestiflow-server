@@ -7,12 +7,12 @@
   <button class="btn btn-primary dropdown-toggle"
           type="button" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">
-    Sequencer Operations
+    Barcode Set Operations
   </button>
   <div class="dropdown-menu dropdown-menu-right">
 
     {# Folder #}
-    <a class="dropdown-item" href="{% url 'sequencers:sequencer-create' project=project.sodar_uuid %}">
+    <a class="dropdown-item" href="{% url 'barcodes:barcodeset-create' project=project.sodar_uuid %}">
       <i class="fa fa-fw fa-plus"></i> Create
     </a>
   </div>

@@ -1,0 +1,28 @@
+<h4>Barcodes</h4>
+
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th style="width: 10px">#</th>
+      <th class="col-2">Name</th>
+      <th class="col-10">Sequence</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if object.entries.all %}
+      {% for entry in object.entries.all %}
+        <tr>
+          <td class="text-muted">{{ forloop.counter }}</td>
+          <td>{{ entry.name }}</td>
+          <td>{{ entry.sequence }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+      <tr>
+        <td colspan="3" class="text-center text-muted">
+          <i>No barcodes (yet).</i>
+        </td>
+      </tr>
+    {% endif %}
+  </tbody>
+</table>

@@ -1,0 +1,28 @@
+{% extends "projectroles/project_base.html" %}
+
+{% block navi_sub_project_extend %}
+  <li class="breadcrumb-item">
+    <a href="{% url 'barcodes:barcodeset-list' project=project.sodar_uuid %}">Barcode Sets</a>
+  </li>
+    <li class="breadcrumb-item active">
+      {{ object.name }} ({{ object.short_name }})
+  </li>
+{% endblock %}
+
+{% block projectroles %}
+  <div class="row sodar-pr-content-title pb-2">
+    {# Project menu dropdown, only visible if browser width < X and sidebar is hidden #}
+    {% include 'projectroles/_project_menu_btn.html' %}
+
+    <h2 class="sodar-pr-content-title">
+      BarcodeSet &quot;{{ object.name }}&quot; ({{ object.short_name }})
+    </h2>
+    {% include "barcodes/_barcodeset_detail_buttons.html" %}
+  </div>
+
+  <div class="container-fluid sodar-page-container">
+    {% include "barcodes/_barcodeset_properties.html" %}
+    {% include "barcodes/_barcodeset_barcodes.html" %}
+  </div>
+
+{% endblock %}
