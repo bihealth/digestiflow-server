@@ -130,7 +130,7 @@ class FlowCell(models.Model):
 
     #: The sequencer used for processing this flow cell
     sequencing_machine = models.ForeignKey(
-        SequencingMachine, null=True, blank=True, on_delete=models.PROTECT
+        SequencingMachine, null=False, on_delete=models.PROTECT
     )
 
     #: The run number on the machine
@@ -262,4 +262,5 @@ class FlowCell(models.Model):
         return "FlowCell %s" % self.get_full_name()
 
     class Meta:
+        unique_together = ("vendor_id", "run_number", "sequencing_machine")
         ordering = ("-run_date", "sequencing_machine", "run_number", "slot")

@@ -14,9 +14,7 @@ from .serializers import FlowCellSerializer
 # TODO: authorization still missing, need mixin for this!
 
 
-class FlowCellCreateApiView(
-    ProjectMixin, ProjectPermissionMixin, APIPermissionMixin, ListCreateAPIView
-):
+class FlowCellCreateApiView(ProjectMixin, ListCreateAPIView):
     queryset = FlowCell.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = FlowCellSerializer
@@ -27,9 +25,7 @@ class FlowCellCreateApiView(
         serializer.save(project=self.get_project())
 
 
-class FlowCellUpdateDestroyApiView(
-    ProjectMixin, ProjectPermissionMixin, APIPermissionMixin, RetrieveUpdateDestroyAPIView
-):
+class FlowCellUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
     queryset = FlowCell.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = FlowCellSerializer
@@ -37,9 +33,7 @@ class FlowCellUpdateDestroyApiView(
     permission_required = "flowcells.modify_data"
 
 
-class FlowCellResolveApiView(
-    ProjectMixin, ProjectPermissionMixin, APIPermissionMixin, ModelViewSet
-):
+class FlowCellResolveApiView(ModelViewSet):
     """Resolve flow cell attributes to UUID"""
 
     queryset = FlowCell.objects.all()
