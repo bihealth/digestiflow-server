@@ -33,6 +33,7 @@ urlpatterns = [
     ## Local Apps
     url(r"^sequencers/", include("sequencers.urls")),
     url(r"^barcodes/", include("barcodes.urls")),
+    url(r"^flowcells/", include("flowcells.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

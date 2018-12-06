@@ -1,0 +1,25 @@
+{% if up %}
+  <div class="row">
+    <div class="btn-group dropup ml-auto" id="sodar-ff-buttons-list-up">
+{% else %}
+  <div class="btn-group ml-auto" id="sodar-ff-buttons-list">
+{% endif %}
+  <button class="btn btn-primary dropdown-toggle"
+          type="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+    Flow Cell Operations
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+
+    {# Folder #}
+    <a class="dropdown-item" href="{% url 'flowcells:flowcell-update' project=project.sodar_uuid flowcell=object.sodar_uuid %}">
+      <i class="fa fa-fw fa-pencil"></i> Update
+    </a>
+    <a class="dropdown-item" href="{% url 'flowcells:flowcell-delete' project=project.sodar_uuid flowcell=object.sodar_uuid %}">
+      <i class="fa fa-fw fa-times"></i> Delete
+    </a>
+  </div>
+</div>
+{% if up %}
+  </div>
+{% endif %}

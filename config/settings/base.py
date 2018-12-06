@@ -81,6 +81,7 @@ LOCAL_APPS = [
     "digestiflow.users.apps.UsersConfig",
     "sequencers.apps.SequencersConfig",
     "barcodes.apps.BarcodesConfig",
+    "flowcells.apps.FlowcellsConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

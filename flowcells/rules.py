@@ -4,9 +4,9 @@ import rules
 from projectroles import rules as pr_rules
 
 
-# ``barcodes.view_data`` -- Allow to view the barcodes in a project.
+# ``flowcells.view_data`` -- Allow to view the flow cells in a project.
 rules.add_perm(
-    "barcodes.view_data",
+    "flowcells.view_data",
     rules.is_superuser
     | pr_rules.is_project_owner
     | pr_rules.is_project_delegate
@@ -15,9 +15,9 @@ rules.add_perm(
 )
 
 
-# ``barcodes.modify_data`` -- Allow to modify the barcodes in a project.
+# ``sequencers.modify_data`` -- Allow to modify the flow cells in a project.
 rules.add_perm(
-    "barcodes.modify_data",
+    "flowcells.modify_data",
     rules.is_superuser
     | pr_rules.is_project_owner
     | pr_rules.is_project_delegate
