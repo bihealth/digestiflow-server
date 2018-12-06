@@ -35,6 +35,8 @@ urlpatterns = [
     url(r"^barcodes/", include("barcodes.urls")),
     url(r"^flowcells/", include("flowcells.urls")),
     url(r"^tokens/", include("tokens.urls")),
+    ## Local Apps API
+    url(r"^api/", include("digestiflow.api_urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
