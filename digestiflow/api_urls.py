@@ -4,10 +4,14 @@ from django.conf.urls import url
 
 from sequencers.api import views as sequencer_views
 from barcodes.api import views as barcode_views
+from flowcells.api import views as flowcell_views
 
 app_name = "api"
 
 urlpatterns = [
+    #
+    # App "sequencers"
+    #
     # {% url "api:sequencers" project=project.sodar_uuid %}
     url(
         regex=r"^sequencers/(?P<project>[0-9a-f-]+)/$",
@@ -20,6 +24,9 @@ urlpatterns = [
         view=sequencer_views.SequencingMachineUpdateDestroyApiView.as_view(),
         name="sequencers",
     ),
+    #
+    # App "barcodesets"
+    #
     # {% url "api:barcodesets" project=project.sodar_uuid %}
     url(
         regex=r"^barcodesets/(?P<project>[0-9a-f-]+)/$",
@@ -43,5 +50,26 @@ urlpatterns = [
         regex=r"^barcodesetentries/(?P<project>[0-9a-f-]+)/(?P<barcodesetentry>(-\w]+/))$",
         view=barcode_views.BarcodeSetUpdateDestroyApiView.as_view(),
         name="barcodesetentries",
+    ),
+    #
+    # App "flowcells"
+    #
+    # {% url "api:flowcells" project=project.sodar_uuid %}
+    url(
+        regex=r"^flowcells/(?P<project>[0-9a-f-]+)/$",
+        view=flowcell_views.FlowCellCreateApiView.as_view(),
+        name="barcodesets",
+    ),
+    # {% url "api:flowcells" project=project.sodar_uuid flowcells=flowcells.sodar_uuid %}
+    url(
+        regex=r"^flowcells/(?P<project>[0-9a-f-]+)/(?P<flowcell>(-\w]+/))$",
+        view=flowcell_views.FlowCellUpdateDestroyApiView.as_view(),
+        name="barcodesets",
+    ),
+    # {% url "api:flowcells" project=project.sodar_uuid flowcells=flowcells.sodar_uuid %}
+    url(
+        regex=r"^flowcells/(?P<project>[0-9a-f-]+)/resolve/(?P<instrument_id>.+)/(?P<run_no>.+)/(?P<flowcell_id>.+)/$",
+        view=flowcell_views.FlowCellResolveApiView.as_view({"get": "resolve"}),
+        name="barcodesets",
     ),
 ]
