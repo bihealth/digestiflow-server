@@ -28,14 +28,12 @@ class FlowCellApiViewMixin(ProjectMixin):
 
 
 class FlowCellListCreateApiView(FlowCellApiViewMixin, ListCreateAPIView):
-    queryset = FlowCell.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = FlowCellSerializer
     permission_required = "flowcells.modify_data"
 
 
 class FlowCellUpdateDestroyApiView(FlowCellApiViewMixin, RetrieveUpdateDestroyAPIView):
-    queryset = FlowCell.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = FlowCellSerializer
     lookup_url_kwarg = "flowcell"

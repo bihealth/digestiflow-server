@@ -10,34 +10,61 @@ from .serializers import BarcodeSetSerializer, BarcodeSetEntrySerializer
 # TODO: authorization still missing, need mixin for this!
 
 
-class BarcodeSetCreateApiView(ProjectMixin, ListCreateAPIView):
+class BarcodeSetViewMixin(ProjectMixin):
+    """Common behaviour of BarcodeSet API views."""
+
+    def get_serializer_context(self):
+        result = super().get_serializer_context()
+        result['project'] = self.get_project()
+        return result
+
+    def get_queryset(self):
+        return BarcodeSet.objects.filter(project=self.get_project())
+
+
+class BarcodeSetCreateApiView(BarcodeSetViewMixin, ListCreateAPIView):
     queryset = BarcodeSet.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = BarcodeSetSerializer
-    lookup_field = "barcodeset"
+    permission_required = "barcodes.modify_data"
 
     def perform_create(self, serializer):
         serializer.save(project=self.get_project())
 
 
-class BarcodeSetUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
+class BarcodeSetUpdateDestroyApiView(BarcodeSetViewMixin, RetrieveUpdateDestroyAPIView):
     queryset = BarcodeSet.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = BarcodeSetSerializer
-    lookup_field = "barcodeset"
+    permission_required = "barcodes.modify_data"
+    lookup_url_kwarg = "barcodeset"
+    lookup_field = "sodar_uuid"
 
 
-class BarcodeSetEntryCreateApiView(ProjectMixin, ListCreateAPIView):
+class BarcodeSetEntryApiViewMixin(ProjectMixin):
+    """Common functionality for BarcodeSetEntry API views."""
+
+    def get_barcode_set(self):
+        return BarcodeSet.objects.filter(project=self.get_project()).get(sodar_uuid=self.kwargs["barcodeset"])
+
+    def get_serializer_context(self):
+        result = super().get_serializer_context()
+        result['project'] = self.get_project()
+        result['barcode_set'] = self.get_barcode_set()
+        return result
+
+    def get_queryset(self):
+        return BarcodeSetEntry.objects.filter(barcode_set=self.get_barcode_set())
+
+
+class BarcodeSetEntryCreateApiView(BarcodeSetEntryApiViewMixin, ListCreateAPIView):
     queryset = BarcodeSetEntry.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = BarcodeSetEntrySerializer
     lookup_field = "barcodesetentry"
 
-    def perform_create(self, serializer):
-        serializer.save(project=self.get_project())
 
-
-class BarcodeSetEntryUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
+class BarcodeSetEntryUpdateDestroyApiView(BarcodeSetEntryApiViewMixin, RetrieveUpdateDestroyAPIView):
     queryset = BarcodeSetEntry.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = BarcodeSetEntrySerializer

@@ -35,20 +35,20 @@ urlpatterns = [
     ),
     # {% url "api:barcodesets" project=project.sodar_uuid barcodeset=barcodeset.sodar_uuid %}
     url(
-        regex=r"^barcodesets/(?P<project>[0-9a-f-]+)/(?P<barcodeset>(-\w]+/))$",
+        regex=r"^barcodesets/(?P<project>[0-9a-f-]+)/(?P<barcodeset>[0-9a-f-]+)/$",
         view=barcode_views.BarcodeSetUpdateDestroyApiView.as_view(),
         name="barcodesets",
     ),
     # {% url "api:barcodesetentries" project=project.sodar_uuid %}
     url(
-        regex=r"^barcodesetentries/(?P<project>[0-9a-f-]+)/$",
-        view=barcode_views.BarcodeSetCreateApiView.as_view(),
+        regex=r"^barcodesetentries/(?P<project>[0-9a-f-]+)/(?P<barcodeset>[0-9a-f-]+)/$",
+        view=barcode_views.BarcodeSetEntryCreateApiView.as_view(),
         name="barcodesetentries",
     ),
     # {% url "api:barcodesetentries" project=project.sodar_uuid barcodesetentry=barcodesetentry.sodar_uuid %}
     url(
-        regex=r"^barcodesetentries/(?P<project>[0-9a-f-]+)/(?P<barcodesetentry>[0-9a-f-]+)$",
-        view=barcode_views.BarcodeSetUpdateDestroyApiView.as_view(),
+        regex=r"^barcodesetentries/(?P<project>[0-9a-f-]+)/(?P<barcodeset>[0-9a-f-]+)/(?P<barcodesetentry>[0-9a-f-]+)$",
+        view=barcode_views.BarcodeSetEntryUpdateDestroyApiView.as_view(),
         name="barcodesetentries",
     ),
     #
