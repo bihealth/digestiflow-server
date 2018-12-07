@@ -8,19 +8,18 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('sequencers', '0001_initial'),
-        ('flowcells', '0002_auto_20181206_0755'),
-    ]
+    dependencies = [("sequencers", "0001_initial"), ("flowcells", "0002_auto_20181206_0755")]
 
     operations = [
         migrations.AlterField(
-            model_name='flowcell',
-            name='sequencing_machine',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sequencers.SequencingMachine'),
+            model_name="flowcell",
+            name="sequencing_machine",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="sequencers.SequencingMachine"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='flowcell',
-            unique_together=set([('vendor_id', 'run_number', 'sequencing_machine')]),
+            name="flowcell",
+            unique_together=set([("vendor_id", "run_number", "sequencing_machine")]),
         ),
     ]

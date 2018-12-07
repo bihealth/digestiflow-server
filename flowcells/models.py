@@ -1,5 +1,6 @@
 import uuid as uuid_object
 
+from django.contrib.postgres.fields import JSONField
 from django.core.urlresolvers import reverse
 from django.db import models
 from projectroles.models import Project
@@ -129,9 +130,7 @@ class FlowCell(models.Model):
     run_date = models.DateField()
 
     #: The sequencer used for processing this flow cell
-    sequencing_machine = models.ForeignKey(
-        SequencingMachine, null=False, on_delete=models.PROTECT
-    )
+    sequencing_machine = models.ForeignKey(SequencingMachine, null=False, on_delete=models.PROTECT)
 
     #: The run number on the machine
     run_number = models.PositiveIntegerField()
@@ -160,25 +159,29 @@ class FlowCell(models.Model):
 
     #: Number of lanes on the flow cell
     num_lanes = models.IntegerField(
+        blank=False, null=False,
         default=8, help_text="Number of lanes on flowcell 8 for HiSeq, 4 for NextSeq"
     )
 
     #: Name of the sequencing machine operator
-    operator = models.CharField(max_length=100, verbose_name="Sequencer Operator")
+    operator = models.CharField(blank=True,
+        null=True, max_length=100, verbose_name="Sequencer Operator")
 
     #: The user responsible for demultiplexing
     demux_operator = models.ForeignKey(
         User,
+        blank=True  ,
+        null=True,
         verbose_name="Demultiplexing Operator",
         related_name="demuxed_flowcells",
         on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
         help_text="User responsible for demultiplexing",
     )
 
     #: RTA version used, required for picking BCL to FASTQ and demultiplexing software
     rta_version = models.IntegerField(
+        blank=False,
+        null=False,
         default=RTA_VERSION_V2,
         choices=RTA_VERSION_CHOICES,
         help_text="Major RTA version, implies bcl2fastq version",
@@ -186,6 +189,8 @@ class FlowCell(models.Model):
 
     #: Status of sequencing
     status_sequencing = models.CharField(
+        blank=False,
+        null=False,
         max_length=50,
         default=STATUS_INITIAL,
         choices=SEQUENCING_STATUS_CHOICES,
@@ -194,6 +199,8 @@ class FlowCell(models.Model):
 
     #: Status of base call to sequence conversion
     status_conversion = models.CharField(
+        blank=False,
+        null=False,
         max_length=50,
         default=STATUS_INITIAL,
         choices=CONVERSION_STATUS_CHOICES,
@@ -202,6 +209,8 @@ class FlowCell(models.Model):
 
     #: Status of data delivery
     status_delivery = models.CharField(
+        blank=False,
+        null=False,
         max_length=50,
         default=STATUS_INITIAL,
         choices=DELIVERY_STATUS_CHOICES,
@@ -210,6 +219,8 @@ class FlowCell(models.Model):
 
     #: What to deliver: sequences, base calls, or both.
     delivery_type = models.CharField(
+        blank=False,
+        null=False,
         max_length=50,
         default=DELIVERY_TYPE_SEQ,
         choices=DELIVERY_CHOICES,
@@ -264,3 +275,46 @@ class FlowCell(models.Model):
     class Meta:
         unique_together = ("vendor_id", "run_number", "sequencing_machine")
         ordering = ("-run_date", "sequencing_machine", "run_number", "slot")
+
+
+class LaneIndexHistogram(models.Model):
+    """Information about the index sequence distribution on a lane for a FlowCell"""
+
+    #: DateTime of creation
+    date_created = models.DateTimeField(auto_now_add=True, help_text="DateTime of creation")
+
+    #: DateTime of last modification
+    date_modified = models.DateTimeField(auto_now=True, help_text="DateTime of last modification")
+
+    #: UUID used for identification throughout SODAR.
+    sodar_uuid = models.UUIDField(
+        default=uuid_object.uuid4, unique=True, help_text="Object SODAR UUID"
+    )
+
+    #: The flow cell this information is for.
+    flowcell = models.ForeignKey(
+        FlowCell, null=False, on_delete=models.CASCADE, related_name="index_histograms"
+    )
+
+    #: The lane that this is for.
+    lane = models.PositiveIntegerField(null=False, help_text="The lane this information is for.")
+
+    #: The number of the index read that this information is for.
+    index_read_no = models.PositiveIntegerField(
+        null=False, help_text="The index read this information is for."
+    )
+
+    #: The sample size used.
+    sample_size = models.PositiveIntegerField(null=False, help_text="Number of index reads read");
+
+    #: The histogram information as a dict from sequence to count.
+    histogram = JSONField(help_text="The index histogram information")
+
+    def __str__(self):
+        return "Index Histogram index {} lane {} flowcell {}".format(
+            self.index_read_no, self.lane, self.flowcell.get_full_name()
+        )
+
+    class Meta:
+        unique_together = ("flowcell", "lane", "index_read_no")
+        ordering = ("flowcell", "lane", "index_read_no")

@@ -47,7 +47,7 @@ urlpatterns = [
     ),
     # {% url "api:barcodesetentries" project=project.sodar_uuid barcodesetentry=barcodesetentry.sodar_uuid %}
     url(
-        regex=r"^barcodesetentries/(?P<project>[0-9a-f-]+)/(?P<barcodesetentry>(-\w]+/))$",
+        regex=r"^barcodesetentries/(?P<project>[0-9a-f-]+)/(?P<barcodesetentry>[0-9a-f-]+)$",
         view=barcode_views.BarcodeSetUpdateDestroyApiView.as_view(),
         name="barcodesetentries",
     ),
@@ -57,19 +57,31 @@ urlpatterns = [
     # {% url "api:flowcells" project=project.sodar_uuid %}
     url(
         regex=r"^flowcells/(?P<project>[0-9a-f-]+)/$",
-        view=flowcell_views.FlowCellCreateApiView.as_view(),
-        name="barcodesets",
+        view=flowcell_views.FlowCellListCreateApiView.as_view(),
+        name="flowcells",
     ),
-    # {% url "api:flowcells" project=project.sodar_uuid flowcells=flowcells.sodar_uuid %}
+    # {% url "api:flowcells" project=project.sodar_uuid flowcell=flowcells.sodar_uuid %}
     url(
-        regex=r"^flowcells/(?P<project>[0-9a-f-]+)/(?P<flowcell>(-\w]+/))$",
+        regex=r"^flowcells/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/$",
         view=flowcell_views.FlowCellUpdateDestroyApiView.as_view(),
-        name="barcodesets",
+        name="flowcells",
     ),
-    # {% url "api:flowcells" project=project.sodar_uuid flowcells=flowcells.sodar_uuid %}
+    # {% url "api:flowcells" project=project.sodar_uuid flowcell=flowcells.sodar_uuid %}
     url(
         regex=r"^flowcells/(?P<project>[0-9a-f-]+)/resolve/(?P<instrument_id>.+)/(?P<run_no>.+)/(?P<flowcell_id>.+)/$",
         view=flowcell_views.FlowCellResolveApiView.as_view({"get": "resolve"}),
-        name="barcodesets",
+        name="flowcells",
+    ),
+    # {% url "api:indexhistos" project=project.sodar_uuid flowcell=flowcells.sodar_uuid %}
+    url(
+        regex=r"^indexhistos/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/$",
+        view=flowcell_views.LaneIndexHistogramListCreateApiView.as_view(),
+        name="indexhistos",
+    ),
+    # {% url "api:indexhistos" project=project.sodar_uuid flowcells=flowcells.sodar_uuid indexhistogram=indexhistogram.sodar_uuid %}
+    url(
+        regex=r"^indexhistograms/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<indexhistogram>[0-9a-f-]+)/$",
+        view=flowcell_views.LaneIndexHistogramUpdateDestroyApiView.as_view(),
+        name="indexhistos",
     ),
 ]
