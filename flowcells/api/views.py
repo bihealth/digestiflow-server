@@ -20,7 +20,7 @@ class FlowCellApiViewMixin(ProjectMixin):
 
     def get_serializer_context(self):
         result = super().get_serializer_context()
-        result['project'] = self.get_project()
+        result["project"] = self.get_project()
         return result
 
     def get_queryset(self):
@@ -43,6 +43,7 @@ class FlowCellUpdateDestroyApiView(FlowCellApiViewMixin, RetrieveUpdateDestroyAP
 
 class FlowCellResolveApiView(FlowCellApiViewMixin, ModelViewSet):
     """Resolve flow cell attributes to UUID"""
+
     permission_classes = (IsAuthenticated,)
     serializer_class = FlowCellSerializer
     lookup_field = "flowcell"
@@ -64,12 +65,14 @@ class LaneIndexHistogramApiViewMixin(ProjectMixin):
     """Common functionality for LaneIndexHistogram API views."""
 
     def get_flowcell(self):
-        return FlowCell.objects.filter(project=self.get_project()).get(sodar_uuid=self.kwargs["flowcell"])
+        return FlowCell.objects.filter(project=self.get_project()).get(
+            sodar_uuid=self.kwargs["flowcell"]
+        )
 
     def get_serializer_context(self):
         result = super().get_serializer_context()
-        result['project'] = self.get_project()
-        result['flowcell'] = self.get_flowcell()
+        result["project"] = self.get_project()
+        result["flowcell"] = self.get_flowcell()
         return result
 
     def get_queryset(self):
@@ -84,7 +87,9 @@ class LaneIndexHistogramListCreateApiView(LaneIndexHistogramApiViewMixin, ListCr
     permission_required = "flowcells.modify_data"
 
 
-class LaneIndexHistogramUpdateDestroyApiView(LaneIndexHistogramApiViewMixin, RetrieveUpdateDestroyAPIView):
+class LaneIndexHistogramUpdateDestroyApiView(
+    LaneIndexHistogramApiViewMixin, RetrieveUpdateDestroyAPIView
+):
     permission_classes = (IsAuthenticated,)
     serializer_class = LaneIndexHistogramSerializer
     lookup_url_kwarg = "indexhistogram"

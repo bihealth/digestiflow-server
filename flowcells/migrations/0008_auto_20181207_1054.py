@@ -7,14 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flowcells', '0007_auto_20181207_1028'),
-    ]
+    dependencies = [("flowcells", "0007_auto_20181207_1028")]
 
     operations = [
         migrations.AlterField(
-            model_name='flowcell',
-            name='operator',
-            field=models.CharField(blank=True, max_length=100, null=True, verbose_name='Sequencer Operator'),
-        ),
+            model_name="flowcell",
+            name="operator",
+            field=models.CharField(
+                blank=True, max_length=100, null=True, verbose_name="Sequencer Operator"
+            ),
+        )
     ]

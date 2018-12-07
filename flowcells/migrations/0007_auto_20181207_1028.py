@@ -8,14 +8,16 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flowcells', '0006_auto_20181207_0923'),
-    ]
+    dependencies = [("flowcells", "0006_auto_20181207_0923")]
 
     operations = [
         migrations.AlterField(
-            model_name='laneindexhistogram',
-            name='flowcell',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='index_histograms', to='flowcells.FlowCell'),
-        ),
+            model_name="laneindexhistogram",
+            name="flowcell",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="index_histograms",
+                to="flowcells.FlowCell",
+            ),
+        )
     ]

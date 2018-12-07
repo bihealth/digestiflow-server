@@ -1,11 +1,14 @@
 import uuid as uuid_object
 
-from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import ArrayField, JSONField
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from projectroles.models import Project
 
 from digestiflow.users.models import User
+from barcodes.models import BarcodeSet, BarcodeSetEntry
 from sequencers.models import SequencingMachine
 
 
@@ -159,18 +162,21 @@ class FlowCell(models.Model):
 
     #: Number of lanes on the flow cell
     num_lanes = models.IntegerField(
-        blank=False, null=False,
-        default=8, help_text="Number of lanes on flowcell 8 for HiSeq, 4 for NextSeq"
+        blank=False,
+        null=False,
+        default=8,
+        help_text="Number of lanes on flowcell 8 for HiSeq, 4 for NextSeq",
     )
 
     #: Name of the sequencing machine operator
-    operator = models.CharField(blank=True,
-        null=True, max_length=100, verbose_name="Sequencer Operator")
+    operator = models.CharField(
+        blank=True, null=True, max_length=100, verbose_name="Sequencer Operator"
+    )
 
     #: The user responsible for demultiplexing
     demux_operator = models.ForeignKey(
         User,
-        blank=True  ,
+        blank=True,
         null=True,
         verbose_name="Demultiplexing Operator",
         related_name="demuxed_flowcells",
@@ -277,6 +283,150 @@ class FlowCell(models.Model):
         ordering = ("-run_date", "sequencing_machine", "run_number", "slot")
 
 
+#: Reference used for identifying human samples
+REFERENCE_HUMAN = "hg19"
+
+#: Reference used for identifying mouse samples
+REFERENCE_MOUSE = "mm9"
+
+#: Reference used for identifying fly samples
+REFERENCE_FLY = "dm6"
+
+#: Reference used for identifying fish samples
+REFERENCE_FISH = "danRer6"
+
+#: Reference used for identifying rat samples
+REFERENCE_RAT = "rn11"
+
+#: Reference used for identifying worm samples
+REFERENCE_WORM = "ce11"
+
+#: Reference used for identifying yeast samples
+REFERENCE_YEAST = "sacCer3"
+
+#: Reference used for identifying other samples
+REFERENCE_OTHER = "__other__"
+
+#: Reference sequence choices, to identify organisms
+REFERENCE_CHOICES = (
+    #: H. sapiens
+    (REFERENCE_HUMAN, "human"),
+    #: M. musculus
+    (REFERENCE_MOUSE, "mouse"),
+    #: D. melanogaster
+    (REFERENCE_FLY, "fly"),
+    #: D. rerio
+    (REFERENCE_FISH, "zebrafish"),
+    #: R. norvegicus
+    (REFERENCE_RAT, "rat"),
+    #: C. elegans
+    (REFERENCE_WORM, "worm"),
+    #: S. cerevisae
+    (REFERENCE_YEAST, "yeast"),
+    #: other
+    (REFERENCE_OTHER, "other"),
+)
+
+
+class Library(models.Model):
+    """The data stored for each library that is to be sequenced
+    """
+
+    #: DateTime of creation
+    date_created = models.DateTimeField(auto_now_add=True, help_text="DateTime of creation")
+
+    #: DateTime of last modification
+    date_modified = models.DateTimeField(auto_now=True, help_text="DateTime of last modification")
+
+    #: UUID used for identification throughout SODAR.
+    sodar_uuid = models.UUIDField(
+        default=uuid_object.uuid4, unique=True, help_text="Object SODAR UUID"
+    )
+
+    #: The flow cell that this library has been sequenced on
+    flow_cell = models.ForeignKey(FlowCell, related_name="libraries", on_delete=models.CASCADE)
+
+    #: The name of the library
+    name = models.CharField(max_length=100)
+
+    #: The organism to assume for this library, used for QC
+    reference = models.CharField(
+        null=True, blank=True, max_length=100, default="hg19", choices=REFERENCE_CHOICES
+    )
+
+    #: The barcode used for first barcode index this library
+    barcode = models.ForeignKey(BarcodeSetEntry, on_delete=models.PROTECT)
+
+    #: Optional a sequence entered directly for the first barcode
+    barcode_seq = models.CharField(max_length=200, null=True, blank=True)
+
+    #: The barcode used for second barcode index this library
+    barcode2 = models.ForeignKey(
+        BarcodeSetEntry, on_delete=models.PROTECT, related_name="barcodes2"
+    )
+
+    #: Optionally, a sequence entered directly for the second barcode.  Entered as for dual indexing workflow A.
+    barcode_seq2 = models.CharField(max_length=200, null=True, blank=True)
+
+    #: The lanes that the library was sequenced on on the flow cell
+    lane_numbers = ArrayField(models.IntegerField(validators=[MinValueValidator(1)]))
+
+    class Meta:
+        ordering = ["name"]
+
+    def save(self, *args, **kwargs):
+        """ Override to check name/barcode being unique on the flow celllanes and lane numbers are compatible."""
+        self._validate_uniqueness()
+        self._validate_lane_nos()
+        return super().save(*args, **kwargs)
+
+    def _validate_lane_nos(self):
+        if any(l > self.flow_cell.num_lanes for l in self.lane_numbers):
+            raise ValidationError(
+                "Lane no {} > flow cell lane count {}".format(
+                    list(sorted(self.lane_numbers)), self.flow_cell.num_lanes
+                )
+            )
+
+    def _validate_uniqueness(self):
+        # Get all libraries sharing any lane on the same flow cell
+        libs_on_lanes = Library.objects.filter(
+            flow_cell=self.flow_cell, lane_numbers__overlap=self.lane_numbers
+        ).exclude(uuid=self.uuid)
+        # Check that no libraries exist with the same
+        if libs_on_lanes.filter(name=self.name).exists():
+            raise ValidationError(
+                "There are libraries sharing flow cell lane with the same name as {}".format(
+                    self.name
+                )
+            )
+        # Check that no libraries exist with the same primary and secondary barcode
+        kwargs = {}
+        if self.barcode is None:
+            kwargs["barcode__isnull"] = True
+        else:
+            kwargs["barcode"] = self.barcode
+        if self.barcode2 is None:
+            kwargs["barcode2__isnull"] = True
+        else:
+            kwargs["barcode2"] = self.barcode2
+        if libs_on_lanes.filter(**kwargs).exists():
+            raise ValidationError(
+                (
+                    "There are libraries sharing flow cell lane with the "
+                    "same barcodes as {}: {}/{}".format(self.name, self.barcode, self.barcode2)
+                )
+            )
+
+    def get_absolute_url(self):
+        return self.flow_cell.get_absolute_url()
+
+    def __str__(self):
+        return "Library {} on lane(s) {} for {}".format(
+            self.name, self.lane_numbers, self.flow_cell
+        )
+
+
 class LaneIndexHistogram(models.Model):
     """Information about the index sequence distribution on a lane for a FlowCell"""
 
@@ -305,7 +455,7 @@ class LaneIndexHistogram(models.Model):
     )
 
     #: The sample size used.
-    sample_size = models.PositiveIntegerField(null=False, help_text="Number of index reads read");
+    sample_size = models.PositiveIntegerField(null=False, help_text="Number of index reads read")
 
     #: The histogram information as a dict from sequence to count.
     histogram = JSONField(help_text="The index histogram information")

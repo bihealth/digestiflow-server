@@ -15,7 +15,7 @@ class BarcodeSetViewMixin(ProjectMixin):
 
     def get_serializer_context(self):
         result = super().get_serializer_context()
-        result['project'] = self.get_project()
+        result["project"] = self.get_project()
         return result
 
     def get_queryset(self):
@@ -45,12 +45,14 @@ class BarcodeSetEntryApiViewMixin(ProjectMixin):
     """Common functionality for BarcodeSetEntry API views."""
 
     def get_barcode_set(self):
-        return BarcodeSet.objects.filter(project=self.get_project()).get(sodar_uuid=self.kwargs["barcodeset"])
+        return BarcodeSet.objects.filter(project=self.get_project()).get(
+            sodar_uuid=self.kwargs["barcodeset"]
+        )
 
     def get_serializer_context(self):
         result = super().get_serializer_context()
-        result['project'] = self.get_project()
-        result['barcode_set'] = self.get_barcode_set()
+        result["project"] = self.get_project()
+        result["barcode_set"] = self.get_barcode_set()
         return result
 
     def get_queryset(self):
@@ -64,7 +66,9 @@ class BarcodeSetEntryCreateApiView(BarcodeSetEntryApiViewMixin, ListCreateAPIVie
     lookup_field = "barcodesetentry"
 
 
-class BarcodeSetEntryUpdateDestroyApiView(BarcodeSetEntryApiViewMixin, RetrieveUpdateDestroyAPIView):
+class BarcodeSetEntryUpdateDestroyApiView(
+    BarcodeSetEntryApiViewMixin, RetrieveUpdateDestroyAPIView
+):
     queryset = BarcodeSetEntry.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = BarcodeSetEntrySerializer

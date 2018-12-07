@@ -7,11 +7,11 @@ from ..models import SequencingMachine
 
 class SequencingMachineSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
-        validated_data["project"] = self.context['project']
+        validated_data["project"] = self.context["project"]
         return super().update(instance, validated_data)
 
     def create(self, validated_data):
-        validated_data["project"] = self.context['project']
+        validated_data["project"] = self.context["project"]
         return super().create(validated_data)
 
     class Meta:

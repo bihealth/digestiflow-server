@@ -102,8 +102,6 @@ class BarcodeSet(models.Model):
     class Meta:
         ordering = ["name"]
 
-    # Boilerplate str/repr ----------------------------------------------------
-
     def __str__(self):
         return "Barcode set: {} ({})".format(self.name, self.short_name)
 
