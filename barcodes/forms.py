@@ -5,14 +5,8 @@ import json
 
 from django import forms
 
+from digestiflow.utils import model_to_dict
 from .models import BarcodeSet
-
-
-class UUIDEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, UUID):
-            return obj.hex
-        return json.JSONEncoder.default(self, obj)
 
 
 class BarcodeSetForm(forms.ModelForm):
@@ -24,7 +18,7 @@ class BarcodeSetForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Fill hidden field with JSON value based on the instance's objects.s
         initial_value = [
-            {"uuid": entry.sodar_uuid, "name": entry.name, "sequence": entry.sequence}
+            model_to_dict(entry, exclude=('pk',), rename={'sodar_uuid': 'uuid'})
             for entry in self.instance.entries.all()
         ]
         self.fields["entries_json"] = forms.CharField(

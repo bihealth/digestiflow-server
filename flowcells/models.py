@@ -392,7 +392,7 @@ class Library(models.Model):
         # Get all libraries sharing any lane on the same flow cell
         libs_on_lanes = Library.objects.filter(
             flow_cell=self.flow_cell, lane_numbers__overlap=self.lane_numbers
-        ).exclude(uuid=self.uuid)
+        ).exclude(sodar_uuid=self.sodar_uuid)
         # Check that no libraries exist with the same
         if libs_on_lanes.filter(name=self.name).exists():
             raise ValidationError(

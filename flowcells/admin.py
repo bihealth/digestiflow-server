@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from .models import FlowCell
+from .models import FlowCell, Library, LaneIndexHistogram
 
 # Register your models here.
 admin.site.register(FlowCell)
+admin.site.register(Library)
+admin.site.register(LaneIndexHistogram)

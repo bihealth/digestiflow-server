@@ -75,13 +75,16 @@ class FlowCellSerializer(serializers.ModelSerializer):
             "barcode_mismatches",
             "sequencing_machine",
             "demux_operator",
+            "libraries",
             "index_histograms",
         )
-        read_only_fields = ("sodar_uuid", "project", "demux_operator", "index_histograms")
+        read_only_fields = ("sodar_uuid", "project", "demux_operator", "libraries", "index_histograms")
 
 
 class LibrarySerializer(serializers.ModelSerializer):
     flowcell = serializers.ReadOnlyField(source="flowcell.sodar_uuid")
+    barcode = serializers.ReadOnlyField(source="barcode.sodar_uuid")
+    barcode2 = serializers.ReadOnlyField(source="barcode2.sodar_uuid")
 
     def update(self, instance, validated_data):
         validated_data["flowcell"] = self.context["flowcell"]

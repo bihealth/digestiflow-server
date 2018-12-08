@@ -7,11 +7,16 @@ from django.core.serializers.json import DjangoJSONEncoder
 from projectroles.models import Project
 
 
-def model_to_dict(*args, **kwargs):
+def model_to_dict(*args, rename={}, **kwargs):
     """Custom version that knows how to deal with the types used in Django models."""
     result = _model_to_dict(*args, **kwargs)
     # Round-trip through JSON using DjangoJSONEncode to get rid of problematic fields
-    return json.loads(json.dumps(result, sort_keys=True, indent=1, cls=DjangoJSONEncoder))
+    result = json.loads(json.dumps(result, sort_keys=True, indent=1, cls=DjangoJSONEncoder))
+    # Rename fields if any.
+    for from_, to in rename.items():
+        result[to] = result[from_]
+        del result[from_]
+    return result
 
 
 def _humanize(value):
