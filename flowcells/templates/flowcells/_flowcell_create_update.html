@@ -1,6 +1,7 @@
 {% extends "projectroles/project_base.html" %}
 
 {% load crispy_forms_tags %}
+{% load render_bundle from webpack_loader %}
 
 {% block navi_sub_project_extend %}
   <li class="breadcrumb-item">
@@ -45,6 +46,15 @@
     </h2>
   </div>
 
+
+  {# Example of page content #}
+  {# Using the example CSS classes is recommended #}
+  <div class="container-fluid sodar-page-container">
+    <div id="app"></div>
+    {% render_bundle 'app' 'js' 'FRONTEND' %}
+  </div>
+
+
   <div class="container-fluid sodar-page-container">
     <form method="post">{% csrf_token %}
       {% if object.pk %}
@@ -73,7 +83,6 @@
           </div>
         </div>
       {% endif %}
-
       {{ form|crispy }}
 
       <div class="text-right mb-3">

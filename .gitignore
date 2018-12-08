@@ -58,8 +58,14 @@ docs/pycharm/*
 *.swp
 *.swo
 
-# npm
+# Node.js and Webpack
 node_modules/
+dist/
+tests/node/unit/coverage/
+tests/node/e2e/reports/
+*.ntvs*
+*.njsproj
+webpack-stats.json
 
 # Compass
 .sass-cache
