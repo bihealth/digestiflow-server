@@ -37,7 +37,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     details_title = "Barcode Sets"
 
     #: Position in plugin ordering
-    plugin_ordering = 10
+    plugin_ordering = 11
 
     def search(self, search_term, user, search_type=None, keywords=None):
         """

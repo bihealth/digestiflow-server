@@ -38,3 +38,13 @@
 .sodar-pr-navbar {
   background-color: #0c6604 !important;
 }
+
+.fc-super-muted {
+  opacity: 0.3;
+}
+
+/* Custom spacing for icons */
+.fc-fw {
+  width: .9em;
+  text-alignment: center;
+}

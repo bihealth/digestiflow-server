@@ -1,7 +1,7 @@
 from projectroles.plugins import ProjectAppPluginPoint
 
 from digestiflow.utils import humanize_dict
-from .models import FlowCell
+from .models import FlowCell, Library
 from .urls import urlpatterns
 
 
@@ -25,7 +25,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     search_enable = True
 
     #: List of search object types for the app
-    search_types = ["flowcell"]
+    search_types = ["flowcell", "library"]
 
     #: Search results template
     search_template = "flowcells/_search_results.html"
@@ -53,12 +53,15 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
 
         if not search_type:
             flow_cells = FlowCell.objects.find(search_term, keywords)
-            items = list(flow_cells)
+            libraries = Library.objects.find(search_term, keywords)
+            items = list(flow_cells) + list(libraries)
             items.sort(key=lambda x: x.name.lower())
         elif search_type == "flowcell":
             items = FlowCell.objects.find(search_term, keywords)
+        elif search_type == "library":
+            items = Library.objects.find(search_term, keywords)
 
-        return {"all": {"title": "Flow Cells", "search_types": ["flowcell"], "items": items}}
+        return {"all": {"title": "Flow Cells and Libraries", "search_types": ["flowcell", "library"], "items": items}}
 
     def get_extra_data_link(self, extra_data, name):
         """Return link for the given label that started with ``"extra-"``."""
@@ -79,5 +82,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
 
         if isinstance(obj, FlowCell):
             return {"url": obj.get_absolute_url(), "label": obj.get_full_name()}
+        elif isinstance(obj, Library):
+            return {"url": obj.get_absolute_url(), "label": obj.name}
 
         return None

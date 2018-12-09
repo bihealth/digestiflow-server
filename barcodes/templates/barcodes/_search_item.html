@@ -7,7 +7,11 @@
     <div class="sodar-overflow-container">
       <a href="{{ item.get_absolute_url }}">
         {% autoescape off %}
-          {% highlight_search_term item.name search_term %} ({% highlight_search_term item.short_namesearch_term %})
+          {% if item.project %}
+            {% highlight_search_term item.name search_term %} ({% highlight_search_term item.short_name search_term %})
+          {% else %}
+            {% highlight_search_term item.name search_term %} ({% highlight_search_term item.sequence search_term %})
+          {% endif %}
         {% endautoescape %}
       </a>
     </div>
@@ -22,21 +26,22 @@
   {# Project column #}
   <td>
     <div class="sodar-overflow-container">
-      {% if item.project %}
-        <a href="{% url 'projectroles:detail' project=item.project.sodar_uuid %}">
-      {% else %}
-        <a href="{% url 'projectroles:detail' project=item.barcode_set.project.sodar_uuid %}">
-      {% endif %}
-        {% autoescape off %}
-          {# NOTE: No highlight here as project is not searched for here #}
-          {{ item.project.title }}
-        {% endautoescape %}
-      </a>
+      {% autoescape off %}
+        {% if item.project %}
+          <a href="{% url 'projectroles:detail' project=item.project.sodar_uuid %}">
+            {{ item.project.title }}
+          </a>
+        {% else %}
+          <a href="{% url 'projectroles:detail' project=item.barcode_set.project.sodar_uuid %}">
+            {% highlight_search_term item.barcode_set.project.title search_term %}
+          </a>
+          /
+          <a href="{% url 'barcodes:barcodeset-detail' project=item.barcode_set.project.sodar_uuid barcodeset=item.barcode_set.sodar_uuid %}">
+            {% highlight_search_term item.barcode_set.name search_term %}
+            ({% highlight_search_term item.barcode_set.short_name search_term %})
+          </a>
+        {% endif %}
+      {% endautoescape %}
     </div>
-  </td>
-  <td class="sodar-overflow-container">
-    {% autoescape off %}
-      {% highlight_search_term item.description search_term %}
-    {% endautoescape %}
   </td>
 </tr>

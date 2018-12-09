@@ -1,16 +1,122 @@
+{% load flowcells %}
+
 <tr>
-  <td class="text-right text-muted">{{ forloop.counter }}</td>
-  <td class="text-nowrap">{{ item.date_created|date:"Y/m/d H:i" }}</td>
+  <td class="text-nowrap">
+    {% if flowcell.get_index_errors or flowcell.get_sample_sheet_errors %}
+      <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
+         data-toggle="tooltip"
+         title="There were with indexes and/or sample sheet!"></i>
+    {% else %}
+      <i class="fa fc-fw fa-exclamation-triangle text-muted fc-super-muted" aria-hidden="true"></i>
+    {% endif %}
+    <i class="ml-3 {{ flowcell.status_sequencing|status_to_icon }}"
+{#       data-toggle="tooltip popover"#}
+{#       data-title="Sequencing Status:<br>{{ flowcell.status_sequencing|status_to_title }}"#}
+{#       data-html="true"#}
+{#       data-popover-title="Update Sequencing Status"#}
+{#       data-popover-content="{% get_status_form flowcell "sequencing" csrf_token|escape %}"#}
+    ></i>
+    <i class="{{ flowcell.status_conversion|status_to_icon }}"
+{#       data-toggle="tooltip popover"#}
+{#       data-title="Conversion Status:<br>{{ flowcell.status_conversion|status_to_title }}"#}
+{#       data-html="true"#}
+{#       data-popover-title="Update Conversion Status"#}
+{#       data-popover-content="{% get_status_form flowcell "conversion" csrf_token|escape %}"#}
+    ></i>
+    <i
+      class="{{ flowcell.status_delivery|status_to_icon }}"
+{#       data-toggle="tooltip popover"#}
+{#       data-title="Delivery Status:<br>{{ flowcell.status_delivery|status_to_title }}"#}
+{#       data-html="true"#}
+{#       data-popover-title="Update Delivery Status"#}
+{#       data-popover-content="{% get_status_form flowcell "delivery" csrf_token|escape %}"#}
+    ></i>
+    {% if flowcell.delivery_type == "seq" %}
+      <i class="ml-3 fa fc-fw fa-file-text-o" aria-hidden="true"
+         data-toggle="tooltip"
+         title="Convert base calls to sequences"
+      ></i>
+      <i class="fa fc-fw fa-file-archive-o text-muted" aria-hidden="true"
+         data-toggle="tooltip"
+         title="DO NOT create raw base call archives"
+         style="opacity: 0.3"
+      ></i>
+    {% elif flowcell.delivery_type == "bcl" %}
+      <i class="ml-3 fa fc-fw fa-file-text-o text-muted"
+         data-toggle="tooltip"
+         title="DO NOT convert base calls to sequences"
+         style="opacity: 0.3"
+      ></i>
+      <i class="fa fc-fw fa-file-archive-o"
+         aria-hidden="true" data-toggle="tooltip"
+         title="Create raw base call archives"
+      ></i>
+    {% else %}
+      <i class="ml-3 fa fc-fw fa-file-text-o"
+         aria-hidden="true" data-toggle="tooltip"
+         title="Convert base calls to sequences"
+      ></i>
+      <i class="fa fc-fw fa-file-archive-o"
+         aria-hidden="true" data-toggle="tooltip"
+         title="Create raw base call archives"
+      ></i>
+    {% endif %}
+    {% if flowcell.description %}
+      <i class="ml-3 fa fc-fw fa-comment-o"  aria-hidden="true"
+         data-toggle="tooltip"
+         title="{{ flowcell.description }}"></i>
+    {% else %}
+      <i class="ml-3 fa fc-fw fa-comment-o text-muted" aria-hidden="true" style="opacity: 0.3;"
+         data-toggle="tooltip"
+         title="no description"
+         ></i>
+    {% endif %}
+    {% if flowcell.messages.all %}
+      <i class="fa fc-fw fa-envelope-o" aria-hidden="true"
+         data-toggle="tooltip"
+         title="{{ flowcell.messages.all|length }} message(s)"></i>
+    {% else %}
+      <i class="fa fc-fw fa-envelope-o text-muted" aria-hidden="true" style="opacity: 0.3;"
+         data-toggle="tooltip"
+         title="no message"
+      ></i>
+    {% endif %}
+    {% if flowcell.count_files %}
+      <i class="fa fc-fw fa-files-o mr-3" aria-hidden="true"
+         data-toggle="tooltip"
+         title="{{ flowcell.count_files }} file(s)"></i>
+    {% else %}
+      <i class="fa fc-fw fa-files-o text-muted mr-3" aria-hidden="true" style="opacity: 0.3;"
+         data-toggle="tooltip"
+         title="no files"
+      ></i>
+    {% endif %}
+  </td>
+  <td>{{ flowcell.run_date|date:"y/m/d" }}</td>
   <td>
-    <a href="{{ item.get_absolute_url }}">
-      {{ item.vendor_id }}
+    <a href="{% url 'sequencers:sequencer-detail' project=project.sodar_uuid sequencer=flowcell.sequencing_machine.sodar_uuid %}"
+       data-toggle="tooltip"
+       title="{{ flowcell.sequencing_machine.vendor_id }}: {{ flowcell.sequencing_machine.machine_model }}">
+      {{ flowcell.sequencing_machine.label }}
+    </a>
+    </td>
+  <td>
+    <a href="{% url 'flowcells:flowcell-detail' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}"
+       title="Show flow cell {{ flowcell.vendor_id }} details">
+      {{ flowcell.vendor_id }}
+      {% if flowcell.label %} <small class="text-muted text-small">{{ flowcell.label }}</small>{% endif %}
+      {% if flowcell.manual_label %} <small class="text-muted text-small">{{ flowcell.manual_label }}</small>{% endif %}
     </a>
   </td>
   <td>
-    {{ item.label }}
+    {{ flowcell.planned_reads }}
   </td>
   <td>
-    {{ item.description|default:"-" }}
+    {{ flowcell.operator }} /
+    {{ flowcell.demux_operator|default:"-" }}
+  </td>
+  <td class="text-right">{{ flowcell.libraries.count }}</td>
+  <td class="text-right" style="width:60px;">
     {% if not details_card_mode %}
       {% include "flowcells/_flowcell_item_buttons.html" %}
     {% endif %}

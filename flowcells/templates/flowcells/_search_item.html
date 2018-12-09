@@ -7,23 +7,58 @@
     <div class="sodar-overflow-container">
       <a href="{{ item.get_absolute_url }}">
         {% autoescape off %}
-          {% highlight_search_term item.vendor_id search_term %}
-          {% if item.label %}
-            ({% highlight_search_term item.label search_term %})
+          {% if item.project %}
+            {% highlight_search_term item.vendor_id search_term %}
+            {% if item.label %}
+              ({% highlight_search_term item.label search_term %})
+            {% endif %}
+          {% else %}
+            {% highlight_search_term item.name search_term %}
+            {% if item.get_barcode_seq or item.get_barcode_seq2 %}
+              {% highlight_search_term item.get_barcode_seq|default:"" search_term as barcode1 %}
+              {% highlight_search_term item.get_barcode_seq2|default:"" search_term as barcode2 %}
+              ({{ barcode1|default:"-" }}/{{ barcode2|default:"-" }})
+            {% endif %}
           {% endif %}
         {% endautoescape %}
       </a>
     </div>
   </td>
+  {# Type column #}
+  <td>
+    <div class="sodar-overflow-container">
+      {% if item.project %}
+        Flow Cell
+      {% else %}
+        Library
+      {% endif %}
+    </div>
+  </td>
   {# Project column #}
   <td>
     <div class="sodar-overflow-container">
-      <a href="{% url 'projectroles:detail' project=item.project.sodar_uuid %}">
-        {% autoescape off %}
-          {# NOTE: No highlight here as project is not searched for here #}
-          {{ item.project.title }}
-        {% endautoescape %}
-      </a>
+      {% if item.project %}
+        <a href="{% url 'projectroles:detail' project=item.project.sodar_uuid %}">
+          {% autoescape off %}
+            {# NOTE: No highlight here as project is not searched for here #}
+            {{ item.project.title }}
+          {% endautoescape %}
+        </a>
+      {% else %}
+        <a href="{% url 'projectroles:detail' project=item.flow_cell.project.sodar_uuid %}">
+          {% autoescape off %}
+            {# NOTE: No highlight here as project is not searched for here #}
+            {{ item.flow_cell.project.title }}
+          {% endautoescape %}
+        </a>
+        /
+        <a href="{% url 'flowcells:flowcell-detail' project=item.flow_cell.project.sodar_uuid flowcell=item.flow_cell.sodar_uuid %}">
+          {% autoescape off %}
+            {# NOTE: No highlight here as project is not searched for here #}
+            {{ item.flow_cell.vendor_id }}
+          {% endautoescape %}
+        </a>
+      {% endif %}
     </div>
   </td>
   {# Description #}

@@ -2,13 +2,7 @@
 
 <table class="table table-striped sodar-card-table">
   <thead>
-    <tr>
-      <th style="width:10px">#</th>
-      <th class="col-lg-2 col-sm-3">Created</th>
-      <th class="col-lg-2 col-sm-3">Name</th>
-      <th class="col-lg-2 col-sm-3">Configured Reads</th>
-      <th class="col-lg-6 col-sm-3">Current Reads</th>
-    </tr>
+    {% include 'flowcells/_flowcell_table_header.html' %}
   </thead>
   <tbody>
     {% get_details_flowcells project as flowcells %}
@@ -18,7 +12,7 @@
       {% endfor %}
     {% else %}
         <tr>
-          <td class="bg-faded font-italic text-center" colspan="5">No flow cells (yet)</td>
+          <td class="bg-faded font-italic text-center" colspan="7">No flow cells (yet)</td>
         </tr>
     {% endif %}
   </tbody>

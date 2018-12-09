@@ -128,7 +128,6 @@ class BarcodeSetEntryManager(models.Manager):
         objects = super().get_queryset().order_by("name")
         objects = objects.filter(
             Q(name__icontains=search_term)
-            | Q(short_name__icontains=search_term)
             | Q(sequence__icontains=search_term)
             | Q(sequence__icontains=revcomp(search_term))
         )

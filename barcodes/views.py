@@ -167,18 +167,22 @@ class BarcodeSetUpdateView(
         The algorithm for matching them is also mirrored in the JavaScript and both need to be kept in sync.
         """
         # Existing entries and to-be-updated values by UUID.
-        existing = {entry.sodar_uuid: entry for entry in barcode_set.entries.all()}
+        existing = {str(entry.sodar_uuid): entry for entry in barcode_set.entries.all()}
         updated = json.loads(form.cleaned_data["entries_json"])
         updated_by_uuid = {entry.get("uuid"): entry for entry in updated if entry.get("uuid")}
+        print('existing', existing)
+        print('updated', updated)
         # Delete and update existing.
         for entry in existing.values():
-            if entry.sodar_uuid not in updated_by_uuid:
+            if str(entry.sodar_uuid) not in updated_by_uuid:
                 # Delete records from existing set that we don't find in updated records.
                 entry.delete()
             else:
                 # Update existing record.
-                the_updated = updated_by_uuid[existing.uuid]
-                existing.update(name=the_updated["name"], sequence=the_updated["sequence"])
+                the_updated = updated_by_uuid[str(entry.sodar_uuid)]
+                entry.name = the_updated["name"]
+                entry.sequence = the_updated["sequence"]
+                entry.save()
         # Add new records.
         for entry in updated:
             if not entry.get("uuid") or entry.get("uuid") not in existing:

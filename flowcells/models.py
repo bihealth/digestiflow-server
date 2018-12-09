@@ -6,6 +6,7 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Q
 import pagerange
 from projectroles.models import Project
 
@@ -116,6 +117,27 @@ RTA_VERSION_CHOICES = (
     #: other, for future-proofness
     (RTA_VERSION_OTHER, "other"),
 )
+
+
+class FlowCellManager(models.Manager):
+    """Manager for custom table-level SequencingMachine queries"""
+
+    # TODO: properly test searching..
+
+    def find(self, search_term, _keywords=None):
+        """Return objects or links matching the query.
+
+        :param search_term: Search term (string)
+        :param keywords: Optional search keywords as key/value pairs (dict)
+        :return: Python list of BaseFilesfolderClass objects
+        """
+        objects = super().get_queryset()
+        objects = objects.filter(
+            Q(vendor_id__icontains=search_term)
+            | Q(label__icontains=search_term)
+            | Q(manual_label__icontains=search_term)
+        )
+        return objects
 
 
 class FlowCell(models.Model):
@@ -254,6 +276,14 @@ class FlowCell(models.Model):
     barcode_mismatches = models.PositiveSmallIntegerField(
         null=True, blank=True, help_text="Number of mismatches to allow"
     )
+
+    #: Search-enabled manager.
+    objects = FlowCellManager()
+
+    @property
+    def name(self):
+        """Used for sorting results."""
+        return self.vendor_id
 
     def get_absolute_url(self):
         return reverse(
@@ -463,6 +493,29 @@ REFERENCE_CHOICES = (
 )
 
 
+class LibraryManager(models.Manager):
+    """Manager for custom table-level Library queries"""
+
+    # TODO: properly test searching..
+
+    def find(self, search_term, _keywords=None):
+        """Return objects or links matching the query.
+
+        :param search_term: Search term (string)
+        :param keywords: Optional search keywords as key/value pairs (dict)
+        :return: Python list of BaseFilesfolderClass objects
+        """
+        objects = super().get_queryset()
+        objects = objects.filter(
+            Q(name=search_term)
+            | Q(barcode__sequence=search_term)
+            | Q(barcode_seq=search_term)
+            | Q(barcode2__sequence=search_term)
+            | Q(barcode_seq2=search_term)
+        )
+        return objects
+
+
 class Library(models.Model):
     """The data stored for each library that is to be sequenced
     """
@@ -505,6 +558,9 @@ class Library(models.Model):
 
     #: The lanes that the library was sequenced on on the flow cell
     lane_numbers = ArrayField(models.IntegerField(validators=[MinValueValidator(1)]))
+
+    #: Search-enabled manager.
+    objects = LibraryManager()
 
     class Meta:
         ordering = ["name"]

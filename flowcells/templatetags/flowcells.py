@@ -91,3 +91,29 @@ def all_n(seq):
 @register.filter(name="max")
 def max_value(iter):
     return max(iter)
+
+
+@register.filter
+def status_to_icon(status):
+    return {
+        'initial': 'fa fc-fw fa-hourglass-1 text-muted fc-super-muted',
+        'in_progress': 'fc-fw fa fa-hourglass-half',
+        'complete': 'fa fc-fw fa-hourglass-end text-success',
+        'failed': 'fa fc-fw fa-hourglass-end text-danger',
+        'closed': 'fa fc-fw fa-check text-success',
+        'canceled': 'fa fc-fw fa-close text-danger',
+        'skipped': 'fa fc-fw fa-minus text-muted',
+    }.get(status)
+
+
+@register.filter
+def status_to_title(status):
+    return {
+        'initial': 'not started',
+        'in_progress': 'in progress',
+        'complete': 'complete (but unconfirmed)',
+        'failed': 'failed / canceled',
+        'closed': 'released confirmed',
+        'canceled': 'canceled confirmed',
+        'skipped': 'skipped or N/A',
+    }.get(status)
