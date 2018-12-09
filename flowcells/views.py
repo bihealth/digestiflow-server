@@ -364,35 +364,22 @@ class MessageDeleteView(
     """Deletion of Message records"""
 
     success_message = "Message has been successfully deleted."
-    template_name = "flowcells/flowcell_confirm_delete.html"
+    template_name = "flowcells/message_confirm_delete.html"
     permission_required = "flowcells.modify_data"
 
     model = Message
 
-    slug_url_kwarg = "flowcell"
+    slug_url_kwarg = "message"
     slug_field = "sodar_uuid"
 
-    @transaction.atomic
-    def delete(self, *args, **kwargs):
-        # Delete sequencing machine record.
-        result = super().delete(*args, **kwargs)
-        # Register event with timeline.
-        timeline = get_backend_api("timeline_backend")
-        if timeline:
-            tl_event = timeline.add_event(
-                project=self._get_project(self.request, self.kwargs),
-                app_name="flowcells",
-                user=self.request.user,
-                event_name="flowcell_delete",
-                description="delete flowcell {flowcell}: {extra-flowcell_dict}",
-                status_type="OK",
-                extra_data={"flowcell_dict": model_to_dict(self.object)},
-            )
-            tl_event.add_object(obj=self.object, label="flowcell", name=self.object.get_full_name())
-        return result
+    def get_queryset(self):
+        flow_cell = FlowCell.objects.get(
+            project__sodar_uuid=self.kwargs["project"], sodar_uuid=self.kwargs["flowcell"]
+        )
+        return flow_cell.messages
 
     def get_success_url(self):
-        return reverse(
-            "flowcells:flowcell-list",
-            kwargs={"project": self._get_project(self.request, self.kwargs).sodar_uuid},
+        flow_cell = FlowCell.objects.get(
+            project__sodar_uuid=self.kwargs["project"], sodar_uuid=self.kwargs["flowcell"]
         )
+        return flow_cell.get_absolute_url() + "#message-top"

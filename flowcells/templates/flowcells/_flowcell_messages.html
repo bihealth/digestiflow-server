@@ -2,40 +2,19 @@
 {% load humanize %}
 
 {# TODO: display non-draft message or message from user #}
-{% if object.get_sent_messages %}
-  {% for message in object.get_sent_messages %}
-    <div class="card mb-3">
-      <div class="card-body">
-        {% if message.subject %}
-          <h5 class="card-title">
-            {{ message.subject }}
-          </h5>
-        {% endif %}
-        <h6 class="card-subtitle mb-2 text-muted">
-          Written
-          <span data-toggle="tooltip" title="{{ message.date_created }}">
-              {{ message.date_created|naturaltime }}
-          </span>
-          by
-          <span
-            {% if message.author.username != message.author.get_full_name %}
-              data-toggle="tooltip" title="{{ message.author.username }}"
-            {% endif %}
-              >
-            {{ message.author.get_full_name }}
-          </span>
-        </h6>
-        <p class="card-text pb-3">
-          {{ message.body }}
-        </p>
-      </div>
-    </div>
-  {% endfor %}
-{% else %}
-  <p class="text-center font-italic">
-    No messages (yet).
-  </p>
-{% endif %}
+<div class="row" id="messages-top">
+  <div class="col px-0">
+    {% if object.get_sent_messages %}
+      {% for message in object.get_sent_messages %}
+        {% include "flowcells/_message_item.html" %}
+      {% endfor %}
+    {% else %}
+      <p class="text-center font-italic">
+        No messages (yet).
+      </p>
+    {% endif %}
+  </div>
+</div>
           
 <div class="row">
   <div class="col px-0">

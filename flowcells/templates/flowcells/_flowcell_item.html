@@ -72,9 +72,10 @@
          ></i>
     {% endif %}
     {% if flowcell.messages.all %}
-      <i class="fa fc-fw fa-envelope-o" aria-hidden="true"
-         data-toggle="tooltip"
-         title="{{ flowcell.messages.all|length }} message(s)"></i>
+      <a href="{% url 'flowcells:flowcell-detail' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}#message-top" class="text-dark"><i
+        class="fa fc-fw fa-envelope-o" aria-hidden="true"
+           data-toggle="tooltip"
+           title="{{ flowcell.messages.all|length }} message(s)"></i></a>
     {% else %}
       <i class="fa fc-fw fa-envelope-o text-muted" aria-hidden="true" style="opacity: 0.3;"
          data-toggle="tooltip"
