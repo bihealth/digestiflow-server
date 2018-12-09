@@ -23,25 +23,41 @@
   <div class="container-fluid sodar-page-container">
     <ul class="nav nav-tabs">
       <li class="nav-item">
-        <a class="nav-link active" id="properties-tab" data-toggle="tab" href="#properties" aria-controls="properties" aria-selected="true">Properties</a>
+        <a class="nav-link" id="properties-tab" data-toggle="tab" href="#properties" aria-controls="properties" aria-selected="true">Properties</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="sample-sheet-tab" data-toggle="tab" href="#sample-sheet" aria-controls="sample-sheet" aria-selected="true">Sample Sheet</a>
+        <a class="nav-link active" id="sample-sheet-tab" data-toggle="tab" href="#sample-sheet" aria-controls="sample-sheet" aria-selected="true">
+          Sample Sheet
+          {% if object.get_sample_sheet_errors %}
+            <i class="fa fa-fw fa-exclamation-triangle text-danger pl-1"></i>
+          {% elif not object.libraries.all %}
+            <span class="text-muted">
+              <i class="fa fa-question-circle"></i>
+            </span>
+          {% endif %}
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="index-stats-tab" data-toggle="tab" href="#index-stats" aria-controls="index-stats" aria-selected="true">Index Stats</a>
+        <a class="nav-link" id="index-stats-tab" data-toggle="tab" href="#index-stats" aria-controls="index-stats" aria-selected="true">
+          Index Stats
+          {% if object.get_index_errors %}
+            <i class="fa fa-exclamation-triangle text-danger pl-1"></i>
+          {% elif not object.index_histograms.all %}
+            <i class="fa fa-question-circle text-muted p-1"></i>
+          {% endif %}
+        </a>
       </li>
     </ul>
 
     <div class="tab-content border-left border-right border-bottom" id="flowcellTabContent">
-      <div class="tab-pane show active" id="properties" role="tabpanel" aria-labelledby="properties-tab">
+      <div class="tab-pane fade" id="properties" role="tabpanel" aria-labelledby="properties-tab">
         <div class="row py-3">
           <div class="col">
             {% include "flowcells/_flowcell_properties.html" %}
           </div>
         </div>
       </div>
-      <div class="tab-pane fade" id="sample-sheet" role="tabpanel" aria-labelledby="sample-sheet-tab">
+      <div class="tab-pane show active" id="sample-sheet" role="tabpanel" aria-labelledby="sample-sheet-tab">
         <div class="row py-3">
           <div class="col">
             {% include "flowcells/_flowcell_samplesheet.html" %}

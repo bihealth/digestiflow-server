@@ -6,8 +6,7 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Q, ProtectedError
-
+from django.db.models import Q
 from projectroles.models import Project
 
 
@@ -98,9 +97,10 @@ class BarcodeSet(models.Model):
         )
 
     def get_flowcells(self):
-        flowcell_model = apps.get_model('flowcells.FlowCell')
+        flowcell_model = apps.get_model("flowcells.FlowCell")
         return flowcell_model.objects.filter(
-            Q(libraries__barcode__barcode_set__id=self.id) | Q(libraries__barcode2__barcode_set__id=self.id)
+            Q(libraries__barcode__barcode_set__id=self.id)
+            | Q(libraries__barcode2__barcode_set__id=self.id)
         ).distinct()
 
     #: Search-enabled manager.

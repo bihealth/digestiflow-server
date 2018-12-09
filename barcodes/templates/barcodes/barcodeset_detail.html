@@ -26,7 +26,14 @@
         <a class="nav-link active" id="properties-tab" data-toggle="tab" href="#properties" aria-controls="properties" aria-selected="true">Properties</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="barcodes-tab" data-toggle="tab" href="#barcodes" aria-controls="barcodes" aria-selected="true">Barcodes</a>
+        <a class="nav-link" id="barcodes-tab" data-toggle="tab" href="#barcodes" aria-controls="barcodes" aria-selected="true">
+          Barcodes
+          {% if not object.entries.all %}
+            <span class="text-muted">
+              <i class="fa fa-question-circle"></i>
+            </span>
+          {% endif %}
+        </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" id="flowcells-tab" data-toggle="tab" href="#flowcells" aria-controls="flowcells" aria-selected="true">

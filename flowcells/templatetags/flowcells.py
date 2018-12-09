@@ -1,7 +1,6 @@
 from django import template
-import pagerange
 
-from ..models import FlowCell, REFERENCE_CHOICES
+from ..models import FlowCell, REFERENCE_CHOICES, pretty_range
 
 register = template.Library()
 
@@ -20,9 +19,9 @@ def reference_label(reference):
     return REF_CHOICE_MAP.get(reference, "unknown")
 
 
-@register.filter
-def pretty_range(value):
-    return pagerange.PageRange(value).range
+@register.filter(name="pretty_range")
+def _pretty_range(value):
+    return pretty_range(value)
 
 
 @register.filter
@@ -64,9 +63,29 @@ def get_index_errors(flowcell, lane, index_read_no, sequence):
     return flowcell.get_index_errors().get((lane, index_read_no, sequence))
 
 
+@register.simple_tag
+def get_sheet_name_errors(flowcell, entry):
+    return flowcell.get_sample_sheet_errors().get(entry.sodar_uuid, {}).get("name")
+
+
+@register.simple_tag
+def get_sheet_lane_errors(flowcell, entry):
+    return flowcell.get_sample_sheet_errors().get(entry.sodar_uuid, {}).get("lane")
+
+
+@register.simple_tag
+def get_sheet_barcode_errors(flowcell, entry):
+    return flowcell.get_sample_sheet_errors().get(entry.sodar_uuid, {}).get("barcode")
+
+
+@register.simple_tag
+def get_sheet_barcode2_errors(flowcell, entry):
+    return flowcell.get_sample_sheet_errors().get(entry.sodar_uuid, {}).get("barcode2")
+
+
 @register.filter
 def all_n(seq):
-    return all(s == 'N' for s in seq)
+    return all(s == "N" for s in seq)
 
 
 @register.filter(name="max")

@@ -1,16 +1,21 @@
 import functools
+import re
 import uuid as uuid_object
 
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
+import pagerange
 from projectroles.models import Project
 
 from digestiflow.users.models import User
 from barcodes.models import BarcodeSet, BarcodeSetEntry
 from sequencers.models import SequencingMachine
+
+
+def pretty_range(value):
+    return pagerange.PageRange(value).range
 
 
 #: Status for "initial"/"not started", not automatically started yet for conversion.
@@ -301,17 +306,109 @@ class FlowCell(models.Model):
             # Collect errors and write into result
             for seq, _ in hist.histogram.items():
                 errors = []
-                if all(s == 'N' for s in seq):
+                if all(s == "N" for s in seq):
                     continue  # skip all-Ns
                 if seq not in expected_seqs:
-                    errors += ['found barcode {} on lane {} and index read {} in BCLs but not in sample sheet'.format(
-                        seq, hist.lane, hist.index_read_no
-                    )]
+                    errors += [
+                        "found barcode {} on lane {} and index read {} in BCLs but not in sample sheet".format(
+                            seq, hist.lane, hist.index_read_no
+                        )
+                    ]
                 if errors:
                     result[(hist.lane, hist.index_read_no, seq)] = errors
-        print(result)
         return result
 
+    @functools.lru_cache()
+    def get_sample_sheet_errors(self):
+        """Analyze the sample sheet for problems and inconsistencies.
+
+        Returns map from library UUID to dict with field names to list of error messages.
+        """
+        # Resulting error map, empty if no errors
+        result = {}
+        # Library from UUID
+        by_uuid = {}
+        # Maps for ambiguity checking
+        by_name = {}  # (lane, name) => library
+        by_barcode = {}  # (lane, barcode) => library
+        by_barcode2 = {}  # (lane, barcode) => library
+
+        # Gather information about libraries, directly validate names and lane numbers
+        for library in self.libraries.all():
+            by_uuid[library.sodar_uuid] = library
+            # Directly check for invalid characters
+            if not re.match("^[a-zA-Z0-9_-]+$", library.name):
+                result.setdefault(library.sodar_uuid, {}).setdefault("name", []).append(
+                    "Library names may only contain alphanumeric characters, hyphens, and underscores"
+                )
+            # Directly check for invalid lanes
+            bad_lanes = list(
+                sorted(no for no in library.lane_numbers if no < 1 or no > self.num_lanes)
+            )
+            if bad_lanes:
+                result.setdefault(library.sodar_uuid, {}).setdefault(
+                    "lane",
+                    [
+                        "Flow cell does not have lane{} #{}".format(
+                            "s" if len(bad_lanes) > 1 else "", pretty_range(bad_lanes)
+                        )
+                    ],
+                )
+            # Store per-lane information for ambiguity evaluation
+            for lane in library.lane_numbers:
+                by_name.setdefault((lane, library.name), []).append(library)
+                by_barcode.setdefault((lane, library.get_barcode_seq()), {})[
+                    library.sodar_uuid
+                ] = library
+                by_barcode2.setdefault((lane, library.get_barcode_seq2()), {})[
+                    library.sodar_uuid
+                ] = library
+
+        # Check uniqueness of sample name with lane.
+        bad_lanes = {}
+        for (lane, name), libraries in by_name.items():
+            if len(libraries) != 1:
+                for library in libraries:
+                    bad_lanes.setdefault(library.sodar_uuid, []).append(lane)
+        for sodar_uuid, lanes in bad_lanes.items():
+            library = by_uuid[sodar_uuid]
+            result.setdefault(sodar_uuid, {}).setdefault("name", []).append(
+                "Library name {} is not unique for lane{} {}".format(
+                    library.name, "s" if len(lanes) > 1 else "", pretty_range(lanes)
+                )
+            )
+
+        # Check uniqueness of barcode sequence combination with lane.  This is a bit more involved as a clash in
+        # one of the indices is not yet an error, it has to be in both.
+        bad_lanes = {}
+        for (lane, seq), libraries in by_barcode.items():
+            for library in libraries.values():
+                other_libraries = by_barcode2[(lane, library.get_barcode_seq2())]
+                clashes = (set(libraries.keys()) & set(other_libraries.keys())) - set(
+                    [library.sodar_uuid]
+                )
+                if clashes:
+                    bad_lanes.setdefault(library.sodar_uuid, []).append(lane)
+        for sodar_uuid, lanes in bad_lanes.items():
+            library = by_uuid[sodar_uuid]
+            keys = []
+            if not library.get_barcode_seq() and not library.get_barcode_seq2():
+                keys = ["barcode", "barcode2"]
+            else:
+                if library.get_barcode_seq():
+                    keys.append("barcode")
+                if library.get_barcode_seq2():
+                    keys.append("barcode2")
+            for key in keys:
+                result.setdefault(sodar_uuid, {}).setdefault(key, []).append(
+                    "Barcode combination {}/{} is not unique for lane{} {}".format(
+                        library.get_barcode_seq() or "-",
+                        library.get_barcode_seq2() or "-",
+                        "s" if len(lanes) > 1 else "",
+                        pretty_range(lanes),
+                    )
+                )
+        return result
 
     def __str__(self):
         return "FlowCell %s" % self.get_full_name()
@@ -412,49 +509,19 @@ class Library(models.Model):
     class Meta:
         ordering = ["name"]
 
-    def save(self, *args, **kwargs):
-        """ Override to check name/barcode being unique on the flow celllanes and lane numbers are compatible."""
-        self._validate_uniqueness()
-        self._validate_lane_nos()
-        return super().save(*args, **kwargs)
-
-    def _validate_lane_nos(self):
-        if any(l > self.flow_cell.num_lanes for l in self.lane_numbers):
-            raise ValidationError(
-                "Lane no {} > flow cell lane count {}".format(
-                    list(sorted(self.lane_numbers)), self.flow_cell.num_lanes
-                )
-            )
-
-    def _validate_uniqueness(self):
-        # Get all libraries sharing any lane on the same flow cell
-        libs_on_lanes = Library.objects.filter(
-            flow_cell=self.flow_cell, lane_numbers__overlap=self.lane_numbers
-        ).exclude(sodar_uuid=self.sodar_uuid)
-        # Check that no libraries exist with the same
-        if libs_on_lanes.filter(name=self.name).exists():
-            raise ValidationError(
-                "There are libraries sharing flow cell lane with the same name as {}".format(
-                    self.name
-                )
-            )
-        # Check that no libraries exist with the same primary and secondary barcode
-        kwargs = {}
-        if self.barcode is None:
-            kwargs["barcode__isnull"] = True
+    def get_barcode_seq(self):
+        """Return barcode sequence #1 either from barcode or bacode_seq"""
+        if self.barcode:
+            return self.barcode.sequence
         else:
-            kwargs["barcode"] = self.barcode
-        if self.barcode2 is None:
-            kwargs["barcode2__isnull"] = True
+            return self.barcode_seq
+
+    def get_barcode_seq2(self):
+        """Return barcode sequence #2 either from barcode or bacode_seq"""
+        if self.barcode2:
+            return self.barcode2.sequence
         else:
-            kwargs["barcode2"] = self.barcode2
-        if libs_on_lanes.filter(**kwargs).exists():
-            raise ValidationError(
-                (
-                    "There are libraries sharing flow cell lane with the "
-                    "same barcodes as {}: {}/{}".format(self.name, self.barcode, self.barcode2)
-                )
-            )
+            return self.barcode_seq2
 
     def get_absolute_url(self):
         return self.flow_cell.get_absolute_url()
