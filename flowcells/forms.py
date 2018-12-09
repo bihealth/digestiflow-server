@@ -9,7 +9,7 @@ from django.core.validators import RegexValidator
 
 from digestiflow.utils import model_to_dict
 from sequencers.models import SequencingMachine
-from .models import FlowCell
+from .models import FlowCell, Message
 
 
 def get_object_or_none(klass, *args, **kwargs):
@@ -119,3 +119,17 @@ class FlowCellForm(forms.ModelForm):
             "current_reads",
         )
         widgets = {"description": forms.Textarea(attrs={"rows": 3})}
+
+
+class MessageForm(forms.ModelForm):
+    """Form for editing messages."""
+
+    submit = forms.ChoiceField(
+        widget=forms.HiddenInput,
+        choices=(("discard", "discard"), ("save", "save"), ("send", "send")),
+    )
+
+    class Meta:
+        model = Message
+        fields = ("subject", "body_format", "body", "submit")
+        widgets = {"body": forms.Textarea(attrs={"rows": 3})}

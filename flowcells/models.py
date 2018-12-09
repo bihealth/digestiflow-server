@@ -9,6 +9,7 @@ from django.db import models
 from django.db.models import Q
 import pagerange
 from projectroles.models import Project
+from filesfolders.models import File, Folder
 
 from digestiflow.users.models import User
 from barcodes.models import BarcodeSet, BarcodeSetEntry
@@ -279,6 +280,10 @@ class FlowCell(models.Model):
 
     #: Search-enabled manager.
     objects = FlowCellManager()
+
+    def get_sent_messages(self):
+        """Return all published messages that are no drafts."""
+        return self.messages.filter(state=MSG_STATE_SENT)
 
     @property
     def name(self):
@@ -629,3 +634,90 @@ class LaneIndexHistogram(models.Model):
     class Meta:
         unique_together = ("flowcell", "lane", "index_read_no")
         ordering = ("flowcell", "lane", "index_read_no")
+
+
+#: Message state for draft
+MSG_STATE_DRAFT = "draft"
+
+#: Message state for sent
+MSG_STATE_SENT = "sent"
+
+#: Choices for message states
+MSG_STATE_CHOICES = ((MSG_STATE_DRAFT, "Draft"), (MSG_STATE_SENT, "Sent"))
+
+#: Format is plain text.
+FORMAT_PLAIN = "text/plain"
+
+#: Format is Markdown.
+FORMAT_MARKDOWN = "text/markdown"
+
+#: Choices for the format
+FORMAT_CHOICES = ((FORMAT_PLAIN, "Plain Text"), (FORMAT_MARKDOWN, "Markdown"))
+
+
+class Message(models.Model):
+    """A message that is attached to a FlowCell."""
+
+    #: DateTime of creation
+    date_created = models.DateTimeField(auto_now_add=True, help_text="DateTime of creation")
+
+    #: DateTime of last modification
+    date_modified = models.DateTimeField(auto_now=True, help_text="DateTime of last modification")
+
+    #: UUID used for identification throughout SODAR.
+    sodar_uuid = models.UUIDField(
+        default=uuid_object.uuid4, unique=True, help_text="Object SODAR UUID"
+    )
+
+    #: The flow cell that this library has been sequenced on
+    author = models.ForeignKey(User, related_name="messages", null=True, on_delete=models.SET_NULL)
+
+    #: The flow cell that this library has been sequenced on
+    flow_cell = models.ForeignKey(FlowCell, related_name="messages", on_delete=models.CASCADE)
+
+    #: The state of the message.
+    state = models.CharField(
+        max_length=50,
+        null=False,
+        choices=MSG_STATE_CHOICES,
+        default=MSG_STATE_DRAFT,
+        help_text="Status of the message",
+    )
+
+    #: The format of the body.
+    body_format = models.CharField(
+        max_length=50,
+        null=False,
+        choices=FORMAT_CHOICES,
+        default=FORMAT_PLAIN,
+        help_text="Format of the message body",
+    )
+
+    #: A list of tags.
+    tags = ArrayField(models.CharField(max_length=100, blank=False), blank=True, default=list)
+
+    #: The title of the message
+    subject = models.CharField(max_length=200, null=True, blank=True, help_text="Message subject")
+
+    #: Body text.
+    body = models.TextField(null=False, blank=False, help_text="Message body")
+
+    #: Folder for the attachments, if any.
+    attachment_folder = models.ForeignKey(
+        Folder, null=True, blank=True, help_text="Folder for the attachments, if any."
+    )
+
+    class Meta:
+        ordering = ("date_created",)
+
+    def get_absolute_url(self):
+        return (
+            reverse(
+                "flowcells:flowcell-detail",
+                kwargs={
+                    "project": self.flow_cell.project.sodar_uuid,
+                    "flowcell": self.flow_cell.sodar_uuid,
+                },
+            )
+            + "#message-%s" % self.sodar_uuid
+        )

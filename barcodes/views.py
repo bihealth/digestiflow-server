@@ -170,8 +170,8 @@ class BarcodeSetUpdateView(
         existing = {str(entry.sodar_uuid): entry for entry in barcode_set.entries.all()}
         updated = json.loads(form.cleaned_data["entries_json"])
         updated_by_uuid = {entry.get("uuid"): entry for entry in updated if entry.get("uuid")}
-        print('existing', existing)
-        print('updated', updated)
+        print("existing", existing)
+        print("updated", updated)
         # Delete and update existing.
         for entry in existing.values():
             if str(entry.sodar_uuid) not in updated_by_uuid:

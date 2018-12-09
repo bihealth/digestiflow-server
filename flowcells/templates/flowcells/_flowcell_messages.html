@@ -1,0 +1,83 @@
+{% load crispy_forms_tags %}
+{% load humanize %}
+
+{# TODO: display non-draft message or message from user #}
+{% if object.get_sent_messages %}
+  {% for message in object.get_sent_messages %}
+    <div class="card mb-3">
+      <div class="card-body">
+        {% if message.subject %}
+          <h5 class="card-title">
+            {{ message.subject }}
+          </h5>
+        {% endif %}
+        <h6 class="card-subtitle mb-2 text-muted">
+          Written
+          <span data-toggle="tooltip" title="{{ message.date_created }}">
+              {{ message.date_created|naturaltime }}
+          </span>
+          by
+          <span
+            {% if message.author.username != message.author.get_full_name %}
+              data-toggle="tooltip" title="{{ message.author.username }}"
+            {% endif %}
+              >
+            {{ message.author.get_full_name }}
+          </span>
+        </h6>
+        <p class="card-text pb-3">
+          {{ message.body }}
+        </p>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="text-center font-italic">
+    No messages (yet).
+  </p>
+{% endif %}
+          
+<div class="row">
+  <div class="col px-0">
+    <div class="card card-body bg-light">
+      {% if message_form.instance.pk %}
+        <span id="{{ message_form.instance.sodar_uuid }}"></span>
+      {% endif %}
+      <form id="message-form" method="post"
+          {% if message_form.instance.pk %}
+            action="{% url 'flowcells:message-update' project=project.sodar_uuid flowcell=object.sodar_uuid message=message_form.instance.sodar_uuid %}#message-form"
+          {% else %}
+            action="{% url 'flowcells:message-create' project=project.sodar_uuid flowcell=object.sodar_uuid %}#message-form"
+          {% endif %}
+        >{% csrf_token %}
+        {% if message_form.instance.pk %}
+        <p class="alert alert-info">
+          <i class="fa fa-info-circle pr-2"></i>
+          Your message has been saved as a draft.
+          Only you can see it. 
+          Use Send below for actually sending it.
+        </p>
+        {% endif %}
+   
+        {{ message_form|crispy }}
+
+        <div class="text-right pb-3">
+          <div class="btn-group" role="group">
+            <button type="submit" name="submit" value="discard" class="btn btn-danger">
+              <i class="fa fa-times" aria-hidden="true"></i>
+              Discard
+            </a>
+            <button type="submit" name="submit" value="save" class="btn btn-secondary">
+              <i class="fa fa-save" aria-hidden="true"></i>
+              Save as Draft
+            </a>
+            <button type="submit" name="submit" value="send" class="btn btn-primary">
+              <i class="fa fa-send" aria-hidden="true"></i>
+              Send
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

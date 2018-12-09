@@ -61,7 +61,13 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
         elif search_type == "library":
             items = Library.objects.find(search_term, keywords)
 
-        return {"all": {"title": "Flow Cells and Libraries", "search_types": ["flowcell", "library"], "items": items}}
+        return {
+            "all": {
+                "title": "Flow Cells and Libraries",
+                "search_types": ["flowcell", "library"],
+                "items": items,
+            }
+        }
 
     def get_extra_data_link(self, extra_data, name):
         """Return link for the given label that started with ``"extra-"``."""

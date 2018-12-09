@@ -23,10 +23,10 @@
   <div class="container-fluid sodar-page-container">
     <ul class="nav nav-tabs">
       <li class="nav-item">
-        <a class="nav-link" id="properties-tab" data-toggle="tab" href="#properties" aria-controls="properties" aria-selected="true">Properties</a>
+        <a class="nav-link{% if not message_mode %} active{% endif %}" id="properties-tab" data-toggle="tab" href="#properties" aria-controls="properties" aria-selected="true">Properties</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link active" id="sample-sheet-tab" data-toggle="tab" href="#sample-sheet" aria-controls="sample-sheet" aria-selected="true">
+        <a class="nav-link" id="sample-sheet-tab" data-toggle="tab" href="#sample-sheet" aria-controls="sample-sheet" aria-selected="true">
           Sample Sheet
           {% if object.get_sample_sheet_errors %}
             <i class="fa fa-fw fa-exclamation-triangle text-danger pl-1"></i>
@@ -47,17 +47,23 @@
           {% endif %}
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link{% if message_mode %} active{%endif %}" id="messages-tab" data-toggle="tab" href="#messages" aria-controls="messages" aria-selected="true">
+          Messages
+          ({{ object.get_sent_messages.count }})
+        </a>
+      </li>
     </ul>
 
     <div class="tab-content border-left border-right border-bottom" id="flowcellTabContent">
-      <div class="tab-pane fade" id="properties" role="tabpanel" aria-labelledby="properties-tab">
+      <div class="tab-pane {% if not message_mode %}show active{% else %}fade{% endif %}" id="properties" role="tabpanel" aria-labelledby="properties-tab">
         <div class="row py-3">
           <div class="col">
             {% include "flowcells/_flowcell_properties.html" %}
           </div>
         </div>
       </div>
-      <div class="tab-pane show active" id="sample-sheet" role="tabpanel" aria-labelledby="sample-sheet-tab">
+      <div class="tab-pane fade" id="sample-sheet" role="tabpanel" aria-labelledby="sample-sheet-tab">
         <div class="row py-3">
           <div class="col">
             {% include "flowcells/_flowcell_samplesheet.html" %}
@@ -71,7 +77,29 @@
           </div>
         </div>
       </div>
+      <div class="tab-pane {% if message_mode %}show active{% else %}fade{% endif %}" id="messages" role="tabpanel" aria-labelledby="messages-tab">
+        <div class="row py-3">
+          <div class="col">
+            {% include "flowcells/_flowcell_messages.html" %}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <script type="text/javascript">
+    $(function () {
+      // open correct tab
+      let hash = window.location.hash
+      if (hash.startsWith('#message-')) {
+        $('#properties').removeClass('show active')
+        $('#properties').addClass('fade')
+        $('#properties-tab').removeClass('active')
+        $('#messages').removeClass('fade')
+        $('#messages').addClass('show active')
+        $('#messages-tab').addClass('active')
+      }
+    })
+  </script>
 
 {% endblock %}
