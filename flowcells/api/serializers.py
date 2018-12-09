@@ -78,7 +78,13 @@ class FlowCellSerializer(serializers.ModelSerializer):
             "libraries",
             "index_histograms",
         )
-        read_only_fields = ("sodar_uuid", "project", "demux_operator", "libraries", "index_histograms")
+        read_only_fields = (
+            "sodar_uuid",
+            "project",
+            "demux_operator",
+            "libraries",
+            "index_histograms",
+        )
 
 
 class LibrarySerializer(serializers.ModelSerializer):

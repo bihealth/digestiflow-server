@@ -9,6 +9,9 @@
   <td>
     {{ item.label }}
   </td>
+  <td class="text-right">
+    {{ item.flowcell_set.count }}
+  </td>
   <td>
     {{ item.description|default:"-" }}
     {% if not details_card_mode %}

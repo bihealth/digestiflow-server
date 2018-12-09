@@ -1,6 +1,5 @@
 """Forms for the barcodes app."""
 
-from uuid import UUID
 import json
 
 from django import forms
@@ -18,11 +17,11 @@ class BarcodeSetForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Fill hidden field with JSON value based on the instance's objects.s
         initial_value = [
-            model_to_dict(entry, exclude=('pk',), rename={'sodar_uuid': 'uuid'})
+            model_to_dict(entry, exclude=("pk",), rename={"sodar_uuid": "uuid"})
             for entry in self.instance.entries.all()
         ]
         self.fields["entries_json"] = forms.CharField(
-            widget=forms.HiddenInput(), initial=json.dumps(initial_value, cls=UUIDEncoder)
+            widget=forms.HiddenInput(), initial=json.dumps(initial_value)
         )
 
     class Meta:

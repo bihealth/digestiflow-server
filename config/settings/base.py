@@ -48,6 +48,7 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.admin",
+    "django.contrib.humanize",
 ]
 
 THIRD_PARTY_APPS = [
@@ -73,7 +74,7 @@ THIRD_PARTY_APPS = [
     # NOTE: Only enable if using sodar_taskflow
     # 'taskflowbackend.apps.TaskflowbackendConfig',
     # TODO: Add other third party apps here
-    'webpack_loader',  # For accessing webpack bundles
+    "webpack_loader",  # For accessing webpack bundles
 ]
 
 # Project apps
@@ -195,8 +196,8 @@ STATIC_ROOT = str(ROOT_DIR("staticfiles"))
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    str(APPS_DIR.path("static")),     # Django static files dir
-    str(ROOT_DIR('isaeditor/dist')),  # flowcells/samplesheet assets
+    str(APPS_DIR.path("static")),  # Django static files dir
+    str(ROOT_DIR("isaeditor/dist")),  # flowcells/samplesheet assets
 ]
 
 STATICFILES_FINDERS = [
@@ -208,10 +209,7 @@ STATICFILES_FINDERS = [
 # ------------------------------------------------------------------------------
 
 WEBPACK_LOADER = {
-    'FRONTEND': {
-        'BUNDLE_DIR_NAME': '',
-        'STATS_FILE': ROOT_DIR('frontend/webpack-stats.json'),
-    },
+    "FRONTEND": {"BUNDLE_DIR_NAME": "", "STATS_FILE": ROOT_DIR("frontend/webpack-stats.json")}
 }
 
 # MEDIA CONFIGURATION

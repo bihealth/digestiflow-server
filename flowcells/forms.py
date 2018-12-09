@@ -58,7 +58,7 @@ class FlowCellForm(forms.ModelForm):
 
     #: The libraries will be transmitted serialized as JSON in a hidden input that is updated from the Vue.js
     #: component in the front-end.
-    libraries_json = forms.CharField(widget=forms.HiddenInput(), initial='{}')
+    libraries_json = forms.CharField(widget=forms.HiddenInput(), initial="{}")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -67,9 +67,9 @@ class FlowCellForm(forms.ModelForm):
         # Fill hidden field with JSON value based on the instance's objects.s
         initial_value = [
             {
-                **model_to_dict(entry, exclude=('pk',), rename={'sodar_uuid': 'uuid'}),
-                'barcode': str(entry.barcode.sodar_uuid),
-                'barcode2': str(entry.barcode2.sodar_uuid),
+                **model_to_dict(entry, exclude=("pk",), rename={"sodar_uuid": "uuid"}),
+                "barcode": str(entry.barcode.sodar_uuid) if entry.barcode else None,
+                "barcode2": str(entry.barcode2.sodar_uuid) if entry.barcode2 else None,
             }
             for entry in self.instance.libraries.all()
         ]

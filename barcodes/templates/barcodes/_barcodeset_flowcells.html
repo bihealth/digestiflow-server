@@ -1,0 +1,8 @@
+<p>
+  <em>
+    <i class="fa fa-info-circle"></i>
+    The following flow cells use barcodes from this set.
+  </em>
+</p>
+
+{% include "flowcells/_flowcell_table.html" with object_list=object.get_flowcells %}

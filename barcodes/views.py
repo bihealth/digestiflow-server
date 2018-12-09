@@ -135,8 +135,8 @@ class BarcodeSetUpdateView(
         try:
             self._update_entries(self.object, form)
         except ProtectedError as e:
-            messages.error("Could not update barcode set entries: %s" % e)
-            return self.form_invalid()
+            messages.error(self.request, "Could not update barcode set entries: %s" % e)
+            return self.form_invalid(form)
         # Call into super class.
         result = super().form_valid(form)
         # Register event with timeline.

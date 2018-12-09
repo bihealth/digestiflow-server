@@ -58,14 +58,6 @@
     </ul>
 
     <div class="tab-content border-left border-right border-bottom" id="flowcellTabContent">
-      <div class="tab-pane" id="sample-sheet" role="tabpanel" aria-labelledby="sample-sheet-tab">
-        <div class="row">
-          <div class="col px-0">
-            <div id="app" data-args="{&quot;project&quot;: &quot;{{ project.sodar_uuid }}&quot;}"></div>
-            {% render_bundle 'app' 'js' 'FRONTEND' %}
-          </div>
-        </div>
-      </div>
       <div class="tab-pane show active" id="properties" role="tabpanel" aria-labelledby="properties-tab">
         <div class="row py-3">
           <div class="col">
@@ -120,6 +112,14 @@
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane" id="sample-sheet" role="tabpanel" aria-labelledby="sample-sheet-tab">
+        <div class="row">
+          <div class="col px-0">
+            <div id="app" data-args="{&quot;project&quot;: &quot;{{ project.sodar_uuid }}&quot;}"></div>
+            {% render_bundle 'app' 'js' 'FRONTEND' %}
           </div>
         </div>
       </div>

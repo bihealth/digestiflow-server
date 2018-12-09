@@ -7,17 +7,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('flowcells', '0009_library'),
-    ]
+    dependencies = [("flowcells", "0009_library")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='library',
-            name='barcode_set',
-        ),
-        migrations.RemoveField(
-            model_name='library',
-            name='barcode_set2',
-        ),
+        migrations.RemoveField(model_name="library", name="barcode_set"),
+        migrations.RemoveField(model_name="library", name="barcode_set2"),
     ]

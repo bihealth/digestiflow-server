@@ -1,52 +1,52 @@
-<dl>
-  <dt>UUID</dt>
-  <dd>{{ object.sodar_uuid }}</dd>
+<dl class="row">
+  <dt class="col-12 col-md-3 col-xl-2">UUID</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.sodar_uuid }}</dd>
 
-  <dt>Project</dt>
-  <dd>{{ object.project.title }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Project</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.project.title }}</dd>
 
-  <dt>Created</dt>
-  <dd>{{ object.date_created }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Created</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.date_created }}</dd>
 
-  <dt>Last Modified</dt>
-  <dd>{{ object.date_modified }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Last Modified</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.date_modified }}</dd>
 
-  <dt>Full Name</dt>
-  <dd>{{ object.get_full_name }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Full Name</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.get_full_name }}</dd>
 
-  <dt>Manual Label</dt>
-  <dd>{{ object.manual_label|default:"-" }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Manual Label</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.manual_label|default:"-" }}</dd>
 
-  <dt>Number of Lanes</dt>
-  <dd>{{ object.num_lanes|default:"-" }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Number of Lanes</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.num_lanes|default:"-" }}</dd>
 
-  <dt>Operator</dt>
-  <dd>{{ object.operator }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Operator</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.operator }}</dd>
 
-  <dt>Demux Operator</dt>
-  <dd>{{ object.demux_operator.name|default:"-" }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Demux Operator</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.demux_operator.name|default:"-" }}</dd>
 
-  <dt>RTA Version</dt>
-  <dd>{{ object.rta_version }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">RTA Version</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.rta_version }}</dd>
 
-  <dt>Status Sequencing</dt>
-  <dd>{{ object.status_sequencing }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Status Sequencing</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.status_sequencing }}</dd>
 
-  <dt>Status Conversion</dt>
-  <dd>{{ object.status_conversion }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Status Conversion</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.status_conversion }}</dd>
 
-  <dt>Status Delivery</dt>
-  <dd>{{ object.status_delivery }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Status Delivery</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.status_delivery }}</dd>
 
-  <dt>Delivery Type</dt>
-  <dd>{{ object.status_delivery }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Delivery Type</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.status_delivery }}</dd>
 
-  <dt>Planned Reads</dt>
-  <dd>{{ object.planned_reads }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Planned Reads</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.planned_reads }}</dd>
 
-  <dt>Current Reads</dt>
-  <dd>{{ object.current_reads }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Current Reads</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.current_reads }}</dd>
 
-  <dt>Barcode Mismatches</dt>
-  <dd>{{ object.barcode_mismatches }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Barcode Mismatches</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.barcode_mismatches|default:"-" }}</dd>
 </dl>

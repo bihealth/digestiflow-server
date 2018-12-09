@@ -1,3 +1,4 @@
+import functools
 import uuid as uuid_object
 
 from django.contrib.postgres.fields import ArrayField, JSONField
@@ -275,6 +276,43 @@ class FlowCell(models.Model):
                 map(str, (run_date, vendor_id, run_number, self.slot, self.vendor_id, self.label))
             )
 
+    @functools.lru_cache()
+    def get_index_errors(self):
+        """Analyze index histograms for problems and inconsistencies with sample sheet.
+
+        Return map from lane number, index read, and sequence to list of errors.
+        """
+        result = {}
+        for hist in self.index_histograms.all():
+            # Collect sequences we expect to see for this lane and read number
+            expected_seqs = set()
+            for library in self.libraries.filter(lane_numbers__contains=[hist.lane]):
+                if hist.index_read_no == 0:
+                    barcode = library.barcode
+                    barcode_seq = library.barcode_seq
+                else:
+                    barcode = library.barcode2
+                    barcode_seq = library.barcode_seq2
+                    # TODO: revcomp in case of sequencing workflow B
+                if barcode:
+                    expected_seqs.add(barcode.sequence)
+                elif barcode_seq:
+                    expected_seqs.add(barcode_seq)
+            # Collect errors and write into result
+            for seq, _ in hist.histogram.items():
+                errors = []
+                if all(s == 'N' for s in seq):
+                    continue  # skip all-Ns
+                if seq not in expected_seqs:
+                    errors += ['found barcode {} on lane {} and index read {} in BCLs but not in sample sheet'.format(
+                        seq, hist.lane, hist.index_read_no
+                    )]
+                if errors:
+                    result[(hist.lane, hist.index_read_no, seq)] = errors
+        print(result)
+        return result
+
+
     def __str__(self):
         return "FlowCell %s" % self.get_full_name()
 
@@ -355,14 +393,14 @@ class Library(models.Model):
     )
 
     #: The barcode used for first barcode index this library
-    barcode = models.ForeignKey(BarcodeSetEntry, on_delete=models.PROTECT)
+    barcode = models.ForeignKey(BarcodeSetEntry, null=True, blank=True, on_delete=models.PROTECT)
 
     #: Optional a sequence entered directly for the first barcode
     barcode_seq = models.CharField(max_length=200, null=True, blank=True)
 
     #: The barcode used for second barcode index this library
     barcode2 = models.ForeignKey(
-        BarcodeSetEntry, on_delete=models.PROTECT, related_name="barcodes2"
+        BarcodeSetEntry, null=True, blank=True, on_delete=models.PROTECT, related_name="barcodes2"
     )
 
     #: Optionally, a sequence entered directly for the second barcode.  Entered as for dual indexing workflow A.

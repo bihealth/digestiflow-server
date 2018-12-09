@@ -20,29 +20,7 @@
   </div>
 
   <div class="container-fluid sodar-page-container">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th style="width:10px">#</th>
-          <th class="col-lg-2 col-sm-3">Created</th>
-          <th class="col-lg-2 col-sm-3">Vendor ID</th>
-          <th class="col-lg-2 col-sm-3">Label</th>
-          <th class="col-lg-6 col-sm-3">Description</th>
-        </tr>
-      </thead>
-      <tbody>
-
-        {% if object_list.count > 0 %}
-          {% for flowcell in object_list %}
-            {% include 'flowcells/_flowcell_item.html' with item=flowcell details_card_mode=False %}
-          {% endfor %}
-        {% else %}
-          <tr>
-            <td class="bg-faded font-italic text-center" colspan="5">No flow cells (yet)</td>
-          </tr>
-        {% endif %}
-      </tbody>
-    </table>
+    {% include "flowcells/_flowcell_table.html" %}
   </div>
 
 {% endblock %}

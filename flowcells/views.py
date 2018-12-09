@@ -1,13 +1,18 @@
 """The views for the flowcells app."""
 
+import json
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
+from django.db.models import ProtectedError
 from django.shortcuts import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from projectroles.plugins import get_backend_api
 from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, ProjectPermissionMixin
 
+from barcodes.models import BarcodeSetEntry
 from digestiflow.utils import model_to_dict
 from .forms import FlowCellForm
 from .models import FlowCell
@@ -49,7 +54,43 @@ class FlowCellDetailView(
     slug_field = "sodar_uuid"
 
 
+class FlowCellRecreateLibrariesMixin:
+    """Mixin with functionality to recreate the libraries"""
+
+    def _update_libraries(self, flowcell, form):
+        """Update libraries of ``flowcell`` record from JSON field.
+
+        This method must be called within a transaction, of course.
+
+        For now, we just recreate the library entries.
+        """
+        flowcell.libraries.all().delete()
+
+        project_barcodes = BarcodeSetEntry.objects.filter(
+            barcode_set__project=self._get_project(self.request, self.kwargs)
+        )
+        for info in json.loads(form.cleaned_data["libraries_json"]):
+            if info["barcode"]:
+                barcode = project_barcodes.get(sodar_uuid=info["barcode"])
+            else:
+                barcode = None
+            if info["barcode2"]:
+                barcode2 = project_barcodes.get(sodar_uuid=info["barcode2"])
+            else:
+                barcode2 = None
+            flowcell.libraries.create(
+                name=info["name"],
+                reference=info["reference"],
+                barcode=barcode,
+                barcode_seq=info["barcode_seq"],
+                barcode2=barcode2,
+                barcode_seq2=info["barcode_seq2"],
+                lane_numbers=info["lane_numbers"],
+            )
+
+
 class FlowCellCreateView(
+    FlowCellRecreateLibrariesMixin,
     SuccessMessageMixin,
     LoginRequiredMixin,
     LoggedInPermissionMixin,
@@ -72,6 +113,11 @@ class FlowCellCreateView(
         # Create the sequencing machine.
         form.instance.project = self._get_project(self.request, self.kwargs)
         result = super().form_valid(form)
+        try:
+            self._update_libraries(self.object, form)
+        except Exception as e:
+            messages.error(self.request, "Could not create libraries: %s" % e)
+            return self.form_invalid(form)
         # Register event with timeline.
         timeline = get_backend_api("timeline_backend")
         if timeline:
@@ -89,6 +135,7 @@ class FlowCellCreateView(
 
 
 class FlowCellUpdateView(
+    FlowCellRecreateLibrariesMixin,
     SuccessMessageMixin,
     LoginRequiredMixin,
     LoggedInPermissionMixin,
@@ -110,7 +157,14 @@ class FlowCellUpdateView(
 
     @transaction.atomic
     def form_valid(self, form):
-        # Update sequencing machine record.
+        # Save form, get ``self.object``, ready for updating libraries.
+        self.object = form.save()
+        try:
+            self._update_libraries(self.object, form)
+        except Exception as e:
+            messages.error(self.request, "Could not update libraries entries: %s" % e)
+            return self.form_invalid(form)
+        # Call into super class.
         result = super().form_valid(form)
         # Register event with timeline.
         timeline = get_backend_api("timeline_backend")

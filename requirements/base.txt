@@ -45,6 +45,9 @@ Sphinx==1.7.9
 django-docs==0.3.0
 sphinx-rtd-theme==0.4.1
 
+# Manipulation of integer rages
+pagerange ==0.4
+
 #####################
 # SODAR Core imports
 #####################

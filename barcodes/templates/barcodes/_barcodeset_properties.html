@@ -1,25 +1,25 @@
-<dl>
-  <dt>UUID</dt>
-  <dd>{{ object.sodar_uuid }}</dd>
+<dl class="row">
+  <dt class="col-12 col-md-3 col-xl-2">UUID</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.sodar_uuid }}</dd>
 
-  <dt>Project</dt>
-  <dd>{{ object.project.title }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Project</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.project.title }}</dd>
 
-  <dt>Created</dt>
-  <dd>{{ object.date_created }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Created</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.date_created }}</dd>
 
-  <dt>Last Modified</dt>
-  <dd>{{ object.date_modified }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Last Modified</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.date_modified }}</dd>
 
-  <dt>Name</dt>
-  <dd>{{ object.name }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Name</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.name }}</dd>
 
-  <dt>Short Name</dt>
-  <dd>{{ object.short_name }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Short Name</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.short_name }}</dd>
 
-  <dt>Description</dt>
-  <dd>{{ object.description|default:"-" }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Description</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.description|default:"-" }}</dd>
 
-  <dt>Barcode Set Type</dt>
-  <dd>{{ object.set_type|default:"-" }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Barcode Set Type</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.set_type|default:"-" }}</dd>
 </dl>

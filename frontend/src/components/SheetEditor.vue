@@ -46,7 +46,6 @@ function integerRangeValidator (query, report) {
   try {
     new MultiRange(query) // eslint-disable-line
   } catch (_e) {
-    console.log(_e)
     report(false)
     return
   }
@@ -76,6 +75,12 @@ let references = [
   {key: '__other__', label: 'other'}
 ]
 
+// Mapping reference label to key
+let labelToReference = {}
+references.forEach((entry) => {
+  labelToReference[entry.label] = entry.key
+})
+
 export default {
   name: 'SheetEditor',
 
@@ -88,8 +93,10 @@ export default {
 
   data () {
     return {
+      barcodesets: {}, // by UUID
       barcodesetShortNames: [],
-      barcodesets: {},
+      barcodesetByShortName: {},
+      barcodes: {}, // by UUID
       onAfterChangeRunning: false,
       // The hidden field whose value will be updated when the grid is updated.
       targetJsonField: null,
@@ -144,22 +151,29 @@ export default {
     this.originalLibrariesJson = JSON.parse(this.targetJsonField.value)
     this.$refs.sheetTable.hotInstance.updateSettings({
       cells: this.hotCells,
-      afterChange: this.onAfterChange,
-      data: this.getDataFromLibrariesJson(this.originalLibrariesJson)
+      afterChange: this.onAfterChange
     })
 
-    // Load barcode sets through API and update HOT settings.
+    // Load barcode sets through API and update HOT settings.  Afterwards, we can load the data libraries from
+    // JSON.
     axios
       .get(`/api/barcodesets/${this.$props.project}/`)
       .then(res => {
         this.barcodesetShortNames = []
+        this.barcodesetByShortName = {}
         this.barcodesets = {}
+        this.barcodes = {}
         for (var i = 0; i < res.data.length; ++i) {
-          this.barcodesets[res.data[i].short_name] = res.data[i]
+          this.barcodesetByShortName[res.data[i].short_name] = res.data[i]
+          this.barcodesets[res.data[i].sodar_uuid] = res.data[i]
           this.barcodesetShortNames.push(res.data[i].short_name)
+          res.data[i].entries.forEach((barcode) => {
+            this.barcodes[barcode.sodar_uuid] = barcode
+          })
         }
         this.$refs.sheetTable.hotInstance.updateSettings({
-          columns: this.hotColumns()
+          columns: this.hotColumns(),
+          data: this.getDataFromLibrariesJson(this.originalLibrariesJson)
         })
       })
   },
@@ -167,23 +181,105 @@ export default {
   methods: {
     // Get table data from libraries JSON data
     getDataFromLibrariesJson (jsonData) {
-      jsonData.forEach((entry) => {
-        
+      // Disable onAfterChange handler
+      this.onAfterChangeRunning = true
+
+      const hot = this.$refs.sheetTable.hotInstance
+      jsonData.forEach((entry, row) => {
+        hot.setDataAtCell(row, 0, entry.name)
+        hot.setDataAtCell(row, 1, entry.reference)
+
+        if (entry.barcode_seq) {
+          hot.setDataAtCell(row, 2, 'type barcode -->')
+          hot.setDataAtCell(row, 3, entry.barcode_seq)
+        } else if (entry.barcode) {
+          const barcode = this.barcodes[entry.barcode]
+          const barcodeset = this.barcodesets[barcode.barcode_set]
+          hot.setDataAtCell(row, 2, `${barcodeset.name} (${barcodeset.short_name})`)
+          hot.setDataAtCell(row, 3, `${barcode.name} (${barcode.sequence})`)
+        }
+
+        if (entry.barcode_seq2) {
+          hot.setDataAtCell(row, 4, 'type barcode -->')
+          hot.setDataAtCell(row, 5, entry.barcode_seq2)
+        } else if (entry.barcode2) {
+          const barcode = this.barcodes[entry.barcode]
+          const barcodeset = this.barcodesets[barcode.barcode_set]
+          hot.setDataAtCell(row, 2, `${barcodeset.name} (${barcodeset.short_name})`)
+          hot.setDataAtCell(row, 3, `${barcode.name} (${barcode.sequence})`)
+        }
+
+        const numbers = new MultiRange()
+        entry.lane_numbers.forEach((x) => numbers.append(x))
+        hot.setDataAtCell(row, 6, numbers.toString())
       })
+
+      // Enable onAfterChange handler again
+      this.onAfterChangeRunning = false
     },
 
     // Update libraries JSON from Handsontable data
     setLibrariesJsonFromData (origJsonData, tableData) {
-      // TODO
+      const jsonData = tableData
+        .filter((row) => !!row[0])
+        .map(([name, reference, barcodeset, barcodeVal, barcodeset2, barcodeVal2, lanes]) => {
+          let lanesArr
+          try {
+            lanesArr = new MultiRange(lanes).toArray()
+          } catch (e) {
+            lanesArr = []
+          }
+
+          let barcodeUuid = null
+          let barcodeSeq = null
+          if (barcodeset === 'type barcode -->') {
+            barcodeSeq = barcodeVal
+          } else if (barcodeset) {
+            const barcodeSet = this.barcodesetByShortName[getShortName(barcodeset)]
+            const barcode = barcodeSet.entries.find((entry) => {
+              return barcodeVal === `${entry.name} (${entry.sequence})`
+            })
+            if (barcode) {
+              barcodeUuid = barcode.sodar_uuid
+            }
+          }
+
+          let barcodeUuid2 = null
+          let barcodeSeq2 = null
+          if (barcodeset2 === 'type barcode -->') {
+            barcodeSeq2 = barcodeVal2
+          } else if (barcodeset2) {
+            const barcodeSet2 = this.barcodesetByShortName[getShortName(barcodeset2)]
+            const barcode2 = barcodeSet2.entries.find((entry) => {
+              return barcodeVal2 === `${entry.name} (${entry.sequence})`
+            })
+            if (barcode2) {
+              barcodeUuid2 = barcode2.sodar_uuid
+            }
+          }
+
+          return {
+            name: name,
+            reference: reference,
+            barcode: barcodeUuid,
+            barcode_seq: barcodeSeq,
+            barcode2: barcodeUuid2,
+            barcode_seq2: barcodeSeq2,
+            lane_numbers: lanesArr
+          }
+        })
+      this.targetJsonField.value = JSON.stringify(jsonData)
     },
 
     // Called when a cell changed.
     onAfterChange (changes) {
       // Guard against infinite event loop.
+      console.log("attempting onAfterChange")
       if (this.onAfterChangeRunning) {
         return
       }
       this.onAfterChangeRunning = true
+      console.log("onAfterChange")
 
       const hot = this.$refs.sheetTable.hotInstance
 
@@ -194,10 +290,10 @@ export default {
           const barcodesetVal = hot.getDataAtCell(row, col - 1)
           if (barcodesetVal) {
             const shortName = getShortName(barcodesetVal)
-            if (this.barcodesets[shortName]) {
+            if (this.barcodesetByShortName[shortName]) {
               // TODO could be sped up with lookup table instead of lookup
               // Selected a barcode set, only allow selecting barcodes from set
-              this.barcodesets[shortName].entries.forEach((entry) => {
+              this.barcodesetByShortName[shortName].entries.forEach((entry) => {
                 if (entry.name === newValue) {
                   hot.setDataAtCell(row, col, `${entry.name} (${entry.sequence})`)
                 }
@@ -227,11 +323,11 @@ export default {
           cellProperties.className = 'read-only-cell'
         } else {
           const shortName = getShortName(barcodesetVal)
-          if (this.barcodesets[shortName]) {
+          if (this.barcodesetByShortName[shortName]) {
             // Selected a barcode set, only allow selecting barcodes from set
             cellProperties.readOnly = false
             cellProperties.type = 'dropdown'
-            cellProperties.source = this.barcodesets[shortName].entries.map(entry => `${entry.name} (${entry.sequence})`)
+            cellProperties.source = this.barcodesetByShortName[shortName].entries.map(entry => `${entry.name} (${entry.sequence})`)
             cellProperties.className = ''
             cellProperties.validator = 'dropdown'
           } else {
@@ -250,7 +346,7 @@ export default {
     // Create HOT columns settings based on currently loaded references.
     hotColumns () {
       const labels = ['', 'type barcode -->'].concat(this.barcodesetShortNames.map(shortName => {
-        const item = this.barcodesets[shortName]
+        const item = this.barcodesetByShortName[shortName]
         return `${item.name} (${item.short_name})`
       }))
       return [

@@ -2,6 +2,7 @@
 
 import uuid as uuid_object
 
+from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -95,6 +96,12 @@ class BarcodeSet(models.Model):
             "barcodes:barcodeset-detail",
             kwargs={"project": self.project.sodar_uuid, "barcodeset": self.sodar_uuid},
         )
+
+    def get_flowcells(self):
+        flowcell_model = apps.get_model('flowcells.FlowCell')
+        return flowcell_model.objects.filter(
+            Q(libraries__barcode__barcode_set__id=self.id) | Q(libraries__barcode2__barcode_set__id=self.id)
+        ).distinct()
 
     #: Search-enabled manager.
     objects = BarcodeSetManager()

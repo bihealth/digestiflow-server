@@ -1,0 +1,8 @@
+<p>
+  <em>
+    <i class="fa fa-info-circle"></i>
+    The following flow cells/runs are known for this sequencer.
+  </em>
+</p>
+
+{% include "flowcells/_flowcell_table.html" with object_list=object.flowcell_set.all %}

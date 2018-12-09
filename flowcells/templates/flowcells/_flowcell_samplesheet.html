@@ -1,0 +1,79 @@
+{% load flowcells %}
+
+<table class="table table-striped table-hover table-sm">
+  <thead>
+    <tr>
+      <th style="width: 10px">#</th>
+      <th class="col-1">Name</th>
+      <th class="col-1">Reference</th>
+      <th class="col-3">Barcode Set #1</th>
+      <th class="col-1">Barcode #1</th>
+      <th class="col-3">Barcode Set #2</th>
+      <th class="col-1">Barcode #2</th>
+      <th class="col-1">Lanes</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if object.libraries.all %}
+      {% for entry in object.libraries.all %}
+        <tr>
+          <td class="text-muted">{{ forloop.counter }}</td>
+          <td>{{ entry.name }}</td>
+          <td>{{ entry.reference|reference_label }}</td>
+
+          <td>
+            {% if not entry.barcode %}
+              -
+            {% else %}
+              {{ entry.barcode.barcode_set.name }}
+            {% endif %}
+          </td>
+          <td class="text-nowrap">
+            {% if not entry.barcode %}
+              {% if entry.barcode_seq %}
+                <span data-toggle="tooltip" title="manually entered barcode">
+                  {{ entry.barcode_seq }}
+                  <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
+                </span>
+              {% endif %}
+            {% else %}
+              {{ entry.barcode.sequence }}
+              <span class="text-muted">({{ entry.barcode.name }})</span>
+            {% endif %}
+          </td>
+
+          <td>
+            {% if not entry.barcode2 %}
+              -
+            {% else %}
+              {{ entry.barcode.barcode_set.name }}
+            {% endif %}
+          </td>
+          <td class="text-nowrap">
+            {% if not entry.barcode2 %}
+              {% if entry.barcode_seq2 %}
+                <span data-toggle="tooltip" title="manually entered barcode">
+                  {{  entry.barcode_seq2 }}
+                  <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
+                </span>
+              {% endif %}
+            {% else %}
+              {{ entry.barcode2.sequence }}
+              <span class="text-muted">({{ entry.barcode2.name }})</span>
+            {% endif %}
+          </td>
+
+          <td>
+            {{ entry.lane_numbers|pretty_range }}
+          </td>
+        </tr>
+      {% endfor %}
+    {% else %}
+      <tr>
+        <td colspan="8" class="text-center text-muted">
+          <i>No libraries (yet).</i>
+        </td>
+      </tr>
+    {% endif %}
+  </tbody>
+</table>

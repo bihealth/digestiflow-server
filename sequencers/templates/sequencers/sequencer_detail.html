@@ -21,7 +21,34 @@
   </div>
 
   <div class="container-fluid sodar-page-container">
-    {% include "sequencers/_sequencer_properties.html" %}
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" id="properties-tab" data-toggle="tab" href="#properties" aria-controls="properties" aria-selected="true">Properties</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="flowcells-tab" data-toggle="tab" href="#flowcells" aria-controls="flowcells" aria-selected="true">
+          Flow Cells/Runs
+          ({{ object.flowcell_set.count }})
+        </a>
+      </li>
+    </ul>
+
+    <div class="tab-content border-left border-right border-bottom" id="flowcellTabContent">
+      <div class="tab-pane show active" id="properties" role="tabpanel" aria-labelledby="properties-tab">
+        <div class="row py-3">
+          <div class="col">
+            {% include "sequencers/_sequencer_properties.html" %}
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane face" id="flowcells" role="tabpanel" aria-labelledby="flowcells-tab">
+        <div class="row py-3">
+          <div class="col">
+            {% include "sequencers/_sequencer_flowcells.html" %}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 {% endblock %}
