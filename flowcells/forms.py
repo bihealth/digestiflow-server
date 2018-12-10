@@ -141,9 +141,9 @@ class MessageForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Add fields for removing the attachments.
         for attachment in self.instance.get_attachment_files():
-            self.fields['del_attachment_%s' % attachment.sodar_uuid] = forms.BooleanField(
-                label='Remove %s' % attachment.name,
-                help_text='Tick the checkbox if you want to remove the attachment when saving/sending',
+            self.fields["del_attachment_%s" % attachment.sodar_uuid] = forms.BooleanField(
+                label="Remove %s" % attachment.name,
+                help_text="Tick the checkbox if you want to remove the attachment when saving/sending",
                 required=False,
             )
 

@@ -25,7 +25,7 @@ urlpatterns = [
     # Filesfolders URLs
     url(r"^filesfolders/", include("filesfolders.urls")),
     # django-db-file-storage URLs (needed for admin, obfuscated for users)
-    url(r'^xu7in5zs9lylar0n/', include('db_file_storage.urls')),
+    url(r"^xu7in5zs9lylar0n/", include("db_file_storage.urls")),
     # Timeline URLs
     url(r"^timeline/", include("timeline.urls")),
     # User Profile URLs

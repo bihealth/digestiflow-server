@@ -702,13 +702,17 @@ class Message(models.Model):
     #: Body text.
     body = models.TextField(null=False, blank=False, help_text="Message body")
 
+    # TODO: make non-optional
     #: Folder for the attachments, if any.
     attachment_folder = models.ForeignKey(
-        Folder, null=True, blank=True, help_text="Folder for the attachments, if any.",
-        on_delete=models.PROTECT
+        Folder,
+        null=True,
+        blank=True,
+        help_text="Folder for the attachments, if any.",
+        on_delete=models.PROTECT,
     )
 
-    def delete(self,*args, **kwargs):
+    def delete(self, *args, **kwargs):
         result = super().delete(*args, **kwargs)
         if self.attachment_folder:
             self.attachment_folder.delete()
@@ -739,4 +743,3 @@ class Message(models.Model):
             return Folder.objects.none()
         else:
             return self.attachment_folder.filesfolders_file_children.all()
-

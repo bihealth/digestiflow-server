@@ -137,7 +137,7 @@ DATABASES = {"default": env.db("DATABASE_URL", default="postgres:///sodar_core")
 DATABASES["default"]["ATOMIC_REQUESTS"] = False
 
 # Set django-db-file-storage as the default storage
-DEFAULT_FILE_STORAGE = 'db_file_storage.storage.DatabaseFileStorage'
+DEFAULT_FILE_STORAGE = "db_file_storage.storage.DatabaseFileStorage"
 
 # GENERAL CONFIGURATION
 # ------------------------------------------------------------------------------

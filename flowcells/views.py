@@ -251,35 +251,38 @@ class MessageAttachmentHelpersMixin:
         """Handle the removal of files."""
         num_removed = 0
         for name, field in form.fields.items():
-            if not name.startswith('del_attachment_') or not field:
+            if not name.startswith("del_attachment_") or not field:
                 continue  # no deletion field or not checked
-            sodar_uuid = name[len('del_attachment_'):]
+            sodar_uuid = name[len("del_attachment_") :]
             try:
                 form.instance.get_attachment_files().get(sodar_uuid=sodar_uuid).delete()
                 num_removed += 1
             except File.DoesNotExist:
                 pass  # swallow exception
 
-
     def _handle_file_uploads(self, message):
-        if not self.request.FILES:
-            return
+        """Handle file uploads, if any.
+
+        Ensures to remove the file upload folder for this message.
+        """
         project = self._get_project(self.request, self.kwargs)
         folder = self._get_attachment_folder(message)
+        if not self.request.FILES:
+            return
         for key in ("attachment1", "attachment2", "attachment3"):
             uploaded = self.request.FILES.get(key)
             if uploaded:
                 counter = 0
-                suffix = ''
+                suffix = ""
                 while folder.filesfolders_file_children.filter(name=uploaded.name + suffix):
                     counter += 1
-                    suffix = ' (%d)' % counter
+                    suffix = " (%d)" % counter
                 new_file = File(
                     name=uploaded.name + suffix,
                     project=project,
                     folder=folder,
                     owner=self.request.user,
-                    secret=build_secret()
+                    secret=build_secret(),
                 )
                 content_file = ContentFile(uploaded.read())
                 new_file.file.save(uploaded.name, content_file)

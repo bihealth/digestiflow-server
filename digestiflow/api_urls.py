@@ -84,16 +84,43 @@ urlpatterns = [
         view=flowcell_views.LaneIndexHistogramUpdateDestroyApiView.as_view(),
         name="indexhistos",
     ),
-    # /libraries/:project/:flowcell/
+    # /indexhistos/:project/:flowcell/
     url(
         regex=r"^indexhistos/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/$",
         view=flowcell_views.LaneIndexHistogramListCreateApiView.as_view(),
         name="libraries",
     ),
-    # /libraries/:project/:flowcell/:library/
+    # /indexhistos/:project/:flowcell/:library/
     url(
-        regex=r"^libraries/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<library>[0-9a-f-]+)/$",
+        regex=r"^indexhistos/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<library>[0-9a-f-]+)/$",
         view=flowcell_views.LaneIndexHistogramUpdateDestroyApiView.as_view(),
-        name="libraries",
+        name="indexhistos",
+    ),
+    # /messages/:project/:flowcell/
+    url(
+        regex=r"^messages/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/$",
+        view=flowcell_views.MessageListCreateApiView.as_view(),
+        name="messages",
+    ),
+    # /messages/:project/:flowcell/:library/
+    url(
+        regex=r"^messages/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<message>[0-9a-f-]+)/$",
+        view=flowcell_views.MessageUpdateDestroyApiView.as_view(),
+        name="messages",
+    ),
+    # /attachments/:project/:flowcell/
+    url(
+        regex=r"^attachments/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<message>[0-9a-f-]+)/$",
+        view=flowcell_views.AttachmentListCreateApiView.as_view(),
+        name="attachments",
+    ),
+    # /attachments/:project/:flowcell/:library/
+    url(
+        regex=(
+            r"^attachments/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<message>[0-9a-f-]+)/"
+            "(?P<attachment>[0-9a-f-]+)/$"
+        ),
+        view=flowcell_views.AttachmentUpdateDestroyApiView.as_view(),
+        name="attachments",
     ),
 ]

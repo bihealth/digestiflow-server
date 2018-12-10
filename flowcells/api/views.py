@@ -9,8 +9,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from digestiflow.utils import ProjectMixin
-from ..models import FlowCell, LaneIndexHistogram
-from .serializers import FlowCellSerializer, LaneIndexHistogramSerializer
+from filesfolders.models import File
+from ..models import FlowCell, LaneIndexHistogram, Message
+from .serializers import FlowCellSerializer, LaneIndexHistogramSerializer, MessageSerializer, AttachmentSerializer
 
 # TODO: authorization still missing, need mixin for this!
 
@@ -93,5 +94,78 @@ class LaneIndexHistogramUpdateDestroyApiView(
     permission_classes = (IsAuthenticated,)
     serializer_class = LaneIndexHistogramSerializer
     lookup_url_kwarg = "indexhistogram"
+    lookup_field = "sodar_uuid"
+    permission_required = "flowcells.modify_data"
+
+
+class MessageApiViewMixin(ProjectMixin):
+    """Common functionality for Message API views."""
+
+    def get_flowcell(self):
+        return FlowCell.objects.filter(project=self.get_project()).get(
+            sodar_uuid=self.kwargs["flowcell"]
+        )
+
+    def get_serializer_context(self):
+        result = super().get_serializer_context()
+        result["project"] = self.get_project()
+        result["flowcell"] = self.get_flowcell()
+        return result
+
+    def get_queryset(self):
+        return Message.objects.filter(flow_cell=self.get_flowcell())
+
+
+class MessageListCreateApiView(MessageApiViewMixin, ListCreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = MessageSerializer
+    lookup_url_kwarg = "message"
+    lookup_field = "sodar_uuid"
+    permission_required = "flowcells.modify_data"
+
+
+class MessageUpdateDestroyApiView(MessageApiViewMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = MessageSerializer
+    lookup_url_kwarg = "message"
+    lookup_field = "sodar_uuid"
+    permission_required = "flowcells.modify_data"
+
+
+class AttachmentApiViewMixin(ProjectMixin):
+    """Common functionality for filesfolders File attachment API views."""
+
+    def get_flowcell(self):
+        return FlowCell.objects.filter(project=self.get_project()).get(
+            sodar_uuid=self.kwargs["flowcell"]
+        )
+
+    def get_message(self):
+        flow_cell = self.get_flowcell()
+        return flow_cell.messages.get(sodar_uuid=self.kwargs["message"])
+
+    def get_serializer_context(self):
+        result = super().get_serializer_context()
+        result["project"] = self.get_project()
+        result["flowcell"] = self.get_flowcell()
+        result["message"] = self.get_message()
+        return result
+
+    def get_queryset(self):
+        return self.get_message().get_attachment_files()
+
+
+class AttachmentListCreateApiView(AttachmentApiViewMixin, ListCreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = AttachmentSerializer
+    lookup_url_kwarg = "message"
+    lookup_field = "sodar_uuid"
+    permission_required = "flowcells.modify_data"
+
+
+class AttachmentUpdateDestroyApiView(AttachmentApiViewMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = AttachmentSerializer
+    lookup_url_kwarg = "message"
     lookup_field = "sodar_uuid"
     permission_required = "flowcells.modify_data"
