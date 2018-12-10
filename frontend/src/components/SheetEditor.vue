@@ -274,12 +274,10 @@ export default {
     // Called when a cell changed.
     onAfterChange (changes) {
       // Guard against infinite event loop.
-      console.log("attempting onAfterChange")
       if (this.onAfterChangeRunning) {
         return
       }
       this.onAfterChangeRunning = true
-      console.log("onAfterChange")
 
       const hot = this.$refs.sheetTable.hotInstance
 

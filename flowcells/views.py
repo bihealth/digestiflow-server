@@ -62,6 +62,7 @@ class FlowCellDetailView(
     def get_context_data(self, *args, **kwargs):
         result = super().get_context_data(*args, **kwargs)
         flowcell = result["object"]
+        print("ERROR", flowcell.get_index_errors())
         messages = flowcell.messages.filter(author=self.request.user, state=MSG_STATE_DRAFT)
         try:
             instance = messages.first()

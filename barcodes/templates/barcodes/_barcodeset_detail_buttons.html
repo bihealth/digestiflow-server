@@ -10,6 +10,9 @@
     Barcode Set Operations
   </button>
   <div class="dropdown-menu dropdown-menu-right">
+    <a class="dropdown-item" href="{% url 'barcodes:barcodeset-create' project=project.sodar_uuid %}">
+      <i class="fa fa-fw fa-plus"></i> Create New
+    </a>
     <a class="dropdown-item" href="{% url 'barcodes:barcodeset-update' project=project.sodar_uuid barcodeset=object.sodar_uuid %}">
       <i class="fa fa-fw fa-pencil"></i> Update
     </a>

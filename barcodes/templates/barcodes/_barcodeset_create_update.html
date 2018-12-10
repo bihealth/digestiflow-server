@@ -1,6 +1,7 @@
 {% extends "projectroles/project_base.html" %}
 
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block navi_sub_project_extend %}
   <li class="breadcrumb-item">
@@ -151,6 +152,8 @@
 
 {% block javascript %}
   {{ block.super }}
+  <script type="text/javascript" src="{% static 'js/handsontable.full.min.js' %}"></script>xxx
+  <link rel="stylesheet" type="text/css" href="{% static 'css/handsontable.full.min.css' %}">
 
   <script type="text/javascript" charset="utf-8">
     // We need quite a bit of state for this so we create an anonymous function for keeping it around.

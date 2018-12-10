@@ -12,8 +12,9 @@ from projectroles.models import Project
 from filesfolders.models import File, Folder
 
 from digestiflow.users.models import User
+from digestiflow.utils import revcomp
 from barcodes.models import BarcodeSet, BarcodeSetEntry
-from sequencers.models import SequencingMachine
+from sequencers.models import SequencingMachine, INDEX_WORKFLOW_B
 
 
 def pretty_range(value):
@@ -278,6 +279,13 @@ class FlowCell(models.Model):
         null=True, blank=True, help_text="Number of mismatches to allow"
     )
 
+    #: Whether or not to silence index errors
+    silence_index_errors = models.BooleanField(
+        blank=True,
+        default=False,
+        help_text="Check to index inconsistency errors between BCLs and sheet",
+    )
+
     #: Search-enabled manager.
     objects = FlowCellManager()
 
@@ -316,28 +324,31 @@ class FlowCell(models.Model):
                 map(str, (run_date, vendor_id, run_number, self.slot, self.vendor_id, self.label))
             )
 
-    @functools.lru_cache()
     def get_index_errors(self):
         """Analyze index histograms for problems and inconsistencies with sample sheet.
 
         Return map from lane number, index read, and sequence to list of errors.
         """
+        if hasattr(self, "_index_errors"):
+            return self._index_errors
         result = {}
         for hist in self.index_histograms.all():
             # Collect sequences we expect to see for this lane and read number
             expected_seqs = set()
             for library in self.libraries.filter(lane_numbers__contains=[hist.lane]):
-                if hist.index_read_no == 0:
+                if hist.index_read_no == 1:
                     barcode = library.barcode
                     barcode_seq = library.barcode_seq
                 else:
                     barcode = library.barcode2
                     barcode_seq = library.barcode_seq2
-                    # TODO: revcomp in case of sequencing workflow B
-                if barcode:
-                    expected_seqs.add(barcode.sequence)
-                elif barcode_seq:
-                    expected_seqs.add(barcode_seq)
+                the_seq = barcode.sequence if barcode else barcode_seq
+                if (
+                    hist.index_read_no == 2
+                    and self.sequencing_machine.dual_index_workflow == INDEX_WORKFLOW_B
+                ):
+                    the_seq = revcomp(the_seq)
+                expected_seqs.add(the_seq)
             # Collect errors and write into result
             for seq, _ in hist.histogram.items():
                 errors = []
@@ -351,14 +362,16 @@ class FlowCell(models.Model):
                     ]
                 if errors:
                     result[(hist.lane, hist.index_read_no, seq)] = errors
+        self._index_errors = result
         return result
 
-    @functools.lru_cache()
     def get_sample_sheet_errors(self):
         """Analyze the sample sheet for problems and inconsistencies.
 
         Returns map from library UUID to dict with field names to list of error messages.
         """
+        if hasattr(self, "_sheet_errors"):
+            return self._sheet_errors
         # Resulting error map, empty if no errors
         result = {}
         # Library from UUID
@@ -419,9 +432,9 @@ class FlowCell(models.Model):
         for (lane, seq), libraries in by_barcode.items():
             for library in libraries.values():
                 other_libraries = by_barcode2[(lane, library.get_barcode_seq2())]
-                clashes = (set(libraries.keys()) & set(other_libraries.keys())) - set(
-                    [library.sodar_uuid]
-                )
+                clashes = (set(libraries.keys()) & set(other_libraries.keys())) - {
+                    library.sodar_uuid
+                }
                 if clashes:
                     bad_lanes.setdefault(library.sodar_uuid, []).append(lane)
         for sodar_uuid, lanes in bad_lanes.items():
@@ -443,6 +456,7 @@ class FlowCell(models.Model):
                         pretty_range(lanes),
                     )
                 )
+        self._sheet_errors = result
         return result
 
     def __str__(self):
@@ -702,20 +716,17 @@ class Message(models.Model):
     #: Body text.
     body = models.TextField(null=False, blank=False, help_text="Message body")
 
-    # TODO: make non-optional
     #: Folder for the attachments, if any.
     attachment_folder = models.ForeignKey(
-        Folder,
-        null=True,
-        blank=True,
-        help_text="Folder for the attachments, if any.",
-        on_delete=models.PROTECT,
+        Folder, help_text="Folder for the attachments, if any.", on_delete=models.PROTECT
     )
 
     def delete(self, *args, **kwargs):
         result = super().delete(*args, **kwargs)
-        if self.attachment_folder:
+        try:
             self.attachment_folder.delete()
+        except Folder.DoesNotExist:
+            pass  # swallow
         return result
 
     class Meta:
@@ -739,7 +750,7 @@ class Message(models.Model):
 
     def get_attachment_files(self):
         """Returns QuerySet with the attached files"""
-        if not self.attachment_folder:
-            return Folder.objects.none()
-        else:
+        try:
             return self.attachment_folder.filesfolders_file_children.all()
+        except Folder.DoesNotExist:
+            return Folder.objects.none()

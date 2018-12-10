@@ -2,10 +2,24 @@
 
 <tr>
   <td class="text-nowrap">
-    {% if flowcell.get_index_errors or flowcell.get_sample_sheet_errors %}
+    {% if flowcell.get_sample_sheet_errors %}
       <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
          data-toggle="tooltip"
-         title="There were with indexes and/or sample sheet!"></i>
+         title="There were errors with the sample sheet!"></i>
+    {% elif flowcell.get_index_errors %}
+      {% if flowcell.silence_index_errors %}
+        <i class="fa fc-fw fa-minus text-secondary" aria-hidden="true"
+           data-toggle="tooltip"
+           title="There were silenced errors with indexes..."></i>
+      {% elif not flowcell.libraries.all %}
+        <i class="fa fc-fw fa-question-circle text-warning" aria-hidden="true"
+           data-toggle="tooltip"
+           title="The sample sheet is empty!"></i>
+      {% else %}
+        <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
+           data-toggle="tooltip"
+           title="There were errors with indexes!"></i>
+      {% endif %}
     {% else %}
       <i class="fa fc-fw fa-check text-muted fc-super-muted" aria-hidden="true"></i>
     {% endif %}

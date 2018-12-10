@@ -117,6 +117,7 @@ class FlowCellForm(forms.ModelForm):
             "barcode_mismatches",
             "planned_reads",
             "current_reads",
+            "silence_index_errors",
         )
         widgets = {"description": forms.Textarea(attrs={"rows": 3})}
 

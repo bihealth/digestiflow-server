@@ -46,3 +46,9 @@ class ProjectMixin:
     def get_project(self):
         """Return the project object."""
         return self.project_class.objects.get(sodar_uuid=self.kwargs["project"])
+
+
+def revcomp(s):
+    """Reverse complement function"""
+    comp_map = {"A": "T", "a": "t", "C": "G", "c": "g", "g": "c", "G": "C", "T": "A", "t": "a"}
+    return "".join(reversed([comp_map.get(x, x) for x in s]))

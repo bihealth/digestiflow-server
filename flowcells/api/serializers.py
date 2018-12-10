@@ -163,7 +163,7 @@ class FlowCellSerializer(serializers.ModelSerializer):
     demux_operator = serializers.ReadOnlyField(source="demux_operator.username")
     index_histograms = LaneIndexHistogramSerializer(many=True, read_only=True)
     libraries = LibrarySerializer(many=True, read_only=True)
-    messages = MessageUuidSerializer(many=True)
+    messages = MessageUuidSerializer(many=True, read_only=True)
 
     def update(self, instance, validated_data):
         validated_data["project"] = self.context["project"]

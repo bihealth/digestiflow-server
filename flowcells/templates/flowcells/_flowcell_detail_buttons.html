@@ -10,8 +10,9 @@
     Flow Cell Operations
   </button>
   <div class="dropdown-menu dropdown-menu-right">
-
-    {# Folder #}
+    <a class="dropdown-item" href="{% url 'flowcells:flowcell-create' project=project.sodar_uuid %}">
+      <i class="fa fa-fw fa-plus"></i> Create New
+    </a>
     <a class="dropdown-item" href="{% url 'flowcells:flowcell-update' project=project.sodar_uuid flowcell=object.sodar_uuid %}">
       <i class="fa fa-fw fa-pencil"></i> Update
     </a>
