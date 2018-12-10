@@ -64,26 +64,26 @@
               {% if object.pk %}
                 <div class="form-group row">
                   <label class="form-control-label {{ form.helper.label_class }}">UUID</label>
-                  <div>
-                    <input type="text" readonly class="form-control-plaintext {{ form_helper.field_class}}" value="{{ object.sodar_uuid }}">
+                  <div class="{{ form.helper.field_class}}">
+                    <input type="text" readonly class="form-control-plaintext" value="{{ object.sodar_uuid }}">
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="form-control-label {{ form.helper.label_class }}">Project</label>
-                  <div>
-                    <input type="text" readonly class="form-control-plaintext {{ form_helper.field_class}}" value="{{ object.project.title }}">
+                  <div class="{{ form.helper.field_class}}">
+                    <input type="text" readonly class="form-control-plaintext" value="{{ object.project.title }}">
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="form-control-label {{ form.helper.label_class }}">Created</label>
-                  <div>
-                    <input type="text" readonly class="form-control-plaintext {{ form_helper.field_class}}" value="{{ object.date_created }}">
+                  <div class="{{ form.helper.field_class}}">
+                    <input type="text" readonly class="form-control-plaintext" value="{{ object.date_created }}">
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="form-control-label {{ form.helper.label_class }}">Last Update</label>
-                  <div>
-                    <input type="text" readonly class="form-control-plaintext {{ form_helper.field_class}}" value="{{ object.date_modified }}">
+                  <div class="{{ form.helper.field_class}}">
+                    <input type="text" readonly class="form-control-plaintext" value="{{ object.date_modified }}">
                   </div>
                 </div>
               {% endif %}
