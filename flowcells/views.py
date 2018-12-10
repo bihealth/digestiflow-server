@@ -14,11 +14,11 @@ from django.shortcuts import reverse, redirect
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from filesfolders.models import File, Folder
 from projectroles.plugins import get_backend_api
+from projectroles.utils import build_secret
 from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, ProjectPermissionMixin
 
 from barcodes.models import BarcodeSetEntry
 from digestiflow.utils import model_to_dict
-from projectroles.utils import build_secret
 from .forms import FlowCellForm, MessageForm
 from .models import FlowCell, Message, MSG_STATE_DRAFT, MSG_STATE_SENT
 

@@ -102,25 +102,25 @@ urlpatterns = [
         view=flowcell_views.MessageListCreateApiView.as_view(),
         name="messages",
     ),
-    # /messages/:project/:flowcell/:library/
+    # /messages/:project/:flowcell/:message/
     url(
         regex=r"^messages/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<message>[0-9a-f-]+)/$",
         view=flowcell_views.MessageUpdateDestroyApiView.as_view(),
         name="messages",
     ),
-    # /attachments/:project/:flowcell/
+    # /attachments/:project/:flowcell/:message/
     url(
         regex=r"^attachments/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<message>[0-9a-f-]+)/$",
-        view=flowcell_views.AttachmentListCreateApiView.as_view(),
+        view=flowcell_views.AttachmentListApiView.as_view(),
         name="attachments",
     ),
-    # /attachments/:project/:flowcell/:library/
+    # /attachments/:project/:flowcell/:message/:file/
     url(
         regex=(
             r"^attachments/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<message>[0-9a-f-]+)/"
-            "(?P<attachment>[0-9a-f-]+)/$"
+            "(?P<file>[0-9a-f-]+)/$"
         ),
-        view=flowcell_views.AttachmentUpdateDestroyApiView.as_view(),
+        view=flowcell_views.AttachmentRetrieveApiView.as_view(),
         name="attachments",
     ),
 ]
