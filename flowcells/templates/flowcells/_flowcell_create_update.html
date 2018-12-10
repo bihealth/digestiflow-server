@@ -1,7 +1,7 @@
 {% extends "projectroles/project_base.html" %}
 
 {% load crispy_forms_tags %}
-{% load render_bundle from webpack_loader %}
+{% load static %}
 
 {% block navi_sub_project_extend %}
   <li class="breadcrumb-item">
@@ -116,13 +116,24 @@
       </div>
       <div class="tab-pane" id="sample-sheet" role="tabpanel" aria-labelledby="sample-sheet-tab">
         <div class="row">
-          <div class="col px-0">
-            <div id="app" data-args="{&quot;project&quot;: &quot;{{ project.sodar_uuid }}&quot;}"></div>
-            {% render_bundle 'app' 'js' 'FRONTEND' %}
+          <div class="col px-0 sheet-table-container">
+            <div id="hot-table" data-args="{&quot;project&quot;: &quot;{{ project.sodar_uuid }}&quot;}"></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+{% endblock %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script type="text/javascript" src="{% static 'js/handsontable.full.min.js' %}"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/handsontable.full.min.css' %}">
+  <script type="text/javascript" src="{% static 'js/axios.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/multi-integer-range.js' %}"></script>
+
+  <script type="text/javascript">
+    {% include "flowcells/_script_flowcell_editor.js" %}
+  </script>
 {% endblock %}

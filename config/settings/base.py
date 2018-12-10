@@ -74,8 +74,6 @@ THIRD_PARTY_APPS = [
     # SODAR Taskflow backend app
     # NOTE: Only enable if using sodar_taskflow
     # 'taskflowbackend.apps.TaskflowbackendConfig',
-    # TODO: Add other third party apps here
-    "webpack_loader",  # For accessing webpack bundles
 ]
 
 # Project apps
@@ -199,21 +197,13 @@ STATIC_ROOT = str(ROOT_DIR("staticfiles"))
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    str(APPS_DIR.path("static")),  # Django static files dir
-    str(ROOT_DIR("isaeditor/dist")),  # flowcells/samplesheet assets
+    str(APPS_DIR.path("static")),
 ]
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
-
-# WEBPACK CONFIGURATION
-# ------------------------------------------------------------------------------
-
-WEBPACK_LOADER = {
-    "FRONTEND": {"BUNDLE_DIR_NAME": "", "STATS_FILE": ROOT_DIR("frontend/webpack-stats.json")}
-}
 
 # MEDIA CONFIGURATION
 # ------------------------------------------------------------------------------
