@@ -1,26 +1,17 @@
-from projectroles.plugins import ProjectAppPluginPoint
-
-from .urls import urlpatterns
+from projectroles.plugins import SiteAppPluginPoint
 
 
-class ProjectAppPlugin(ProjectAppPluginPoint):
+class ProjectAppPlugin(SiteAppPluginPoint):
     """Plugin for registering app with Projectroles"""
 
-    name = "tokens"
-    title = "API Tokens"
-    urls = urlpatterns
-
     icon = "key"
+    name = 'token'
+
+    title = 'API Tokens'
 
     entry_point_url_id = "tokens:token-list"
 
-    description = "Token Management"
+    description = "API Token Management"
 
     #: Required permission for accessing the app
     app_permission = "tokens.view_data"
-
-    #: Enable or disable general search from project title bar
-    search_enable = False
-
-    #: Position in plugin ordering
-    plugin_ordering = 100

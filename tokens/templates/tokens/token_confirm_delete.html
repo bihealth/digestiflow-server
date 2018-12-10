@@ -2,7 +2,7 @@
 
 {% block navi_sub_project_extend %}
   <li class="breadcrumb-item">
-    <a href="{% url 'tokens:token-list' project=project.sodar_uuid %}">API Tokens</a>
+    <a href="{% url 'tokens:token-list' %}">API Tokens</a>
   </li>
   <li class="breadcrumb-item">{{ object.token_key }}</li>
   <li class="breadcrumb-item active">Delete</li>

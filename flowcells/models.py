@@ -329,6 +329,14 @@ class FlowCell(models.Model):
 
         Return map from lane number, index read, and sequence to list of errors.
         """
+        def prefix_match(query, db):
+            """Naive implementation of "is seq prefix of one in expecteds or vice versa"."""
+            for entry in db:
+                l = min(len(query), len(entry))
+                if query[:l] == entry[:l]:
+                    return True
+            return False
+
         if hasattr(self, "_index_errors"):
             return self._index_errors
         result = {}
@@ -354,7 +362,7 @@ class FlowCell(models.Model):
                 errors = []
                 if all(s == "N" for s in seq):
                     continue  # skip all-Ns
-                if seq not in expected_seqs:
+                if not prefix_match(seq, expected_seqs):
                     errors += [
                         "found barcode {} on lane {} and index read {} in BCLs but not in sample sheet".format(
                             seq, hist.lane, hist.index_read_no

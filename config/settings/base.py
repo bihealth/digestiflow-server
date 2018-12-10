@@ -401,6 +401,9 @@ PROJECTROLES_DISABLE_CATEGORIES = True
 # Remote access mode: SOURCE or TARGET
 PROJECTROLES_SITE_MODE = env.str("PROJECTROLES_SITE_MODE", "SOURCE")
 
+# Hide links for filesfolders
+PROJECTROLES_HIDE_APP_LINKS = ('filesfolders',)
+
 # Enable or disable project creation if site is in TARGET mode
 PROJECTROLES_TARGET_CREATE = env.bool("PROJECTROLES_TARGET_CREATE", True)
 

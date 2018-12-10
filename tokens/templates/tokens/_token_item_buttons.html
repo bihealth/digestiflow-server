@@ -4,7 +4,7 @@
     <i class="fa fa-cog"></i>
   </button>
   <div class="dropdown-menu dropdown-menu-right">
-    <a class="dropdown-item" href="{% url 'tokens:token-delete' project=project.sodar_uuid pk=item.pk %}">
+    <a class="dropdown-item" href="{% url 'tokens:token-delete' pk=item.pk %}">
       <i class="fa fa-fw fa-close"></i>
       Delete
     </a>

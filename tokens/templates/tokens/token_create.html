@@ -4,7 +4,7 @@
 
 {% block navi_sub_project_extend %}
   <li class="breadcrumb-item">
-    <a href="{% url 'tokens:token-list' project=project.sodar_uuid %}">API Tokens</a>
+    <a href="{% url 'tokens:token-list' %}">API Tokens</a>
   </li>
   <li class="breadcrumb-item active">
     Create
@@ -32,7 +32,7 @@
       <div class="text-right mb-3">
         <div class="btn-group" role="group">
           <a role="button" class="btn btn-secondary"
-              href="{% url 'tokens:token-list' project=project.sodar_uuid %}">
+              href="{% url 'tokens:token-list' %}">
             <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
             Cancel
           </a>

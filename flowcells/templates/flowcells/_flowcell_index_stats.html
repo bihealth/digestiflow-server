@@ -37,7 +37,7 @@
                       <span class="text-danger" data-toggle="tooltip" title="{% for msg in index_errors %}{{ msg }}{% if not forloop.last %}, {% endif %}{% endfor %}">
                     {% endif %}
                       {{ seq }}
-                      ({{ count|divide:entry.sample_size|multiply:100|stringformat:".2f" }}%)
+                      ({{ count|divide:entry.sample_size|multiply:100|stringformat:".2f"|stringformat:"05s" }}%)
                     {% if index_errors %}
                       </span>
                     {% endif %}

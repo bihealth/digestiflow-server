@@ -13,9 +13,7 @@ from .forms import UserTokenCreateForm
 
 class UserTokenListView(
     LoginRequiredMixin,
-    ProjectPermissionMixin,
     LoggedInPermissionMixin,
-    ProjectContextMixin,
     ListView,
 ):
     permission_required = "tokens.access"
@@ -29,9 +27,7 @@ class UserTokenListView(
 
 class UserTokenCreateView(
     LoginRequiredMixin,
-    ProjectPermissionMixin,
     LoggedInPermissionMixin,
-    ProjectContextMixin,
     FormView,
 ):
     permission_required = "tokens.access"
@@ -47,9 +43,7 @@ class UserTokenCreateView(
 
 class UserTokenDeleteView(
     LoginRequiredMixin,
-    ProjectPermissionMixin,
     LoggedInPermissionMixin,
-    ProjectContextMixin,
     DeleteView,
 ):
     permission_required = "tokens.access"
@@ -57,10 +51,7 @@ class UserTokenDeleteView(
     template_name = "tokens/token_confirm_delete.html"
 
     def get_success_url(self):
-        return reverse(
-            "tokens:token-list",
-            kwargs={"project": self._get_project(self.request, self.kwargs).sodar_uuid},
-        )
+        return reverse("tokens:token-list")
 
     def get_queryset(self):
         """Only allow access to this user's query set."""
