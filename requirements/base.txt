@@ -48,6 +48,11 @@ sphinx-rtd-theme==0.4.1
 # Manipulation of integer rages
 pagerange ==0.4
 
+# Required also in production for collecting static
+django-debug-toolbar ==1.9.1
+# Required for collectstatic
+django-extensions ==2.1.4
+
 #####################
 # SODAR Core imports
 #####################
