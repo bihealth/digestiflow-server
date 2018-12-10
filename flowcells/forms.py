@@ -129,7 +129,33 @@ class MessageForm(forms.ModelForm):
         choices=(("discard", "discard"), ("save", "save"), ("send", "send")),
     )
 
+    attachment1 = forms.FileField(label="Attach File #1", required=False)
+    attachment2 = forms.FileField(label="Attach File #2", required=False)
+    attachment3 = forms.FileField(
+        label="Attach File #3",
+        required=False,
+        help_text='Click "Save as Draft" to upload more files.',
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add fields for removing the attachments.
+        for attachment in self.instance.get_attachment_files():
+            self.fields['del_attachment_%s' % attachment.sodar_uuid] = forms.BooleanField(
+                label='Remove %s' % attachment.name,
+                help_text='Tick the checkbox if you want to remove the attachment when saving/sending',
+                required=False,
+            )
+
     class Meta:
         model = Message
-        fields = ("subject", "body_format", "body", "submit")
+        fields = (
+            "subject",
+            "body_format",
+            "body",
+            "submit",
+            "attachment1",
+            "attachment2",
+            "attachment3",
+        )
         widgets = {"body": forms.Textarea(attrs={"rows": 3})}

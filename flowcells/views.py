@@ -1,19 +1,24 @@
 """The views for the flowcells app."""
 
+import mimetypes
+import functools
 import json
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.files.base import ContentFile
 from django.db import transaction
-from django.db.models import ProtectedError
 from django.shortcuts import reverse, redirect
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from filesfolders.models import File, Folder
 from projectroles.plugins import get_backend_api
 from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, ProjectPermissionMixin
 
 from barcodes.models import BarcodeSetEntry
 from digestiflow.utils import model_to_dict
+from projectroles.utils import build_secret
 from .forms import FlowCellForm, MessageForm
 from .models import FlowCell, Message, MSG_STATE_DRAFT, MSG_STATE_SENT
 
@@ -239,7 +244,74 @@ class FlowCellDeleteView(
         )
 
 
+class MessageAttachmentHelpersMixin:
+    """Mixin with helper functions for message attachments."""
+
+    def _handle_attachment_removal(self, form):
+        """Handle the removal of files."""
+        num_removed = 0
+        for name, field in form.fields.items():
+            if not name.startswith('del_attachment_') or not field:
+                continue  # no deletion field or not checked
+            sodar_uuid = name[len('del_attachment_'):]
+            try:
+                form.instance.get_attachment_files().get(sodar_uuid=sodar_uuid).delete()
+                num_removed += 1
+            except File.DoesNotExist:
+                pass  # swallow exception
+
+
+    def _handle_file_uploads(self, message):
+        if not self.request.FILES:
+            return
+        project = self._get_project(self.request, self.kwargs)
+        folder = self._get_attachment_folder(message)
+        for key in ("attachment1", "attachment2", "attachment3"):
+            uploaded = self.request.FILES.get(key)
+            if uploaded:
+                counter = 0
+                suffix = ''
+                while folder.filesfolders_file_children.filter(name=uploaded.name + suffix):
+                    counter += 1
+                    suffix = ' (%d)' % counter
+                new_file = File(
+                    name=uploaded.name + suffix,
+                    project=project,
+                    folder=folder,
+                    owner=self.request.user,
+                    secret=build_secret()
+                )
+                content_file = ContentFile(uploaded.read())
+                new_file.file.save(uploaded.name, content_file)
+                new_file.save()
+
+    @functools.lru_cache()
+    def _get_attachment_folder(self, message):
+        """Get the folder containing the attachments of this message."""
+        project = self._get_project(self.request, self.kwargs)
+        container = self._get_message_attachments_folder()
+        message.attachment_folder = container.filesfolders_folder_children.get_or_create(
+            name=message.sodar_uuid, owner=self.request.user, project=project, folder=container
+        )[0]
+        return message.attachment_folder
+
+    @functools.lru_cache()
+    def _get_message_attachments_folder(self):
+        """Get folder containing all message attachments.
+
+        On creation, the folder will be owned by the first created user that is a super user.
+        """
+        project = self._get_project(self.request, self.kwargs)
+        try:
+            return Folder.objects.get(project=project, name="Message Attachments")
+        except Folder.DoesNotExist:
+            # TODO: assumes there is a "first super user" created on installation, document requirement
+            root = get_user_model().objects.filter(is_superuser=True).order_by("pk").first()
+            return Folder.objects.create(project=project, name="Message Attachments", owner=root)
+
+
 class MessageCreateView(
+    MessageAttachmentHelpersMixin,
     LoginRequiredMixin,
     LoggedInPermissionMixin,
     ProjectPermissionMixin,
@@ -286,10 +358,12 @@ class MessageCreateView(
 
         # Handle submission with "discard"
         if form.cleaned_data["submit"] == "discard":
-            message.success(self.request, "Your message draft has been discarded")
+            messages.success(self.request, "Your message draft has been discarded")
             return redirect(form.instance.flow_cell.get_absolute_url())
 
         # Handle submission with "save" or "send"
+        self._handle_attachment_removal(form)
+        self._handle_file_uploads(form.instance)
         if form.cleaned_data["submit"] == "save":
             form.instance.state = MSG_STATE_DRAFT
             messages.success(self.request, "Your message has been saved as a draft.")
@@ -302,6 +376,7 @@ class MessageCreateView(
 
 
 class MessageUpdateView(
+    MessageAttachmentHelpersMixin,
     LoginRequiredMixin,
     LoggedInPermissionMixin,
     ProjectPermissionMixin,
@@ -341,6 +416,8 @@ class MessageUpdateView(
             return redirect(form.instance.flow_cell.get_absolute_url())
 
         # Handle submission with "save" or "send"
+        self._handle_attachment_removal(form)
+        self._handle_file_uploads(form.instance)
         if form.cleaned_data["submit"] == "save":
             form.instance.state = MSG_STATE_DRAFT
             messages.success(self.request, "Your message has been saved as a draft.")

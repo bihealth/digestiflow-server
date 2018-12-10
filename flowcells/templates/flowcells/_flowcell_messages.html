@@ -22,7 +22,7 @@
       {% if message_form.instance.pk %}
         <span id="{{ message_form.instance.sodar_uuid }}"></span>
       {% endif %}
-      <form id="message-form" method="post"
+      <form id="message-form" method="post" enctype="multipart/form-data"
           {% if message_form.instance.pk %}
             action="{% url 'flowcells:message-update' project=project.sodar_uuid flowcell=object.sodar_uuid message=message_form.instance.sodar_uuid %}#message-form"
           {% else %}

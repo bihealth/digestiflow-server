@@ -66,6 +66,7 @@ THIRD_PARTY_APPS = [
     "timeline.apps.TimelineConfig",
     # SODAR Filesfolders app
     "filesfolders.apps.FilesfoldersConfig",
+    "db_file_storage",
     # User Profile site app
     "userprofile.apps.UserprofileConfig",
     # Admin Alerts site app
@@ -135,6 +136,8 @@ MANAGERS = ADMINS
 DATABASES = {"default": env.db("DATABASE_URL", default="postgres:///sodar_core")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = False
 
+# Set django-db-file-storage as the default storage
+DEFAULT_FILE_STORAGE = 'db_file_storage.storage.DatabaseFileStorage'
 
 # GENERAL CONFIGURATION
 # ------------------------------------------------------------------------------

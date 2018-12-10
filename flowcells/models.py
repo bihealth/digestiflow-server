@@ -704,13 +704,24 @@ class Message(models.Model):
 
     #: Folder for the attachments, if any.
     attachment_folder = models.ForeignKey(
-        Folder, null=True, blank=True, help_text="Folder for the attachments, if any."
+        Folder, null=True, blank=True, help_text="Folder for the attachments, if any.",
+        on_delete=models.PROTECT
     )
+
+    def delete(self,*args, **kwargs):
+        result = super().delete(*args, **kwargs)
+        if self.attachment_folder:
+            self.attachment_folder.delete()
+        return result
 
     class Meta:
         ordering = ("date_created",)
 
     def get_absolute_url(self):
+        if self.state == MSG_STATE_DRAFT:
+            suffix = "#message-form"
+        else:
+            suffix = "#message-%s" % self.sodar_uuid
         return (
             reverse(
                 "flowcells:flowcell-detail",
@@ -719,5 +730,13 @@ class Message(models.Model):
                     "flowcell": self.flow_cell.sodar_uuid,
                 },
             )
-            + "#message-%s" % self.sodar_uuid
+            + suffix
         )
+
+    def get_attachment_files(self):
+        """Returns QuerySet with the attached files"""
+        if not self.attachment_folder:
+            return Folder.objects.none()
+        else:
+            return self.attachment_folder.filesfolders_file_children.all()
+
