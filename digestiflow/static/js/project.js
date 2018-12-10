@@ -18,4 +18,4 @@ Issues with the above approach:
 3. Really Unforgiving: No way to override this behavior
 4. Undocumented: No mention in the documentation, or it's too hard for me to find
 */
-$('.form-group').removeClass('row');
+// $('.form-group').removeClass('row');

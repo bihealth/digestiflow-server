@@ -60,3 +60,7 @@
   height: 500px;
   background-color: #f0f0f0;
 }
+
+.form-group.row {
+  margin-bottom: 0.2em !important;
+}

@@ -48,33 +48,33 @@
   <div class="container-fluid sodar-page-container">
     <form method="post">{% csrf_token %}
       {% if object.pk %}
-        <div class="form-group">
-          <label class="form-control-label">UUID</label>
+        <div class="form-group row">
+          <label class="form-control-label {{ form.helper.label_class }}">UUID</label>
           <div>
-            <input type="text" readonly class="form-control-plaintext" value="{{ object.sodar_uuid }}">
+            <input type="text" readonly class="form-control-plaintext {{ form_helper.field_class}}" value="{{ object.sodar_uuid }}">
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-control-label">Project</label>
+        <div class="form-group row">
+          <label class="form-control-label {{ form.helper.label_class }}">Project</label>
           <div>
-            <input type="text" readonly class="form-control-plaintext" value="{{ object.project.title }}">
+            <input type="text" readonly class="form-control-plaintext {{ form_helper.field_class}}" value="{{ object.project.title }}">
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-control-label">Created</label>
+        <div class="form-group row">
+          <label class="form-control-label {{ form.helper.label_class }}">Created</label>
           <div>
-            <input type="text" readonly class="form-control-plaintext" value="{{ object.date_created }}">
+            <input type="text" readonly class="form-control-plaintext {{ form_helper.field_class}}" value="{{ object.date_created }}">
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-control-label">Last Update</label>
+        <div class="form-group row">
+          <label class="form-control-label {{ form.helper.label_class }}">Last Update</label>
           <div>
-            <input type="text" readonly class="form-control-plaintext" value="{{ object.date_modified }}">
+            <input type="text" readonly class="form-control-plaintext {{ form_helper.field_class}}" value="{{ object.date_modified }}">
           </div>
         </div>
       {% endif %}
 
-      {{ form|crispy }}
+      {% crispy form form.helper %}
 
       <div class="text-right mb-3">
         <div class="btn-group" role="group">

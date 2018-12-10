@@ -7,7 +7,7 @@ import re
 from django import forms
 from django.core.validators import RegexValidator
 
-from digestiflow.utils import model_to_dict
+from digestiflow.utils import model_to_dict, HorizontalFormHelper
 from sequencers.models import SequencingMachine
 from .models import FlowCell, Message
 
@@ -76,6 +76,8 @@ class FlowCellForm(forms.ModelForm):
         self.fields["libraries_json"] = forms.CharField(
             widget=forms.HiddenInput(), initial=json.dumps(initial_value)
         )
+        # Setup crispy-forms helper
+        self.helper = HorizontalFormHelper()
 
     def clean(self):
         if "name" not in self.cleaned_data:

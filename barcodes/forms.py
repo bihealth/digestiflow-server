@@ -4,7 +4,7 @@ import json
 
 from django import forms
 
-from digestiflow.utils import model_to_dict
+from digestiflow.utils import model_to_dict, HorizontalFormHelper
 from .models import BarcodeSet
 
 
@@ -23,6 +23,8 @@ class BarcodeSetForm(forms.ModelForm):
         self.fields["entries_json"] = forms.CharField(
             widget=forms.HiddenInput(), initial=json.dumps(initial_value)
         )
+        # Setup crispy-forms helper
+        self.helper = HorizontalFormHelper()
 
     class Meta:
         model = BarcodeSet
