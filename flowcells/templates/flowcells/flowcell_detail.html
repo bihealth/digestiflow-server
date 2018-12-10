@@ -50,7 +50,7 @@
       <li class="nav-item">
         <a class="nav-link{% if message_mode %} active{%endif %}" id="messages-tab" data-toggle="tab" href="#messages" aria-controls="messages" aria-selected="true">
           Messages
-          ({{ object.get_sent_messages.count }})
+          <span class="badge badge-secondary ml-1">{{ object.get_sent_messages.count }}</span>
         </a>
       </li>
     </ul>
