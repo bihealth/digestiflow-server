@@ -56,11 +56,11 @@
       </li>
     </ul>
 
-    <div class="tab-content border-left border-right border-bottom" id="flowcellTabContent">
-      <div class="tab-pane show active" id="properties" role="tabpanel" aria-labelledby="properties-tab">
-        <div class="row py-3">
-          <div class="col">
-            <form method="post">{% csrf_token %}
+    <form method="post">{% csrf_token %}
+      <div class="tab-content border-left border-right border-bottom" id="flowcellTabContent">
+        <div class="tab-pane show active" id="properties" role="tabpanel" aria-labelledby="properties-tab">
+          <div class="row py-3">
+            <div class="col">
               {% if object.pk %}
                 <div class="form-group">
                   <label class="form-control-label">UUID</label>
@@ -89,39 +89,24 @@
               {% endif %}
               {{ form|crispy }}
 
-              <div class="text-right mb-3">
-                <div class="btn-group" role="group">
-                  <a role="button" class="btn btn-secondary"
-                    {% if object.pk %}
-                      href="{% url 'flowcells:flowcell-detail' project=project.sodar_uuid flowcell=object.sodar_uuid %}">
-                    {% else %}
-                      href="{% url 'flowcells:flowcell-list' project=project.sodar_uuid %}">
-                    {% endif %}
-                    <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
-                    Cancel
-                  </a>
-                  <button type="submit" class="btn btn-primary">
-                    <i class="fa fa-check" aria-hidden="true"></i>
-                    {% if object.pk %}
-                      Update
-                    {% else %}
-                      Create
-                    {% endif %}
-                  </button>
-                </div>
-              </div>
-            </form>
+              {% include "flowcells/_flowcell_submit_buttons.html" %}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="sample-sheet" role="tabpanel" aria-labelledby="sample-sheet-tab">
+          <div class="row">
+            <div class="col px-0 sheet-table-container">
+              <div id="hot-table" data-args="{&quot;project&quot;: &quot;{{ project.sodar_uuid }}&quot;}"></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col pt-3">
+              {% include "flowcells/_flowcell_submit_buttons.html" %}
+            </div>
           </div>
         </div>
       </div>
-      <div class="tab-pane" id="sample-sheet" role="tabpanel" aria-labelledby="sample-sheet-tab">
-        <div class="row">
-          <div class="col px-0 sheet-table-container">
-            <div id="hot-table" data-args="{&quot;project&quot;: &quot;{{ project.sodar_uuid }}&quot;}"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </form>
   </div>
 
 {% endblock %}

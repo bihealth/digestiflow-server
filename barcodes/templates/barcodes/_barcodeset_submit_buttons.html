@@ -1,0 +1,21 @@
+<div class="text-right my-3">
+  <div class="btn-group" role="group">
+    <a role="button" class="btn btn-secondary"
+      {% if object.pk %}
+        href="{% url 'barcodes:barcodeset-detail' project=project.sodar_uuid barcodeset=object.sodar_uuid %}">
+      {% else %}
+        href="{% url 'barcodes:barcodeset-list' project=project.sodar_uuid %}">
+      {% endif %}
+      <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+      Cancel
+    </a>
+    <button type="submit" class="btn btn-primary">
+      <i class="fa fa-check" aria-hidden="true"></i>
+      {% if object.pk %}
+        Update
+      {% else %}
+        Create
+      {% endif %}
+    </button>
+  </div>
+</div>
