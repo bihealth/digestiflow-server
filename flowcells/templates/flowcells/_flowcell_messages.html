@@ -19,6 +19,8 @@
 <div class="row">
   <div class="col px-0">
     <div class="card card-body bg-light">
+      <h5 class="card-title">Write Message</h5>
+
       {% if message_form.instance.pk %}
         <span id="{{ message_form.instance.sodar_uuid }}"></span>
       {% endif %}

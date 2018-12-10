@@ -1,10 +1,17 @@
 {% load humanize %}
+{% load filesfolders_tags %}
 
 <div class="card mb-3">
-  <div class="card-body">
+  <div class="card-body pb-3">
     {% if message.subject %}
       <h5 class="card-title">
         {{ message.subject }}
+        {% if not delete_mode %}
+          <a class="btn btn-danger btn-sm pull-right mb-2" href="{% url 'flowcells:message-delete' project=project.sodar_uuid flowcell=message.flow_cell.sodar_uuid message=message.sodar_uuid %}">
+            <i class="fa fa-times"></i>
+            Delete
+          </a>
+        {% endif %}
       </h5>
     {% endif %}
     <h6 class="card-subtitle mb-2 text-muted">
@@ -21,14 +28,27 @@
         {{ message.author.get_full_name }}
       </span>
     </h6>
-    <p class="card-text pb-3">
+    <p class="card-text">
       {{ message.body }}
-      {% if not delete_mode %}
-        <a class="btn btn-danger btn-sm pull-right mb-2" href="{% url 'flowcells:message-delete' project=project.sodar_uuid flowcell=message.flow_cell.sodar_uuid message=message.sodar_uuid %}">
-          <i class="fa fa-times"></i>
-          Delete
-        </a>
-      {% endif %}
     </p>
+    {% if message.get_attachment_files %}
+      <h6 class="card-subtitle text-muted mb-2">
+        Attachments
+      </h6>
+      <ul class="list-unstyled mb-0">
+        {% for item in message.get_attachment_files %}
+          <li>
+            <span class="text-muted ml-2 mr-2">
+              #{{ forloop.counter }}
+            </span>
+            <a href="{% url 'filesfolders:file_serve' file=item.sodar_uuid file_name=item.name %}" class="text-dark">
+              <i class="fa fa-{% get_file_icon item %}"></i>
+              {{ item.name }}
+            </a>
+           ({{ item.file.file.size|filesizeformat }})
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
   </div>
 </div>

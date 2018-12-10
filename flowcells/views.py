@@ -362,6 +362,7 @@ class MessageCreateView(
             return redirect(form.instance.flow_cell.get_absolute_url())
 
         # Handle submission with "save" or "send"
+        form.save()
         self._handle_attachment_removal(form)
         self._handle_file_uploads(form.instance)
         if form.cleaned_data["submit"] == "save":
