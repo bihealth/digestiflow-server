@@ -285,10 +285,14 @@ class MessageAttachmentHelpersMixin:
                     secret=build_secret(),
                 )
                 content_file = ContentFile(uploaded.read())
+                print("uploaded.name", uploaded.name)
+                import ipdb
+
+                ipdb.set_trace()
                 new_file.file.save(uploaded.name, content_file)
+                raise Exception("Foo")
                 new_file.save()
 
-    @functools.lru_cache()
     def _get_attachment_folder(self, message):
         """Get the folder containing the attachments of this message."""
         project = self._get_project(self.request, self.kwargs)
@@ -298,7 +302,6 @@ class MessageAttachmentHelpersMixin:
         )[0]
         return message.attachment_folder
 
-    @functools.lru_cache()
     def _get_message_attachments_folder(self):
         """Get folder containing all message attachments.
 

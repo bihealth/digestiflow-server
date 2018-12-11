@@ -113,7 +113,7 @@ class SequencingMachine(models.Model):
 
     #: Vendor ID of the machine, reflected in file names and read names later on.
     vendor_id = models.CharField(
-        unique=True, db_index=True, max_length=100, help_text="Vendor ID of the machine"
+        db_index=True, max_length=100, help_text="Vendor ID of the machine"
     )
 
     #: Human-readable label of the machine
@@ -145,6 +145,7 @@ class SequencingMachine(models.Model):
 
     class Meta:
         ordering = ["vendor_id"]
+        unique_together = ("project", "vendor_id")
 
     def get_absolute_url(self):
         """Return URL for displaying the sequencer details."""

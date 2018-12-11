@@ -196,9 +196,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 STATIC_ROOT = str(ROOT_DIR("staticfiles"))
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = [
-    str(APPS_DIR.path("static")),
-]
+STATICFILES_DIRS = [str(APPS_DIR.path("static"))]
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -392,7 +390,7 @@ PROJECTROLES_DISABLE_CATEGORIES = True
 PROJECTROLES_SITE_MODE = env.str("PROJECTROLES_SITE_MODE", "SOURCE")
 
 # Hide links for filesfolders
-PROJECTROLES_HIDE_APP_LINKS = ('filesfolders',)
+PROJECTROLES_HIDE_APP_LINKS = ("filesfolders",)
 
 # Enable or disable project creation if site is in TARGET mode
 PROJECTROLES_TARGET_CREATE = env.bool("PROJECTROLES_TARGET_CREATE", True)

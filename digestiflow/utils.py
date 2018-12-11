@@ -9,10 +9,12 @@ from projectroles.models import Project
 
 
 class HorizontalFormHelper(FormHelper):
-    form_class = 'form-horizontal'
-    template_pack = 'bootstrap4'
-    label_class = 'px-0 col-12 col-md-3 col-xl-2 col-form-label font-weight-bold'
-    field_class = 'px-0 col-12 col-md-9 col-xl-10'
+    form_class = "form-horizontal"
+    template_pack = "bootstrap4"
+    label_class = "px-0 col-12 col-md-3 col-xl-2 col-form-label font-weight-bold"
+    field_class = "px-0 col-12 col-md-9 col-xl-10"
+    # We write our own form tags in the HTML.
+    form_tag = False
 
 
 def model_to_dict(*args, rename={}, **kwargs):

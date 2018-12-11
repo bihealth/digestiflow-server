@@ -1,11 +1,11 @@
-import functools
 import re
 import uuid as uuid_object
 
+from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 import pagerange
 from projectroles.models import Project
@@ -329,6 +329,7 @@ class FlowCell(models.Model):
 
         Return map from lane number, index read, and sequence to list of errors.
         """
+
         def prefix_match(query, db):
             """Naive implementation of "is seq prefix of one in expecteds or vice versa"."""
             for entry in db:
@@ -728,6 +729,35 @@ class Message(models.Model):
     attachment_folder = models.ForeignKey(
         Folder, help_text="Folder for the attachments, if any.", on_delete=models.PROTECT
     )
+
+    def save(self, *args, **kwargs):
+        try:
+            self.attachment_folder
+        except Folder.DoesNotExist:
+            self.attachment_folder = self._create_attachment_folder()
+        super().save(*args, **kwargs)
+
+    @transaction.atomic
+    def _create_attachment_folder(self):
+        """Get the folder containing the attachments of this message."""
+        project = self.flow_cell.project
+        container = self._get_message_attachments_folder(project)
+        return container.filesfolders_folder_children.get_or_create(
+            name=self.sodar_uuid, owner=self.author, project=project, folder=container
+        )[0]
+
+    def _get_message_attachments_folder(self, project):
+        """Get folder containing all message attachments.
+
+        On creation, the folder will be owned by the first created user that is a super user.
+
+        This will only work properly if you created a super user at the very beginning.
+        """
+        try:
+            return Folder.objects.get(project=project, name="Message Attachments")
+        except Folder.DoesNotExist:
+            root = get_user_model().objects.filter(is_superuser=True).order_by("pk").first()
+            return Folder.objects.create(project=project, name="Message Attachments", owner=root)
 
     def delete(self, *args, **kwargs):
         result = super().delete(*args, **kwargs)

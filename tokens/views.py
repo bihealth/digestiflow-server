@@ -11,11 +11,7 @@ from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, Pro
 from .forms import UserTokenCreateForm
 
 
-class UserTokenListView(
-    LoginRequiredMixin,
-    LoggedInPermissionMixin,
-    ListView,
-):
+class UserTokenListView(LoginRequiredMixin, LoggedInPermissionMixin, ListView):
     permission_required = "tokens.access"
     model = AuthToken
     template_name = "tokens/token_list.html"
@@ -25,11 +21,7 @@ class UserTokenListView(
         return AuthToken.objects.filter(user=self.request.user)
 
 
-class UserTokenCreateView(
-    LoginRequiredMixin,
-    LoggedInPermissionMixin,
-    FormView,
-):
+class UserTokenCreateView(LoginRequiredMixin, LoggedInPermissionMixin, FormView):
     permission_required = "tokens.access"
     template_name = "tokens/token_create.html"
     form_class = UserTokenCreateForm
@@ -41,11 +33,7 @@ class UserTokenCreateView(
         return render(self.request, "tokens/token_create_success.html", context)
 
 
-class UserTokenDeleteView(
-    LoginRequiredMixin,
-    LoggedInPermissionMixin,
-    DeleteView,
-):
+class UserTokenDeleteView(LoginRequiredMixin, LoggedInPermissionMixin, DeleteView):
     permission_required = "tokens.access"
     model = AuthToken
     template_name = "tokens/token_confirm_delete.html"

@@ -17,109 +17,433 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('barcodes', '0001_initial'),
-        ('filesfolders', '0004_update_uuid'),
-        ('projectroles', '0006_add_remote_projects'),
-        ('sequencers', '0001_initial'),
+        ("barcodes", "0001_initial"),
+        ("filesfolders", "0004_update_uuid"),
+        ("projectroles", "0006_add_remote_projects"),
+        ("sequencers", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FlowCell',
+            name="FlowCell",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_created', models.DateTimeField(auto_now_add=True, help_text='DateTime of creation')),
-                ('date_modified', models.DateTimeField(auto_now=True, help_text='DateTime of last modification')),
-                ('sodar_uuid', models.UUIDField(default=uuid.uuid4, help_text='Barcodeset SODAR UUID', unique=True)),
-                ('run_date', models.DateField()),
-                ('run_number', models.PositiveIntegerField()),
-                ('slot', models.CharField(max_length=1)),
-                ('vendor_id', models.CharField(max_length=40)),
-                ('label', models.CharField(blank=True, max_length=100, null=True)),
-                ('manual_label', models.CharField(blank=True, help_text='Manual label for overriding the one from the folder name', max_length=100, null=True)),
-                ('description', models.TextField(blank=True, help_text='Short description of the flow cell', null=True)),
-                ('num_lanes', models.IntegerField(default=8, help_text='Number of lanes on flowcell 8 for HiSeq, 4 for NextSeq')),
-                ('operator', models.CharField(blank=True, max_length=100, null=True, verbose_name='Sequencer Operator')),
-                ('rta_version', models.IntegerField(choices=[(1, 'RTA v1'), (2, 'RTA v2'), (0, 'other')], default=2, help_text='Major RTA version, implies bcl2fastq version')),
-                ('status_sequencing', models.CharField(choices=[('initial', 'not started'), ('in_progress', 'in progress'), ('complete', 'complete'), ('complete_warnings', 'complete with warnings'), ('closed', 'released'), ('failed', 'failed'), ('canceled', 'failured confirmed')], default='initial', help_text='Choices for sequencing', max_length=50)),
-                ('status_conversion', models.CharField(choices=[('initial', 'keep unstarted'), ('ready', 'ready to start'), ('in_progress', 'in progress'), ('complete', 'complete'), ('complete_warnings', 'complete with warnings'), ('failed', 'failed'), ('closed', 'released'), ('canceled', 'failured confirmed'), ('skipped', 'skipped')], default='initial', help_text='Choices for sequencing', max_length=50)),
-                ('status_delivery', models.CharField(choices=[('initial', 'not started'), ('in_progress', 'in progress'), ('complete', 'complete'), ('complete_warnings', 'complete with warnings'), ('closed', 'received'), ('failed', 'canceled'), ('canceled', 'canceled confirmed'), ('skipped', 'skipped')], default='initial', help_text='Choices for sequencing', max_length=50)),
-                ('delivery_type', models.CharField(choices=[('seq', 'sequences'), ('bcl', 'base calls'), ('seq_bcl', 'sequences + base calls')], default='seq', help_text='Choices for data delivery type', max_length=50)),
-                ('planned_reads', models.CharField(blank=True, help_text='Specification of the planned reads', max_length=200, null=True)),
-                ('current_reads', models.CharField(blank=True, help_text='Specification of the current reads', max_length=200, null=True)),
-                ('barcode_mismatches', models.PositiveSmallIntegerField(blank=True, help_text='Number of mismatches to allow', null=True)),
-                ('silence_index_errors', models.BooleanField(default=False, help_text='Check to index inconsistency errors between BCLs and sheet')),
-                ('demux_operator', models.ForeignKey(blank=True, help_text='User responsible for demultiplexing', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='demuxed_flowcells', to=settings.AUTH_USER_MODEL, verbose_name='Demultiplexing Operator')),
-                ('project', models.ForeignKey(help_text='Project in which this flow cell belongs', on_delete=django.db.models.deletion.CASCADE, to='projectroles.Project')),
-                ('sequencing_machine', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sequencers.SequencingMachine')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "date_created",
+                    models.DateTimeField(auto_now_add=True, help_text="DateTime of creation"),
+                ),
+                (
+                    "date_modified",
+                    models.DateTimeField(auto_now=True, help_text="DateTime of last modification"),
+                ),
+                (
+                    "sodar_uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4, help_text="Barcodeset SODAR UUID", unique=True
+                    ),
+                ),
+                ("run_date", models.DateField()),
+                ("run_number", models.PositiveIntegerField()),
+                ("slot", models.CharField(max_length=1)),
+                ("vendor_id", models.CharField(max_length=40)),
+                ("label", models.CharField(blank=True, max_length=100, null=True)),
+                (
+                    "manual_label",
+                    models.CharField(
+                        blank=True,
+                        help_text="Manual label for overriding the one from the folder name",
+                        max_length=100,
+                        null=True,
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, help_text="Short description of the flow cell", null=True
+                    ),
+                ),
+                (
+                    "num_lanes",
+                    models.IntegerField(
+                        default=8,
+                        help_text="Number of lanes on flowcell 8 for HiSeq, 4 for NextSeq",
+                    ),
+                ),
+                (
+                    "operator",
+                    models.CharField(
+                        blank=True, max_length=100, null=True, verbose_name="Sequencer Operator"
+                    ),
+                ),
+                (
+                    "rta_version",
+                    models.IntegerField(
+                        choices=[(1, "RTA v1"), (2, "RTA v2"), (0, "other")],
+                        default=2,
+                        help_text="Major RTA version, implies bcl2fastq version",
+                    ),
+                ),
+                (
+                    "status_sequencing",
+                    models.CharField(
+                        choices=[
+                            ("initial", "not started"),
+                            ("in_progress", "in progress"),
+                            ("complete", "complete"),
+                            ("complete_warnings", "complete with warnings"),
+                            ("closed", "released"),
+                            ("failed", "failed"),
+                            ("canceled", "failured confirmed"),
+                        ],
+                        default="initial",
+                        help_text="Choices for sequencing",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "status_conversion",
+                    models.CharField(
+                        choices=[
+                            ("initial", "keep unstarted"),
+                            ("ready", "ready to start"),
+                            ("in_progress", "in progress"),
+                            ("complete", "complete"),
+                            ("complete_warnings", "complete with warnings"),
+                            ("failed", "failed"),
+                            ("closed", "released"),
+                            ("canceled", "failured confirmed"),
+                            ("skipped", "skipped"),
+                        ],
+                        default="initial",
+                        help_text="Choices for sequencing",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "status_delivery",
+                    models.CharField(
+                        choices=[
+                            ("initial", "not started"),
+                            ("in_progress", "in progress"),
+                            ("complete", "complete"),
+                            ("complete_warnings", "complete with warnings"),
+                            ("closed", "received"),
+                            ("failed", "canceled"),
+                            ("canceled", "canceled confirmed"),
+                            ("skipped", "skipped"),
+                        ],
+                        default="initial",
+                        help_text="Choices for sequencing",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "delivery_type",
+                    models.CharField(
+                        choices=[
+                            ("seq", "sequences"),
+                            ("bcl", "base calls"),
+                            ("seq_bcl", "sequences + base calls"),
+                        ],
+                        default="seq",
+                        help_text="Choices for data delivery type",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "planned_reads",
+                    models.CharField(
+                        blank=True,
+                        help_text="Specification of the planned reads",
+                        max_length=200,
+                        null=True,
+                    ),
+                ),
+                (
+                    "current_reads",
+                    models.CharField(
+                        blank=True,
+                        help_text="Specification of the current reads",
+                        max_length=200,
+                        null=True,
+                    ),
+                ),
+                (
+                    "barcode_mismatches",
+                    models.PositiveSmallIntegerField(
+                        blank=True, help_text="Number of mismatches to allow", null=True
+                    ),
+                ),
+                (
+                    "silence_index_errors",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Check to index inconsistency errors between BCLs and sheet",
+                    ),
+                ),
+                (
+                    "demux_operator",
+                    models.ForeignKey(
+                        blank=True,
+                        help_text="User responsible for demultiplexing",
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="demuxed_flowcells",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Demultiplexing Operator",
+                    ),
+                ),
+                (
+                    "project",
+                    models.ForeignKey(
+                        help_text="Project in which this flow cell belongs",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="projectroles.Project",
+                    ),
+                ),
+                (
+                    "sequencing_machine",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="sequencers.SequencingMachine",
+                    ),
+                ),
             ],
-            options={
-                'ordering': ('-run_date', 'sequencing_machine', 'run_number', 'slot'),
-            },
+            options={"ordering": ("-run_date", "sequencing_machine", "run_number", "slot")},
         ),
         migrations.CreateModel(
-            name='LaneIndexHistogram',
+            name="LaneIndexHistogram",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_created', models.DateTimeField(auto_now_add=True, help_text='DateTime of creation')),
-                ('date_modified', models.DateTimeField(auto_now=True, help_text='DateTime of last modification')),
-                ('sodar_uuid', models.UUIDField(default=uuid.uuid4, help_text='Object SODAR UUID', unique=True)),
-                ('lane', models.PositiveIntegerField(help_text='The lane this information is for.')),
-                ('index_read_no', models.PositiveIntegerField(help_text='The index read this information is for.')),
-                ('sample_size', models.PositiveIntegerField(help_text='Number of index reads read')),
-                ('histogram', django.contrib.postgres.fields.jsonb.JSONField(help_text='The index histogram information')),
-                ('flowcell', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='index_histograms', to='flowcells.FlowCell')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "date_created",
+                    models.DateTimeField(auto_now_add=True, help_text="DateTime of creation"),
+                ),
+                (
+                    "date_modified",
+                    models.DateTimeField(auto_now=True, help_text="DateTime of last modification"),
+                ),
+                (
+                    "sodar_uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4, help_text="Object SODAR UUID", unique=True
+                    ),
+                ),
+                (
+                    "lane",
+                    models.PositiveIntegerField(help_text="The lane this information is for."),
+                ),
+                (
+                    "index_read_no",
+                    models.PositiveIntegerField(
+                        help_text="The index read this information is for."
+                    ),
+                ),
+                (
+                    "sample_size",
+                    models.PositiveIntegerField(help_text="Number of index reads read"),
+                ),
+                (
+                    "histogram",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        help_text="The index histogram information"
+                    ),
+                ),
+                (
+                    "flowcell",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="index_histograms",
+                        to="flowcells.FlowCell",
+                    ),
+                ),
             ],
-            options={
-                'ordering': ('flowcell', 'lane', 'index_read_no'),
-            },
+            options={"ordering": ("flowcell", "lane", "index_read_no")},
         ),
         migrations.CreateModel(
-            name='Library',
+            name="Library",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_created', models.DateTimeField(auto_now_add=True, help_text='DateTime of creation')),
-                ('date_modified', models.DateTimeField(auto_now=True, help_text='DateTime of last modification')),
-                ('sodar_uuid', models.UUIDField(default=uuid.uuid4, help_text='Object SODAR UUID', unique=True)),
-                ('name', models.CharField(max_length=100)),
-                ('reference', models.CharField(blank=True, choices=[('hg19', 'human'), ('mm9', 'mouse'), ('dm6', 'fly'), ('danRer6', 'zebrafish'), ('rn11', 'rat'), ('ce11', 'worm'), ('sacCer3', 'yeast'), ('__other__', 'other')], default='hg19', max_length=100, null=True)),
-                ('barcode_seq', models.CharField(blank=True, max_length=200, null=True)),
-                ('barcode_seq2', models.CharField(blank=True, max_length=200, null=True)),
-                ('lane_numbers', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(validators=[django.core.validators.MinValueValidator(1)]), size=None)),
-                ('barcode', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='barcodes.BarcodeSetEntry')),
-                ('barcode2', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='barcodes2', to='barcodes.BarcodeSetEntry')),
-                ('flow_cell', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='libraries', to='flowcells.FlowCell')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "date_created",
+                    models.DateTimeField(auto_now_add=True, help_text="DateTime of creation"),
+                ),
+                (
+                    "date_modified",
+                    models.DateTimeField(auto_now=True, help_text="DateTime of last modification"),
+                ),
+                (
+                    "sodar_uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4, help_text="Object SODAR UUID", unique=True
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "reference",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("hg19", "human"),
+                            ("mm9", "mouse"),
+                            ("dm6", "fly"),
+                            ("danRer6", "zebrafish"),
+                            ("rn11", "rat"),
+                            ("ce11", "worm"),
+                            ("sacCer3", "yeast"),
+                            ("__other__", "other"),
+                        ],
+                        default="hg19",
+                        max_length=100,
+                        null=True,
+                    ),
+                ),
+                ("barcode_seq", models.CharField(blank=True, max_length=200, null=True)),
+                ("barcode_seq2", models.CharField(blank=True, max_length=200, null=True)),
+                (
+                    "lane_numbers",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.IntegerField(
+                            validators=[django.core.validators.MinValueValidator(1)]
+                        ),
+                        size=None,
+                    ),
+                ),
+                (
+                    "barcode",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="barcodes.BarcodeSetEntry",
+                    ),
+                ),
+                (
+                    "barcode2",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="barcodes2",
+                        to="barcodes.BarcodeSetEntry",
+                    ),
+                ),
+                (
+                    "flow_cell",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="libraries",
+                        to="flowcells.FlowCell",
+                    ),
+                ),
             ],
-            options={
-                'ordering': ['name'],
-            },
+            options={"ordering": ["name"]},
         ),
         migrations.CreateModel(
-            name='Message',
+            name="Message",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_created', models.DateTimeField(auto_now_add=True, help_text='DateTime of creation')),
-                ('date_modified', models.DateTimeField(auto_now=True, help_text='DateTime of last modification')),
-                ('sodar_uuid', models.UUIDField(default=uuid.uuid4, help_text='Object SODAR UUID', unique=True)),
-                ('state', models.CharField(choices=[('draft', 'Draft'), ('sent', 'Sent')], default='draft', help_text='Status of the message', max_length=50)),
-                ('body_format', models.CharField(choices=[('text/plain', 'Plain Text'), ('text/markdown', 'Markdown')], default='text/plain', help_text='Format of the message body', max_length=50)),
-                ('tags', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=100), blank=True, default=list, size=None)),
-                ('subject', models.CharField(blank=True, help_text='Message subject', max_length=200, null=True)),
-                ('body', models.TextField(help_text='Message body')),
-                ('attachment_folder', models.ForeignKey(help_text='Folder for the attachments, if any.', on_delete=django.db.models.deletion.PROTECT, to='filesfolders.Folder')),
-                ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='messages', to=settings.AUTH_USER_MODEL)),
-                ('flow_cell', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='messages', to='flowcells.FlowCell')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "date_created",
+                    models.DateTimeField(auto_now_add=True, help_text="DateTime of creation"),
+                ),
+                (
+                    "date_modified",
+                    models.DateTimeField(auto_now=True, help_text="DateTime of last modification"),
+                ),
+                (
+                    "sodar_uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4, help_text="Object SODAR UUID", unique=True
+                    ),
+                ),
+                (
+                    "state",
+                    models.CharField(
+                        choices=[("draft", "Draft"), ("sent", "Sent")],
+                        default="draft",
+                        help_text="Status of the message",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "body_format",
+                    models.CharField(
+                        choices=[("text/plain", "Plain Text"), ("text/markdown", "Markdown")],
+                        default="text/plain",
+                        help_text="Format of the message body",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "tags",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(max_length=100),
+                        blank=True,
+                        default=list,
+                        size=None,
+                    ),
+                ),
+                (
+                    "subject",
+                    models.CharField(
+                        blank=True, help_text="Message subject", max_length=200, null=True
+                    ),
+                ),
+                ("body", models.TextField(help_text="Message body")),
+                (
+                    "attachment_folder",
+                    models.ForeignKey(
+                        help_text="Folder for the attachments, if any.",
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="filesfolders.Folder",
+                    ),
+                ),
+                (
+                    "author",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="messages",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "flow_cell",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="messages",
+                        to="flowcells.FlowCell",
+                    ),
+                ),
             ],
-            options={
-                'ordering': ('date_created',),
-            },
+            options={"ordering": ("date_created",)},
         ),
         migrations.AlterUniqueTogether(
-            name='laneindexhistogram',
-            unique_together=set([('flowcell', 'lane', 'index_read_no')]),
+            name="laneindexhistogram", unique_together=set([("flowcell", "lane", "index_read_no")])
         ),
         migrations.AlterUniqueTogether(
-            name='flowcell',
-            unique_together=set([('vendor_id', 'run_number', 'sequencing_machine')]),
+            name="flowcell",
+            unique_together=set([("vendor_id", "run_number", "sequencing_machine")]),
         ),
     ]

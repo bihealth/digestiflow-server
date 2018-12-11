@@ -6,6 +6,7 @@
     {% if message.subject %}
       <h5 class="card-title">
         {{ message.subject }}
+        <a class="pull-right text-muted" id="message-{{ message.sodar_uuid }}" href="#message-{{ message.sodar_uuid }}">#</a>
         {% if not delete_mode %}
           <a class="btn btn-danger btn-sm pull-right mb-2" href="{% url 'flowcells:message-delete' project=project.sodar_uuid flowcell=message.flow_cell.sodar_uuid message=message.sodar_uuid %}">
             <i class="fa fa-times"></i>
@@ -27,9 +28,12 @@
           >
         {{ message.author.get_full_name }}
       </span>
+      {% if not message.subject %}
+        <a class="pull-right text-muted" id="message-{{ message.sodar_uuid }}" href="#message-{{ message.sodar_uuid }}">#</a>
+      {% endif %}
     </h6>
     <p class="card-text">
-      {{ message.body }}
+      {{ message.body|linebreaks }}
     </p>
     {% if message.get_attachment_files %}
       <h6 class="card-subtitle text-muted mb-2">

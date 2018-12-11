@@ -46,7 +46,7 @@
   </div>
 
   <div class="container-fluid sodar-page-container">
-    <form method="post">{% csrf_token %}
+    <form method="post">
       {% if object.pk %}
         <div class="form-group row">
           <label class="form-control-label {{ form.helper.label_class }}">UUID</label>

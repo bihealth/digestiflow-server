@@ -40,7 +40,7 @@
         </p>
         {% endif %}
    
-        {{ message_form|crispy }}
+        {% crispy message_form message_form.helper %}
 
         <div class="text-right pb-3">
           <div class="btn-group" role="group">

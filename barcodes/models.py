@@ -70,10 +70,7 @@ class BarcodeSet(models.Model):
 
     #: Short, unique identifier of the barcode index set
     short_name = models.CharField(
-        max_length=100,
-        unique=True,
-        db_index=True,
-        help_text="Short, unique identifier of barcode adapter set",
+        max_length=100, db_index=True, help_text="Short, unique identifier of barcode adapter set"
     )
 
     #: Optional, short description of the barcode set, including copyright
@@ -108,6 +105,7 @@ class BarcodeSet(models.Model):
 
     class Meta:
         ordering = ["name"]
+        unique_together = ("project", "short_name")
 
     def __str__(self):
         return "Barcode set: {} ({})".format(self.name, self.short_name)
@@ -149,7 +147,7 @@ class BarcodeSetEntry(models.Model):
     )
 
     #: The barcode set that this barcode belongs to
-    barcode_set = models.ForeignKey(BarcodeSet, related_name="entries", on_delete=models.PROTECT)
+    barcode_set = models.ForeignKey(BarcodeSet, related_name="entries", on_delete=models.CASCADE)
 
     #: The identifier of the adapter, e.g., 'AR001'.  This has to be unique in the context of the ``BarcodeSet``
     name = models.CharField(max_length=100, db_index=True, unique=False)

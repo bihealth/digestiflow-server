@@ -90,11 +90,11 @@
       // open correct tab
       let hash = window.location.hash
       if (hash.startsWith('#message-')) {
-        $('#properties').removeClass('show active')
-        $('#properties').addClass('fade')
         $('#properties-tab').removeClass('active')
-        $('#messages').removeClass('fade')
+        $('#properties').addClass('fade')
+        $('#properties').removeClass('active show')
         $('#messages').addClass('show active')
+        $('#messages').removeClass('fade')
         $('#messages-tab').addClass('active')
       }
     })

@@ -108,7 +108,6 @@ class MessageSerializer(serializers.ModelSerializer):
 
     # TODO: remove the following two dupes from normal views
 
-    @functools.lru_cache()
     def _get_attachment_folder(self, message):
         """Get the folder containing the attachments of this message."""
         project = self.context["project"]
@@ -121,7 +120,6 @@ class MessageSerializer(serializers.ModelSerializer):
         )[0]
         return message.attachment_folder
 
-    @functools.lru_cache()
     def _get_message_attachments_folder(self):
         """Get folder containing all message attachments.
 

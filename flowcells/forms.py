@@ -149,6 +149,8 @@ class MessageForm(forms.ModelForm):
                 help_text="Tick the checkbox if you want to remove the attachment when saving/sending",
                 required=False,
             )
+        # Central formatting of forms.
+        self.helper = HorizontalFormHelper()
 
     class Meta:
         model = Message

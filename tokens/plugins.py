@@ -5,9 +5,9 @@ class ProjectAppPlugin(SiteAppPluginPoint):
     """Plugin for registering app with Projectroles"""
 
     icon = "key"
-    name = 'token'
+    name = "token"
 
-    title = 'API Tokens'
+    title = "API Tokens"
 
     entry_point_url_id = "tokens:token-list"
 
