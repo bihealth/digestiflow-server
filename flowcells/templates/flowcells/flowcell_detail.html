@@ -28,7 +28,7 @@
       <li class="nav-item">
         <a class="nav-link" id="sample-sheet-tab" data-toggle="tab" href="#sample-sheet" aria-controls="sample-sheet" aria-selected="true">
           Sample Sheet
-          {% if object.get_sample_sheet_errors %}
+          {% if object.get_sample_sheet_errors or object.get_reverse_index_errors %}
             <i class="fa fa-fw fa-exclamation-triangle text-danger pl-1"></i>
           {% elif not object.libraries.all %}
             <i class="fa fa-question-circle text-warning"></i>

@@ -1,6 +1,8 @@
+import itertools
+
 from django import template
 
-from ..models import FlowCell, REFERENCE_CHOICES, pretty_range
+from ..models import FlowCell, KnownIndexContamination, REFERENCE_CHOICES, pretty_range
 
 register = template.Library()
 
@@ -64,6 +66,11 @@ def get_index_errors(flowcell, lane, index_read_no, sequence):
 
 
 @register.simple_tag
+def get_reverse_index_errors(flowcell, library_uuid):
+    return flowcell.get_reverse_index_errors().get(library_uuid)
+
+
+@register.simple_tag
 def get_sheet_name_errors(flowcell, entry):
     return flowcell.get_sample_sheet_errors().get(entry.sodar_uuid, {}).get("name")
 
@@ -91,6 +98,21 @@ def all_n(seq):
 @register.filter(name="max")
 def max_value(iter):
     return max(iter)
+
+
+@register.filter
+def chain(lhs, rhs):
+    return itertools.chain(lhs or (), rhs or ())
+
+
+@register.simple_tag
+def get_known_contaminations():
+    return {entry.sequence: entry for entry in KnownIndexContamination.objects.all()}
+
+
+@register.simple_tag
+def get_contamination(contaminations, seq):
+    return contaminations.get(seq)
 
 
 @register.filter

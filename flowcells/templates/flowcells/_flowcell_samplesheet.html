@@ -24,6 +24,7 @@
             {% get_sheet_barcode_errors object entry as barcode_errors %}
             {% get_sheet_barcode2_errors object entry as barcode2_errors %}
             {% get_sheet_lane_errors object entry as lane_errors %}
+            {% get_reverse_index_errors flowcell entry.sodar_uuid as reverse_errors %}
 
             {% if name_errors or barcode_errors or barcode2_errors or lane_errors %}
               <i class="fa fa-fw fa-times text-danger"></i>
@@ -53,23 +54,23 @@
             {% endif %}
           </td>
           <td class="text-nowrap">
-            {% if barcode_errors %}
-              <span class="text-danger" data-toggle="tooltip" title="{{ barcode_errors|join:", " }}">
+            {% if barcode_errors or reverse_errors.0 %}
+              <span class="text-danger" data-toggle="tooltip" title="{{ barcode_errors|chain:reverse_errors.0|join:", " }}">
             {% endif %}
 
             {% if not entry.barcode %}
               {% if entry.barcode_seq %}
                 <span data-toggle="tooltip" title="manually entered barcode">
-                  {{ entry.barcode_seq }}
+                  {{ entry.get_barcode_seq }}
                   <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
                 </span>
               {% endif %}
             {% else %}
-              {{ entry.barcode.sequence }}
+              {{ entry.get_barcode_seq }}
               <span class="{% if not barcode_errors %}text-muted{% endif %}">({{ entry.barcode.name }})</span>
             {% endif %}
 
-            {% if barcode_errors %}
+            {% if barcode_errors or reverse_errors.0 %}
                 <i class="fa fa-exclamation-triangle pl-1"></i>
               </span>
             {% endif %}
@@ -85,23 +86,23 @@
             {% endif %}
           </td>
           <td class="text-nowrap">
-            {% if barcode2_errors %}
-              <span class="text-danger" data-toggle="tooltip" title="{{ barcode_errors|join:", " }}">
+            {% if barcode2_errors or reverse_errors.1 %}
+              <span class="text-danger" data-toggle="tooltip" title="{{ barcode2_errors|chain:reverse_errors.1|join:", " }}">
             {% endif %}
 
             {% if not entry.barcode2 %}
-              {% if entry.barcode_seq2 %}
+              {% if entry.barcode2 %}
                 <span data-toggle="tooltip" title="manually entered barcode">
-                  {{  entry.barcode_seq2 }}
+                  {{ entry.get_barcode_seq2 }}
                   <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
                 </span>
               {% endif %}
             {% else %}
-              {{ entry.barcode2.sequence }}
+              {{ entry.get_barcode_seq2 }}
               <span class="{% if not barcode2_errors %}text-muted{% endif %}">({{ entry.barcode2.name }})</span>
             {% endif %}
 
-            {% if barcode2_errors %}
+            {% if barcode2_errors or reverse_errors.1 %}
                 <i class="fa fa-exclamation-triangle pl-1"></i>
               </span>
             {% endif %}

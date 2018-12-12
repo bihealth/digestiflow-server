@@ -21,6 +21,16 @@ def pretty_range(value):
     return pagerange.PageRange(value).range
 
 
+def prefix_match(query, db):
+    """Naive implementation of "is seq prefix of one in expecteds or vice versa"."""
+    print("prefix_match({}, {})".format(query, db))
+    for entry in db:
+        l = min(len(query), len(entry))
+        if query[:l] == entry[:l]:
+            return True
+    return False
+
+
 #: Status for "initial"/"not started", not automatically started yet for conversion.
 STATUS_INITIAL = "initial"
 
@@ -329,22 +339,24 @@ class FlowCell(models.Model):
 
         Return map from lane number, index read, and sequence to list of errors.
         """
-
-        def prefix_match(query, db):
-            """Naive implementation of "is seq prefix of one in expecteds or vice versa"."""
-            for entry in db:
-                l = min(len(query), len(entry))
-                if query[:l] == entry[:l]:
-                    return True
-            return False
-
         if hasattr(self, "_index_errors"):
             return self._index_errors
+        # Short-circuit if sample sheet is empty.
+        if not self.libraries.all():
+            self._index_errors = {}
+            return self._index_errors
+        # Pre-fetch known contaminations
+        contaminations = {entry.sequence: entry for entry in KnownIndexContamination.objects.all()}
+        # Pre-fetch libraries.
+        libraries = {}
+        for library in self.libraries.prefetch_related("barcode", "barcode2"):
+            for lane_number in library.lane_numbers:
+                libraries.setdefault(lane_number, []).append(library)
         result = {}
         for hist in self.index_histograms.all():
             # Collect sequences we expect to see for this lane and read number
             expected_seqs = set()
-            for library in self.libraries.filter(lane_numbers__contains=[hist.lane]):
+            for library in libraries.get(hist.lane):
                 if hist.index_read_no == 1:
                     barcode = library.barcode
                     barcode_seq = library.barcode_seq
@@ -361,8 +373,8 @@ class FlowCell(models.Model):
             # Collect errors and write into result
             for seq, _ in hist.histogram.items():
                 errors = []
-                if all(s == "N" for s in seq):
-                    continue  # skip all-Ns
+                if seq in contaminations:
+                    continue  # contamination are not errors, will be displayed in template
                 if not prefix_match(seq, expected_seqs):
                     errors += [
                         "found barcode {} on lane {} and index read {} in BCLs but not in sample sheet".format(
@@ -374,11 +386,76 @@ class FlowCell(models.Model):
         self._index_errors = result
         return result
 
+    def get_reverse_index_errors(self):
+        """Analyze sample sheet for inconsistencies with index histograms.
+
+        That is, instead of looking up indices from histograms in sample sheet (as done in ``get_index_errors()``),
+        look at sample sheet and look whether sample sheet sequences can be found in the adapter histograms.
+
+        Returns an error message mapping from library UUID to pair of list of error messages (for first and second
+        index).
+        """
+        # TODO: can we prefetch more?
+        if hasattr(self, "_reverse_index_errors "):
+            return self._reverse_index_errors
+        # Pre-fetch the lane histograms
+        lane_histos = {}
+        for histo in self.index_histograms.all():
+            lane_histos.setdefault(histo.lane, {}).setdefault(histo.index_read_no, []).append(histo)
+        # Perform the checking
+        result = {}
+        for library in self.libraries.prefetch_related("barcode", "barcode2").all():
+            error_lanes = []
+            error_lanes2 = []
+            # Collect sequences seen for this lane and read number
+            for lane_number in library.lane_numbers:
+                # Check for error in barcode
+                if library.get_barcode_seq():
+                    seen_seqs = set()
+                    for hist in lane_histos.get(lane_number, {}).get(1, []):
+                        seen_seqs |= set(hist.histogram.keys())
+                    if not prefix_match(library.get_barcode_seq(), seen_seqs):
+                        error_lanes.append(lane_number)
+                # Check for error in barcode2
+                if library.get_barcode_seq2():
+                    seen_seqs2 = set()
+                    for hist in lane_histos.get(lane_number, {}).get(2, []):
+                        seen_seqs2 |= set(hist.histogram.keys())
+                    if not prefix_match(library.get_barcode_seq2(), seen_seqs2):
+                        error_lanes2.append(lane_number)
+            # Build error message for this library, if any lanes are problematic
+            msgs = []
+            msgs2 = []
+            if error_lanes:
+                msgs = [
+                    "barcode #1 {} ({}) for library {} not found in adapters on lane{} {}".format(
+                        library.get_barcode_seq(),
+                        library.barcode.name if library.barcode else "manually entered",
+                        library.name,
+                        "s" if len(error_lanes) > 1 else "",
+                        pretty_range(error_lanes),
+                    )
+                ]
+            if error_lanes2:
+                msgs2 = [
+                    "barcode #2 {} ({}) for library {} not found in adapters on lane{} {}".format(
+                        library.get_barcode_seq2(),
+                        library.barcode2.name if library.barcode2 else "manually entered",
+                        library.name,
+                        "s" if len(error_lanes2) > 1 else "",
+                        pretty_range(error_lanes2),
+                    )
+                ]
+            if msgs or msgs2:
+                result[library.sodar_uuid] = (msgs, msgs2)
+        return result
+
     def get_sample_sheet_errors(self):
         """Analyze the sample sheet for problems and inconsistencies.
 
         Returns map from library UUID to dict with field names to list of error messages.
         """
+        # TODO: can we prefetch more?
         if hasattr(self, "_sheet_errors"):
             return self._sheet_errors
         # Resulting error map, empty if no errors
@@ -391,7 +468,7 @@ class FlowCell(models.Model):
         by_barcode2 = {}  # (lane, barcode) => library
 
         # Gather information about libraries, directly validate names and lane numbers
-        for library in self.libraries.all():
+        for library in self.libraries.prefetch_related("barcode", "barcode2").all():
             by_uuid[library.sodar_uuid] = library
             # Directly check for invalid characters
             if not re.match("^[a-zA-Z0-9_-]+$", library.name):
@@ -600,12 +677,19 @@ class Library(models.Model):
         else:
             return self.barcode_seq
 
-    def get_barcode_seq2(self):
-        """Return barcode sequence #2 either from barcode or bacode_seq"""
+    def get_barcode_seq2(self, revcomp_if_needed=True):
+        """Return barcode sequence #2 either from barcode or bacode_seq.
+
+        Reverse-complement appropriately unless ``revcomp_if_needed`` is ``False``.
+        """
         if self.barcode2:
-            return self.barcode2.sequence
+            seq = self.barcode2.sequence
         else:
-            return self.barcode_seq2
+            seq = self.barcode_seq2
+        if seq and self.flow_cell.sequencing_machine.dual_index_workflow == INDEX_WORKFLOW_B:
+            if revcomp_if_needed:
+                seq = revcomp(seq)
+        return seq
 
     def get_absolute_url(self):
         return self.flow_cell.get_absolute_url()
@@ -792,3 +876,30 @@ class Message(models.Model):
             return self.attachment_folder.filesfolders_file_children.all()
         except Folder.DoesNotExist:
             return Folder.objects.none()
+
+
+class KnownIndexContamination(models.Model):
+    """Known contamination """
+
+    #: DateTime of creation
+    date_created = models.DateTimeField(auto_now_add=True, help_text="DateTime of creation")
+
+    #: DateTime of last modification
+    date_modified = models.DateTimeField(auto_now=True, help_text="DateTime of last modification")
+
+    #: UUID used for identification throughout SODAR.
+    sodar_uuid = models.UUIDField(
+        default=uuid_object.uuid4, unique=True, help_text="Object SODAR UUID"
+    )
+
+    #: Title of the contamination.
+    title = models.CharField(max_length=200)
+
+    #: Sequence of the contamination.
+    sequence = models.CharField(max_length=200)
+
+    #: Textual description of the contamination.
+    description = models.TextField()
+
+    #: Whether or not an immutable factory default.
+    factory_default = models.BooleanField(default=False, help_text="Is immutable factory default")
