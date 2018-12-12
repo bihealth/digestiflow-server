@@ -38,10 +38,10 @@
                     </div>
 
                     {% if index_errors %}
-                      <span class="text-danger" data-toggle="popup" title="{% for msg in index_errors %}{{ msg }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                      <span class="text-danger" data-toggle="popover" title="{% for msg in index_errors %}{{ msg }}{% if not forloop.last %}, {% endif %}{% endfor %}">
                     {% elif entry_contamination %}
                       {% render_markdown entry_contamination.description as description %}
-                      <span class="text-info" data-toggle="popup" data-html="true" title="Known contamination &quot;{{ entry_contamination.title }}&quot;: {{ description|striptags }}" data-html="true">
+                      <span class="text-info" data-toggle="popover" data-html="true" title="Known contamination &quot;{{ entry_contamination.title }}&quot;: {{ description|striptags }}" data-html="true">
                     {% endif %}
                       {{ seq }}
                       ({{ count|divide:entry.sample_size|multiply:100|stringformat:".2f"|stringformat:"05s" }}%)

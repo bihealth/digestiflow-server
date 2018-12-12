@@ -18,7 +18,7 @@
     <h6 class="card-subtitle mb-2 text-muted">
       Written
       <span data-toggle="tooltip" title="{{ message.date_created }}">
-          {{ message.date_created|naturaltime }}
+        {{ message.date_created|naturaltime }}
       </span>
       by
       <span
@@ -33,7 +33,14 @@
       {% endif %}
     </h6>
     <p class="card-text">
-      {{ message.body|linebreaks }}
+      {% if message.body_format == "text/markdown" %}
+        {% render_markdown entry_contamination.description as description %}
+        {% autoescape off %}
+          {{ description }}
+        {% endautoescape %}
+      {% else %}
+        {{ message.body|linebreaks }}
+      {% endif %}
     </p>
     {% if message.get_attachment_files %}
       <h6 class="card-subtitle text-muted mb-2">
