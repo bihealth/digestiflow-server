@@ -21,7 +21,7 @@ class SequencingMachineCreateApiView(ProjectMixin, ListCreateAPIView):
         return SequencingMachine.objects.filter(project=self.get_project())
 
 
-class SequencingMachineUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
+class SequencingMachineUpdateDestroyApiView(ProjectMixin, RetrieveUpdateDestroyAPIView):
     queryset = SequencingMachine.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = SequencingMachineSerializer

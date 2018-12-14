@@ -20,7 +20,7 @@ urlpatterns = [
     ),
     # /sequencers/:project/:sequencer/
     url(
-        regex=r"^sequencers/(?P<project>[0-9a-f-]+)/(?P<sequencer>(-\w]+/))$",
+        regex=r"^sequencers/(?P<project>[0-9a-f-]+)/(?P<sequencer>([0-9a-f-]+))$",
         view=sequencer_views.SequencingMachineUpdateDestroyApiView.as_view(),
         name="sequencers",
     ),

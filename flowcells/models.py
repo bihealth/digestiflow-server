@@ -23,7 +23,6 @@ def pretty_range(value):
 
 def prefix_match(query, db):
     """Naive implementation of "is seq prefix of one in expecteds or vice versa"."""
-    print("prefix_match({}, {})".format(query, db))
     for entry in db:
         l = min(len(query), len(entry))
         if query[:l] == entry[:l]:
@@ -334,6 +333,30 @@ class FlowCell(models.Model):
                 map(str, (run_date, vendor_id, run_number, self.slot, self.vendor_id, self.label))
             )
 
+    def has_sheet_for_lane(self, lane):
+        if hasattr(self, "_has_sheet_for_lane"):
+            return self._has_sheet_for_lane[lane]
+        self._has_sheet_for_lane = {number: False for number in range(1, self.num_lanes + 1)}
+        for lib in self.libraries.all():
+            for number in lib.lane_numbers:
+                self._has_sheet_for_lane[number] = True
+        return self._has_sheet_for_lane[lane]
+
+    def get_known_contaminations(self):
+        """Return known contaminations dict, cut down to the sequence lengths of observed sequences."""
+        if hasattr(self, "_known_contaminations"):
+            return self._known_contaminations
+        self._known_contaminations = {}
+        for hist in self.index_histograms.all():
+            for length in set(len(seq) for seq in hist.histogram.keys()):
+                self._known_contaminations.update(
+                    {
+                        entry.sequence[:length]: entry
+                        for entry in KnownIndexContamination.objects.all()
+                    }
+                )
+        return self._known_contaminations
+
     def get_index_errors(self):
         """Analyze index histograms for problems and inconsistencies with sample sheet.
 
@@ -345,18 +368,19 @@ class FlowCell(models.Model):
         if not self.libraries.all():
             self._index_errors = {}
             return self._index_errors
-        # Pre-fetch known contaminations
-        contaminations = {entry.sequence: entry for entry in KnownIndexContamination.objects.all()}
         # Pre-fetch libraries.
         libraries = {}
         for library in self.libraries.prefetch_related("barcode", "barcode2"):
             for lane_number in library.lane_numbers:
                 libraries.setdefault(lane_number, []).append(library)
+        # Build error messages
         result = {}
         for hist in self.index_histograms.all():
+            if not self.has_sheet_for_lane(hist.lane):
+                continue  # no errors if no sheet for lane
             # Collect sequences we expect to see for this lane and read number
             expected_seqs = set()
-            for library in libraries.get(hist.lane):
+            for library in libraries.get(hist.lane, ()):
                 if hist.index_read_no == 1:
                     barcode = library.barcode
                     barcode_seq = library.barcode_seq
@@ -373,7 +397,7 @@ class FlowCell(models.Model):
             # Collect errors and write into result
             for seq, _ in hist.histogram.items():
                 errors = []
-                if seq in contaminations:
+                if seq in self.get_known_contaminations():
                     continue  # contamination are not errors, will be displayed in template
                 if not prefix_match(seq, expected_seqs):
                     errors += [
@@ -395,6 +419,9 @@ class FlowCell(models.Model):
         Returns an error message mapping from library UUID to pair of list of error messages (for first and second
         index).
         """
+        # Short-circuit if there are no index histograms.
+        if not self.index_histograms.all():
+            return {}
         # TODO: can we prefetch more?
         if hasattr(self, "_reverse_index_errors "):
             return self._reverse_index_errors

@@ -1,0 +1,64 @@
+{% load crispy_forms_tags %}
+{% load flowcells %}
+
+<form class="flowcell-update-status-form" action="{% url 'flowcells:flowcell-update-status' project=project.sodar_uuid flowcell=object.sodar_uuid attribute=attribute %}{% if render_full %}?render_full=true{% endif %}" method="post">
+  {% csrf_token %}
+
+  {% for field in form %}
+    {% if field.name == attribute %}
+      {% valid_status attribute "canceled" as canceled_valid %}
+      {% valid_status attribute "closed" as closed_valid %}
+      {% valid_status attribute "closed_warnings" as closed_warnings_valid %}
+      {% valid_status attribute "complete" as complete_valid %}
+      {% valid_status attribute "complete_warnings" as complete_warnings_valid %}
+      {% valid_status attribute "initial" as initial_valid %}
+      {% valid_status attribute "in_progress" as in_progress_valid %}
+      {% valid_status attribute "ready" as ready_valid %}
+      {% valid_status attribute "skipped" as skipped_valid %}
+
+      {% if initial_valid %}
+        <button type="submit" name="{{ field.name }}" value="initial" class="list-group-item list-group-item-action list-group-item-light p-2">
+          <i class="fa fa-fw fa-asterisk"></i>
+          reset to &quot;initial&quot;
+        </button>
+      {% endif %}
+
+      {% if ready_valid %}
+        <button type="submit" name="{{ field.name }}" value="ready" class="list-group-item list-group-item-action list-group-item-info p-2">
+          <i class="fa fa-fw fa-hourglass-1"></i>
+          mark &quot;ready&quot;
+        </button>
+      {% endif %}
+
+      {% if canceled_valid %}
+        <button type="submit" name="{{ field.name }}" value="canceled" class="list-group-item list-group-item-action list-group-item-danger p-2">
+          <i class="fa fa-fw fa-close"></i>
+          confirm failure
+        </button>
+      {% endif %}
+
+      {% if closed_valid %}
+        <button type="submit" name="{{ field.name }}" value="closed" class="list-group-item list-group-item-action list-group-item-success p-2">
+          <i class="fa fa-fw fa-check"></i>
+          confirm success
+        </button>
+      {% endif %}
+
+      {% if closed_warnings_valid %}
+        <button type="submit" name="{{ field.name }}" value="closed_warnings" class="list-group-item list-group-item-action list-group-item-warning p-2">
+          <i class="fa fa-fw fa-warning"></i>
+          mark &quot;complete with warnings&quot;
+        </button>
+      {% endif %}
+
+      {% if skipped_valid %}
+        <button type="submit" name="{{ field.name }}" value="skipped" class="list-group-item list-group-item-action list-group-item-secondary p-2">
+          <i class="fa fa-fw fa-minus"></i>
+          mark skipped
+        </button>
+      {% endif %}
+    {% else %}
+      {{ field|as_crispy_field }}
+    {% endif %}
+  {% endfor %}
+</form>

@@ -98,14 +98,57 @@ $(function () {
       100
     ],
     columnSorting: false,
-    contextMenu: [
-      'row_above',
-      'row_below',
-      'remove_row',
-      '---------',
-      'copy',
-      'cut'
-    ],
+    contextMenu: {
+      items: {
+        'row_above': {},
+        'row_below': {},
+        'remove_row': {},
+        'sep1': Handsontable.plugins.ContextMenu.SEPARATOR,
+        'copy': {},
+        'cut': {},
+        'sep2': Handsontable.plugins.ContextMenu.SEPARATOR,
+        'reverse_complement': {
+          name: 'Reverse-complement',
+          callback: function() {
+            let sel = this.getSelectedRange();
+            for (var i = 0; i < sel.length; ++i) {
+              let frmCol = Math.min(sel[i].from.col, sel[i].to.col)
+              let toCol = Math.max(sel[i].from.col, sel[i].to.col)
+              let frmRow = Math.min(sel[i].from.row, sel[i].to.row)
+              let toRow = Math.max(sel[i].from.row, sel[i].to.row)
+              for (var col = frmCol; col <= toCol; ++col) {
+                for (var row = frmRow; row <= toRow; ++row) {
+                  if (col == 3 || col == 5) {
+                    if (this.getDataAtCell(row, col - 1) == 'type barcode -->') {
+                      this.setDataAtCell(row, col, revComp(this.getDataAtCell(row, col)));
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        'name_lookup' : {
+          name: 'Re-do name lookup',
+          callback: function() {
+            let sel = this.getSelectedRange();
+            for (var i = 0; i < sel.length; ++i) {
+              let frmCol = Math.min(sel[i].from.col, sel[i].to.col)
+              let toCol = Math.max(sel[i].from.col, sel[i].to.col)
+              let frmRow = Math.min(sel[i].from.row, sel[i].to.row)
+              let toRow = Math.max(sel[i].from.row, sel[i].to.row)
+              for (var col = frmCol; col <= toCol; ++col) {
+                for (var row = frmRow; row <= toRow; ++row) {
+                  if (col == 3 || col == 5) {
+                    performNameLookup(row, col, this.getDataAtCell(row, col))
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     copyPaste: true,
     height: 500,
     manualColumnResize: true,
@@ -249,6 +292,23 @@ $(function () {
     targetJsonField.value = JSON.stringify(jsonData)
   }
 
+  // Performs lookup for the given cell.
+  function performNameLookup(row, col, newValue) {
+    const barcodesetVal = hotTable.getDataAtCell(row, col - 1)
+    if (barcodesetVal) {
+      const shortName = getShortName(barcodesetVal)
+      if (barcodesetByShortName[shortName]) {
+        // TODO could be sped up with lookup table instead of lookup
+        // Selected a barcode set, only allow selecting barcodes from set
+        barcodesetByShortName[shortName].entries.forEach((entry) => {
+          if (entry.name === newValue) {
+            hotTable.setDataAtCell(row, col, `${entry.name} (${entry.sequence})`)
+          }
+        })
+      }
+    }
+  }
+
   // Called when a cell changed.
   function onAfterChange (changes) {
     // Guard against infinite event loop.
@@ -261,19 +321,7 @@ $(function () {
     // barcode with its "$name ($sequence)" label that the validator requires.
     changes.forEach(([row, col, oldValue, newValue]) => {
       if (col === 3 || col === 5) {
-        const barcodesetVal = hotTable.getDataAtCell(row, col - 1)
-        if (barcodesetVal) {
-          const shortName = getShortName(barcodesetVal)
-          if (barcodesetByShortName[shortName]) {
-            // TODO could be sped up with lookup table instead of lookup
-            // Selected a barcode set, only allow selecting barcodes from set
-            barcodesetByShortName[shortName].entries.forEach((entry) => {
-              if (entry.name === newValue) {
-                hotTable.setDataAtCell(row, col, `${entry.name} (${entry.sequence})`)
-              }
-            })
-          }
-        }
+        performNameLookup(row, col, newValue);
       }
     })
 

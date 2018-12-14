@@ -44,4 +44,9 @@ urlpatterns = [
         view=views.MessageDeleteView.as_view(),
         name="message-delete",
     ),
+    url(
+        regex=r"^(?P<project>[0-9a-f-]+)/flowcell/(?P<flowcell>[0-9a-f-]+)/update-status/(?P<attribute>[a-z_]+)/$",
+        view=views.FlowCellUpdateStatusView.as_view(),
+        name="flowcell-update-status",
+    ),
 ]

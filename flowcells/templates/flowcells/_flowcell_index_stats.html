@@ -11,7 +11,7 @@
 </p>
 
 {% if object.index_histograms.all %}
-  {% get_known_contaminations as contaminations %}
+  {% get_known_contaminations object as contaminations %}
 
   <table class="table table-striped table-hover table-sm">
     <thead>
@@ -24,8 +24,20 @@
     <tbody>
       {% for entry in object.index_histograms.all %}
         <tr>
-          <td class="text-center align-middle"><b>{{ entry.lane }}</b></td>
-          <td class="text-center align-middle"><b>{{ entry.index_read_no }}</b></td>
+          <td class="text-center align-middle font-weight-bold text-nowrap">
+            {% has_sheet_for_lane object entry.lane as sheet_for_lane %}
+            {% if not sheet_for_lane %}
+              <span class="text-warning" data-toggle="tooltip" title="No sample sheet information provided for lane">
+                {{ entry.lane }}
+                <i class="fa fa-exclamation-circle pl-1"></i>
+              </span>
+            {% else %}
+              {{ entry.lane }}
+            {% endif %}
+          </td>
+          <td class="text-center align-middle font-weight-bold">
+            {{ entry.index_read_no }}
+          </td>
           <td>
             {% with entry.histogram.values|max as max_count %}
               {% for seq, count in entry.histogram.items|dictsortreversed:1 %}
@@ -38,10 +50,10 @@
                     </div>
 
                     {% if index_errors %}
-                      <span class="text-danger" data-toggle="popover" title="{% for msg in index_errors %}{{ msg }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                      <span class="text-danger" data-toggle="tooltip" title="{% for msg in index_errors %}{{ msg }}{% if not forloop.last %}, {% endif %}{% endfor %}">
                     {% elif entry_contamination %}
                       {% render_markdown entry_contamination.description as description %}
-                      <span class="text-info" data-toggle="popover" data-html="true" title="Known contamination &quot;{{ entry_contamination.title }}&quot;: {{ description|striptags }}" data-html="true">
+                      <span class="text-info" data-toggle="tooltip" data-html="true" title="Known contamination &quot;{{ entry_contamination.title }}&quot;: {{ description|striptags }}" data-html="true">
                     {% endif %}
                       {{ seq }}
                       ({{ count|divide:entry.sample_size|multiply:100|stringformat:".2f"|stringformat:"05s" }}%)

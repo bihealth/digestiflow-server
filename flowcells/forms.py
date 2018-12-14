@@ -9,7 +9,13 @@ from django.core.validators import RegexValidator
 
 from digestiflow.utils import model_to_dict, HorizontalFormHelper
 from sequencers.models import SequencingMachine
-from .models import FlowCell, Message
+from .models import (
+    FlowCell,
+    Message,
+    SEQUENCING_STATUS_CHOICES,
+    CONVERSION_STATUS_CHOICES,
+    DELIVERY_STATUS_CHOICES,
+)
 
 
 def get_object_or_none(klass, *args, **kwargs):
@@ -122,6 +128,33 @@ class FlowCellForm(forms.ModelForm):
             "silence_index_errors",
         )
         widgets = {"description": forms.Textarea(attrs={"rows": 3})}
+
+
+class FlowCellUpdateStatusForm(forms.ModelForm):
+    """Helper form for updating the status."""
+
+    def __init__(self, *args, **kwargs):
+        self.attribute = kwargs.pop("attribute")
+        super().__init__(*args, **kwargs)
+        choices = {
+            "sequencing": SEQUENCING_STATUS_CHOICES,
+            "conversion": CONVERSION_STATUS_CHOICES,
+            "delivery": DELIVERY_STATUS_CHOICES,
+        }
+        for attribute in choices.keys():
+            field_name = "status_%s" % attribute
+            field = forms.ChoiceField(
+                required=True,
+                choices=choices[attribute],
+                initial=getattr(self.instance, field_name),
+                widget=forms.HiddenInput(),
+            )
+            field.valid_choices = {key for key, _ in choices[attribute]}
+            self.fields[field_name] = field
+
+    class Meta:
+        model = FlowCell
+        fields = ("status_sequencing", "status_conversion", "status_delivery")
 
 
 class MessageForm(forms.ModelForm):

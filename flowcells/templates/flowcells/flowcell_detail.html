@@ -1,5 +1,7 @@
 {% extends "projectroles/project_base.html" %}
 
+{% load flowcells %}
+
 {% block navi_sub_project_extend %}
   <li class="breadcrumb-item">
     <a href="{% url 'flowcells:flowcell-list' project=project.sodar_uuid %}">Flow Cells</a>
@@ -29,19 +31,22 @@
         <a class="nav-link" id="sample-sheet-tab" data-toggle="tab" href="#sample-sheet" aria-controls="sample-sheet" aria-selected="true">
           Sample Sheet
           {% if object.get_sample_sheet_errors or object.get_reverse_index_errors %}
-            <i class="fa fa-fw fa-exclamation-triangle text-danger pl-1"></i>
+            <i class="fa fa-fw fa-exclamation-triangle text-danger pl-1" data-toggle="tooltip" title="There were inconsistencies betwen the sample sheet and the observed indices"></i>
           {% elif not object.libraries.all %}
-            <i class="fa fa-question-circle text-warning"></i>
+            <i class="fa fa-question-circle text-muted" data-toggle="tooltip" title="No sample sheet information added so far"></i>
           {% endif %}
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" id="index-stats-tab" data-toggle="tab" href="#index-stats" aria-controls="index-stats" aria-selected="true">
           Index Stats
+          {% sheet_missing_for_any_lane object as any_lane_without_sheet %}
           {% if object.get_index_errors %}
-            <i class="fa fa-exclamation-triangle text-danger pl-1"></i>
+            <i class="fa fa-exclamation-triangle text-danger pl-1" data-toggle="tooltip" title="There were inconsistencies with observed index adapters and the sample sheet"></i>
+          {% elif any_lane_without_sheet %}
+            <i class="fa fa-exclamation-circle text-warning p-1" data-toggle="tooltip" title="No sample sheet information for at least one lane"></i>
           {% elif not object.index_histograms.all %}
-            <i class="fa fa-question-circle text-muted p-1"></i>
+            <i class="fa fa-question-circle text-muted p-1" data-toggle="tooltip" title="No observed index adapters registered (yet)"></i>
           {% endif %}
         </a>
       </li>

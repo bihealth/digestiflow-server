@@ -1,0 +1,46 @@
+{% extends "projectroles/project_base.html" %}
+
+{% block navi_sub_project_extend %}
+  <li class="breadcrumb-item">
+    <a href="{% url 'flowcells:flowcell-list' project=project.sodar_uuid %}">Flow Cells</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="{% url 'flowcells:flowcell-detail' project=project.sodar_uuid flowcell=object.sodar_uuid %}">
+      {{ object.vendor_id }} ({{ object.label }})
+    </a>
+  </li>
+  <li class="breadcrumb-item active">
+    Update Status
+  </li>
+{% endblock %}
+
+{% block title %}
+  Updating Status of {{ object.vendor_id }} ({{ vendor.label }})
+{% endblock title %}
+
+{% block projectroles %}
+
+  <div class="row sodar-pr-content-title pb-2">
+    {# Project menu dropdown, only visible if browser width < X and sidebar is hidden #}
+    {% include 'projectroles/_project_menu_btn.html' %}
+
+    <h2 class="sodar-pr-content-title">
+      Update Flow Cell Status
+    </h2>
+  </div>
+
+  <h3>Status Update</h3>
+
+  {% include "flowcells/_flowcell_update_status_form.html" %}
+
+  <h3 class="pt-3">Flow Cell Details</h3>
+
+  {{ form.errors }}
+
+  <div class="row">
+    <div class="col border px-0 py-3">
+      {% include "flowcells/_flowcell_properties.html" %}
+    </div>
+  </div>
+
+{% endblock %}

@@ -153,10 +153,12 @@ $(function() {
           callback: function() {
             let sel = this.getSelectedRange();
             for (var i = 0; i < sel.length; ++i) {
-              let frm = sel[i].from;
-              let to = sel[i].to;
-              if (frm.col <= 1 && to.col >= 1) {
-                for (var row = frm.row; row <= to.row; ++row) {
+              let frmCol = Math.min(sel[i].from.col, sel[i].to.col)
+              let toCol = Math.max(sel[i].from.col, sel[i].to.col)
+              let frmRow = Math.min(sel[i].from.row, sel[i].to.row)
+              let toRow = Math.max(sel[i].from.row, sel[i].to.row)
+              for (var col = frmCol; col <= toCol; ++col) {
+                for (var row = frmRow; row <= toRow; ++row) {
                   let oldValue = this.getDataAtCell(row, 1);
                   this.setDataAtCell(row, 1, revComp(oldValue));
                 }

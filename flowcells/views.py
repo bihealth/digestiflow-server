@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.files.base import ContentFile
 from django.db import transaction
-from django.shortcuts import reverse, redirect
+from django.shortcuts import reverse, redirect, render
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from filesfolders.models import File, Folder
 from projectroles.plugins import get_backend_api
@@ -19,7 +19,7 @@ from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, Pro
 
 from barcodes.models import BarcodeSetEntry
 from digestiflow.utils import model_to_dict
-from .forms import FlowCellForm, MessageForm
+from .forms import FlowCellForm, MessageForm, FlowCellUpdateStatusForm
 from .models import FlowCell, Message, MSG_STATE_DRAFT, MSG_STATE_SENT
 
 
@@ -197,6 +197,65 @@ class FlowCellUpdateView(
             )
             tl_event.add_object(obj=self.object, label="flowcell", name=self.object.get_full_name())
         return result
+
+
+class FlowCellUpdateStatusView(
+    LoginRequiredMixin,
+    LoggedInPermissionMixin,
+    ProjectPermissionMixin,
+    ProjectContextMixin,
+    UpdateView,
+):
+    """Updating of FlowCell records, status field."""
+
+    template_name = "flowcells/flowcell_update_status.html"
+    permission_required = "flowcells.modify_data"
+
+    model = FlowCell
+    form_class = FlowCellUpdateStatusForm
+
+    slug_url_kwarg = "flowcell"
+    slug_field = "sodar_uuid"
+
+    def get_form_kwargs(self):
+        result = super().get_form_kwargs()
+        result["attribute"] = self.kwargs["attribute"]
+        return result
+
+    def _is_render_full(self):
+        return self.request.GET.get("render_full", "").lower() in ("true", "1")
+
+    def get_context_data(self, *args, **kwargs):
+        result = super().get_context_data()
+        result["render_full"] = self._is_render_full()
+        result["attribute"] = self.kwargs["attribute"]
+        return result
+
+    def form_invalid(self, form):
+        """Show form again with errors in ``render_full`` mode, otherwise push errors into tags."""
+        if self._is_render_full():
+            return super().form_invalid(form)
+        else:
+            error_str = "; ".join(
+                "%s: %s" % (field, ", ".join(list(errors))) for field, errors in form.errors.items()
+            )
+            return self._render_row({"errors": error_str})
+
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        if self._is_render_full():
+            # Redirect to detail view
+            return result
+        else:
+            return self._render_row()
+
+    def _render_row(self, context_data={}):
+        """Just render one row."""
+        # Fresh rendering of the template row
+        context = super().get_context_data()
+        context["item"] = context["object"]
+        context.update(context_data)
+        return render(self.request, "flowcells/_flowcell_item.html", context)
 
 
 class FlowCellDeleteView(

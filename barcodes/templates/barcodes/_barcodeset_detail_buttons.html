@@ -19,6 +19,10 @@
     <a class="dropdown-item" href="{% url 'barcodes:barcodeset-delete' project=project.sodar_uuid barcodeset=object.sodar_uuid %}">
       <i class="fa fa-fw fa-times"></i> Delete
     </a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="{% url 'api:barcodesets' project=project.sodar_uuid barcodeset=object.sodar_uuid %}?format=json">
+      <i class="fa fa-fw fa-cloud-download"></i> JSON Export
+    </a>
   </div>
 </div>
 {% if up %}

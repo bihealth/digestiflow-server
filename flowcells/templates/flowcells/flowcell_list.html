@@ -9,6 +9,8 @@
 {% endblock title %}
 
 {% block projectroles %}
+  <div id="ajax-form-errors"></div>
+
   <div class="row sodar-pr-content-title pb-2">
     {# Project menu dropdown, only visible if browser width < X and sidebar is hidden #}
     {% include 'projectroles/_project_menu_btn.html' %}
@@ -26,4 +28,58 @@
     {% include "flowcells/_flowcell_table.html" %}
   </div>
 
+{% endblock %}
+
+{% block javascript %}
+  {{ block.super }}
+
+  <script type="text/javascript">
+    $(function () {
+      function urlPopOverContent () {
+        const div = $('<div>loading</div>')
+        const self = $(this)
+        const itemRow = $(this).closest('.flowcell-item')
+
+        $.ajax(
+          $(this).data('popover-url'),
+          {
+            success: function (response) {
+              {#console.log(response)#}
+              div.html(response);
+              $(div).find('.flowcell-update-status-form').ajaxForm(function (response) {
+                self.popover("dispose")
+                let newLine = $(response)
+                newLine.find('*[data-popover-url]').popover({
+                  html: true,
+                  content: urlPopOverContent,
+                })
+                itemRow.replaceWith(newLine)
+                if (newLine.data('errors')) {
+                  $(
+                    '<div class="alert alert-danger sodar-alert-top mb-3">' +
+                    '  <div class="sodar-alert-top-content">' +
+                    newLine.data('errors') +
+                    '    <a href="#" class="pull-right sodar-alert-close-link"><i class="fa fa-close text-muted"></i></a>' +
+                    '  </div>' +
+                    '</div>'
+                  ).appendTo($('#ajax-form-errors'))
+                }
+                $('.sodar-alert-close-link').click(function () {
+                  $(this).closest('.sodar-alert-top').fadeOut('fast');
+                });
+              })
+            }
+          }
+        )
+
+        return div
+      }
+
+      $('*[data-popover-url]').popover({
+        {#trigger: 'focus',#}
+        html: true,
+        content: urlPopOverContent,
+      })
+    })
+  </script>
 {% endblock %}
