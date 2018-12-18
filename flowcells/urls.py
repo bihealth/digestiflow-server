@@ -49,4 +49,12 @@ urlpatterns = [
         view=views.FlowCellUpdateStatusView.as_view(),
         name="flowcell-update-status",
     ),
+    url(
+        regex=(
+            r"^(?P<project>[0-9a-f-]+)/flowcell/(?P<flowcell>[0-9a-f-]+)/suppress-warning/"
+            r"(?P<warning>no_sample_sheet|no_sample_found_for_observed_index)/(?P<lanes>[0-9]+(?:,[0-9]+)*)/$"
+        ),
+        view=views.FlowCellSuppressWarningView.as_view(),
+        name="flowcell-suppress-warning",
+    ),
 ]

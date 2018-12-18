@@ -13,7 +13,7 @@
 {% if object.index_histograms.all %}
   {% get_known_contaminations object as contaminations %}
 
-  <table class="table table-striped table-hover table-sm">
+  <table class="table table-striped table-hover table-sm index-histograms-table">
     <thead>
       <tr>
         <th style="width: 10px;">Lane</th>
@@ -26,10 +26,34 @@
         <tr>
           <td class="text-center align-middle font-weight-bold text-nowrap">
             {% has_sheet_for_lane object entry.lane as sheet_for_lane %}
-            {% if not sheet_for_lane %}
+            {% get_lane_index_errors object entry.lane as lane_index_errors %}
+
+            {% if not sheet_for_lane and entry.lane not in object.lanes_suppress_no_sample_sheet_warning %}
               <span class="text-warning" data-toggle="tooltip" title="No sample sheet information provided for lane">
                 {{ entry.lane }}
-                <i class="fa fa-exclamation-circle pl-1"></i>
+                <i class="fa fa-exclamation-circle pl-1" title="Suppress Warning?"
+                 data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=entry.lane %}?return_to=index-stats"></i>
+              </span>
+            {% elif lane_index_errors %}
+              <span class="text-danger" data-toggle="tooltip" title="Indices found that have no corresponding entry in sample sheet">
+                {{ entry.lane }}
+                <i class="fa fa-exclamation-circle pl-1" title="Suppress Warning?"
+                 data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_found_for_observed_index" lanes=entry.lane %}?return_to=index-stats"
+                ></i>
+              </span>
+            {% elif entry.lane in object.lanes_suppress_no_sample_sheet_warning %}
+              {{ entry.lane }}
+              <span data-toggle="tooltip" title="The warning &quot;no sample sheet information for lane {{ entry.lane }}&quot; is being suppressed">
+                <i class="fa fa-exclamation-circle pl-1 text-muted" title="Suppress Warning?"
+                  data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=entry.lane %}?return_to=index-stats"
+                ></i>
+              </span>
+            {% elif entry.lane in object.lanes_suppress_no_sample_found_for_observed_index_warning %}
+              {{ entry.lane }}
+              <span data-toggle="tooltip" title="The warning &quot;found an index adapter in BCLs without matching sample&quot; is being suppressed for lane {{ entry.lane }}">
+                <i class="fa fa-exclamation-circle pl-1 text-muted" title="Suppress Warning?"
+                  data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_found_for_observed_index" lanes=entry.lane %}?return_to=index-stats"
+                ></i>
               </span>
             {% else %}
               {{ entry.lane }}

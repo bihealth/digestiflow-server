@@ -69,7 +69,10 @@ class FlowCellForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance:
-            self.fields["name"].initial = self.instance.get_full_name()
+            try:
+                self.fields["name"].initial = self.instance.get_full_name()
+            except SequencingMachine.DoesNotExist:
+                pass  # swallow
         # Fill hidden field with JSON value based on the instance's objects.s
         initial_value = [
             {
@@ -125,7 +128,6 @@ class FlowCellForm(forms.ModelForm):
             "barcode_mismatches",
             "planned_reads",
             "current_reads",
-            "silence_index_errors",
         )
         widgets = {"description": forms.Textarea(attrs={"rows": 3})}
 
@@ -155,6 +157,44 @@ class FlowCellUpdateStatusForm(forms.ModelForm):
     class Meta:
         model = FlowCell
         fields = ("status_sequencing", "status_conversion", "status_delivery")
+
+
+class IntegerMultipleChoiceField(forms.MultipleChoiceField):
+    """Helper that casts its values to ``int``."""
+
+    def to_python(self, value):
+        result = []
+        for val in value:
+            result += list(map(int, val.split(",")))
+        return result
+
+
+class FlowCellSuppressWarningForm(forms.ModelForm):
+    """Helper form for suppressing warnings.
+
+    This form can be used for updating the warning suppression lane list fields that are stored in the ``FlowCell`
+    model itself ("no sample sheet information for lane" and "adapter found in BCL but not in sample sheet").
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.warning = kwargs.pop("warning")
+        assert self.warning in ("no_sample_found_for_observed_index", "no_sample_sheet")
+        super().__init__(*args, **kwargs)
+        self.field_name = "lanes_suppress_%s_warning" % self.warning
+        field = IntegerMultipleChoiceField(
+            required=False,
+            choices=tuple((str(lane), str(lane)) for lane in range(1, self.instance.num_lanes + 1)),
+            initial=getattr(self.instance, self.field_name),
+            # widget=forms.HiddenInput(),
+        )
+        self.fields[self.field_name] = field
+
+    class Meta:
+        model = FlowCell
+        fields = (
+            "lanes_suppress_no_sample_found_for_observed_index_warning",
+            "lanes_suppress_no_sample_sheet_warning",
+        )
 
 
 class MessageForm(forms.ModelForm):

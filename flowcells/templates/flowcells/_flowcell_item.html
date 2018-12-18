@@ -2,17 +2,14 @@
 
 <tr class="flowcell-item" {% if errors %}data-errors="{{ errors }}"{% endif %}>
   <td class="text-nowrap">
-      {% sheet_missing_for_any_lane flowcell as any_lane_without_sheet %}
+    {% get_lanes_with_missing_sheets flowcell True as any_lanes_with_missing_sheets %} {# includes suppressed #}
+    {% get_lanes_with_missing_sheets flowcell as warning_lanes_with_missing_sheets %} {# EXCLUDES suppressed #}
     {% if flowcell.get_sample_sheet_errors %}
       <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
          data-toggle="tooltip"
          title="There were errors with the sample sheet!"></i>
     {% elif flowcell.get_index_errors %}
-      {% if flowcell.silence_index_errors %}
-        <i class="fa fc-fw fa-minus text-secondary" aria-hidden="true"
-           data-toggle="tooltip"
-           title="There were silenced errors with indexes..."></i>
-      {% elif not flowcell.libraries.all %}
+      {% if not flowcell.libraries.all %}
         <i class="fa fc-fw fa-question-circle text-warning" aria-hidden="true"
            data-toggle="tooltip"
            title="The sample sheet is empty!"></i>
@@ -21,27 +18,28 @@
            data-toggle="tooltip"
            title="There were errors with indexes!"></i>
       {% endif %}
-    {% elif any_lane_without_sheet %}
-      <i class="fa fc-fw fa-exclamation-circle text-warning" aria-hidden="true"
-         data-toggle="tooltip"
-         title="Sample sheet information missing for at least one lane"></i>
+    {% elif any_lanes_with_missing_sheets %}
+        {% if warning_lanes_with_missing_sheets %}
+          <i class="fa fc-fw fa-exclamation-circle text-warning" title="Suppress Missing Sheet Warning{{ lanes_with_missing_sheets|pluralize:"s" }}?"
+           data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=any_lanes_with_missing_sheets|join:"," %}?render=flowcell-line"></i>
+        {% else %}
+          <i class="fa fc-fw fa-exclamation-circle text-muted" title="Suppress Missing Sheet Warning{{ lanes_with_missing_sheets|pluralize:"s" }}?"
+           data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=any_lanes_with_missing_sheets|join:"," %}?render=flowcell-line"></i>
+        {% endif %}
     {% else %}
       <i class="fa fc-fw fa-check text-muted fc-super-muted" aria-hidden="true"></i>
     {% endif %}
     <i class="ml-3 {{ flowcell.status_sequencing|status_to_icon }}"
        title="Update sequencing status"
-       data-html="true"
        data-popover-url="{% url 'flowcells:flowcell-update-status' project=project.sodar_uuid flowcell=flowcell.sodar_uuid attribute="status_sequencing" %}"
     ></i>
     <i class="{{ flowcell.status_conversion|status_to_icon }}"
        title="Update conversion status"
-       data-html="true"
        data-popover-url="{% url 'flowcells:flowcell-update-status' project=project.sodar_uuid flowcell=flowcell.sodar_uuid attribute="status_conversion" %}"
     ></i>
-    <i
-      class="{{ flowcell.status_delivery|status_to_icon }}"
+    <i class="{{ flowcell.status_delivery|status_to_icon }}"
+       data-toggle="tooltip"
        title="Update delivery status"
-       data-html="true"
        data-popover-url="{% url 'flowcells:flowcell-update-status' project=project.sodar_uuid flowcell=flowcell.sodar_uuid attribute="status_delivery" %}"
     ></i>
     {% if flowcell.delivery_type == "seq" %}

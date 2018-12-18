@@ -69,6 +69,15 @@ def get_details_flowcells(project):
 
 
 @register.simple_tag
+def get_lane_index_errors(flowcell, lane):
+    result = []
+    for (err_lane, _, _), val in flowcell.get_index_errors().items():
+        if lane == err_lane:
+            result.append(val)
+    return result
+
+
+@register.simple_tag
 def get_index_errors(flowcell, lane, index_read_no, sequence):
     return flowcell.get_index_errors().get((lane, index_read_no, sequence))
 
@@ -124,11 +133,14 @@ def has_sheet_for_lane(flowcell, lane):
 
 
 @register.simple_tag
-def sheet_missing_for_any_lane(flowcell):
+def get_lanes_with_missing_sheets(flowcell, ignore_suppressions=False):
+    result = []
     for lane in range(1, flowcell.num_lanes):
-        if not flowcell.has_sheet_for_lane(lane):
-            return True
-    return False
+        if not flowcell.has_sheet_for_lane(lane) and (
+            ignore_suppressions or lane not in flowcell.lanes_suppress_no_sample_sheet_warning
+        ):
+            result.append(lane)
+    return result
 
 
 @register.simple_tag

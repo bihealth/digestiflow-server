@@ -1,0 +1,38 @@
+{% extends "projectroles/project_base.html" %}
+
+{% block navi_sub_project_extend %}
+  <li class="breadcrumb-item">
+    <a href="{% url 'flowcells:flowcell-list' project=project.sodar_uuid %}">Flow Cells</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="{% url 'flowcells:flowcell-detail' project=project.sodar_uuid flowcell=object.sodar_uuid %}">
+      {{ object.vendor_id }} ({{ object.label }})
+    </a>
+  </li>
+  <li class="breadcrumb-item active">
+    Suppress Warning
+  </li>
+{% endblock %}
+
+{% block title %}
+  Suppress Warning for {{ object.vendor_id }} ({{ vendor.label }})
+{% endblock title %}
+
+{% block projectroles %}
+
+  <div class="row sodar-pr-content-title pb-2">
+    {# Project menu dropdown, only visible if browser width < X and sidebar is hidden #}
+    {% include 'projectroles/_project_menu_btn.html' %}
+
+    <h2 class="sodar-pr-content-title">
+      Suppress Flow Cell Status Warning
+    </h2>
+  </div>
+
+  <h3>Warning</h3>
+
+  {% include "flowcells/_flowcell_suppress_warning_form.html" %}
+
+  {{ form.errors }}
+
+{% endblock %}

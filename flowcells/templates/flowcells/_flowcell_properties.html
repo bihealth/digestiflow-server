@@ -1,4 +1,6 @@
-<dl class="row">
+{% load flowcells %}
+
+<dl class="row flowcell-properties">
   <dt class="col-12 col-md-3 col-xl-2">UUID</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.sodar_uuid }}</dd>
 
@@ -57,4 +59,25 @@
 
   <dt class="col-12 col-md-3 col-xl-2">Barcode Mismatches</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.barcode_mismatches|default:"-" }}</dd>
+
+  {% get_lanes_with_missing_sheets object as lanes_with_missing_sheets %}
+  <dt class="col-12 col-md-3 col-xl-2">Sheet Completeness</dt>
+  <dd class="col-12 col-md-9 col-xl-10">
+    {% if lanes_with_missing_sheets %}
+      <span class="text-warning">
+        <i class="fa fa-exclamation-circle pr-1" title="Suppress Warning{{ lanes_with_missing_sheets|pluralize:"s" }}?"
+         data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=lanes_with_missing_sheets|join:"," %}?return_to=properties"></i>
+        Sample sheet missing for {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|join:", " }}.
+      </span>
+    {% elif flowcell.lanes_suppress_no_sample_sheet_warning %}
+      {% get_lanes_with_missing_sheets object True as lanes_with_missing_sheets %}
+      <span class="text-muted">
+        <i class="fa fa-exclamation-circle pr-1" title="Suppress Warning{{ lanes_with_missing_sheets|pluralize:"s" }}?"
+         data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=lanes_with_missing_sheets|join:"," %}?return_to=properties"></i>
+        Suppressed warning{{ lanes_with_missing_sheets|pluralize:"s" }} on lanes with missing sample sheets.
+      </span>
+    {% else %}
+      The sheet is complete
+    {% endif %}
+  </dd>
 </dl>

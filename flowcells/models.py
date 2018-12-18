@@ -288,11 +288,20 @@ class FlowCell(models.Model):
         null=True, blank=True, help_text="Number of mismatches to allow"
     )
 
-    #: Whether or not to silence index errors
-    silence_index_errors = models.BooleanField(
+    #: Lanes to suppress the "no sample sheet information available" for
+    lanes_suppress_no_sample_sheet_warning = ArrayField(
+        models.PositiveIntegerField(),
         blank=True,
-        default=False,
-        help_text="Check to index inconsistency errors between BCLs and sheet",
+        default=list,
+        help_text="The lanes for which missing sample sheet information should be suppressed",
+    )
+
+    #: Lanes to suppress "index sequence found with no entry in sample sheet" for
+    lanes_suppress_no_sample_found_for_observed_index_warning = ArrayField(
+        models.PositiveIntegerField(),
+        blank=True,
+        default=list,
+        help_text="The lanes for which indexes without matching entry in the sample sheet should be ignored",
     )
 
     #: Search-enabled manager.
@@ -388,6 +397,8 @@ class FlowCell(models.Model):
                     barcode = library.barcode2
                     barcode_seq = library.barcode_seq2
                 the_seq = barcode.sequence if barcode else barcode_seq
+                if not the_seq:
+                    continue
                 if (
                     hist.index_read_no == 2
                     and self.sequencing_machine.dual_index_workflow == INDEX_WORKFLOW_B
@@ -397,14 +408,18 @@ class FlowCell(models.Model):
             # Collect errors and write into result
             for seq, _ in hist.histogram.items():
                 errors = []
-                if seq in self.get_known_contaminations():
+                if not seq or seq in self.get_known_contaminations():
                     continue  # contamination are not errors, will be displayed in template
                 if not prefix_match(seq, expected_seqs):
-                    errors += [
-                        "found barcode {} on lane {} and index read {} in BCLs but not in sample sheet".format(
-                            seq, hist.lane, hist.index_read_no
-                        )
-                    ]
+                    if (
+                        hist.lane
+                        not in self.lanes_suppress_no_sample_found_for_observed_index_warning
+                    ):
+                        errors += [
+                            "found barcode {} on lane {} and index read {} in BCLs but not in sample sheet".format(
+                                seq, hist.lane, hist.index_read_no
+                            )
+                        ]
                 if errors:
                     result[(hist.lane, hist.index_read_no, seq)] = errors
         self._index_errors = result
@@ -691,6 +706,20 @@ class Library(models.Model):
     #: The lanes that the library was sequenced on on the flow cell
     lane_numbers = ArrayField(models.IntegerField(validators=[MinValueValidator(1)]))
 
+    #: Whether or not to suppress errors because the library could not be found in the adapter histograms.
+    suppress_barcode1_not_observed_error = models.BooleanField(
+        default=False,
+        blank=True,
+        help_text='Suppress "index not observed" error in barcode 1 for this library.',
+    )
+
+    #: Whether or not to suppress errors because the library could not be found in the adapter histograms.
+    suppress_barcode2_not_observed_error = models.BooleanField(
+        default=False,
+        blank=True,
+        help_text='Suppress "index not observed" error in barcode 2 for this library.',
+    )
+
     #: Search-enabled manager.
     objects = LibraryManager()
 
@@ -746,7 +775,7 @@ class LaneIndexHistogram(models.Model):
         FlowCell, null=False, on_delete=models.CASCADE, related_name="index_histograms"
     )
 
-    #: The lane that this is for.
+    #: The lane that this histogram is for.
     lane = models.PositiveIntegerField(null=False, help_text="The lane this information is for.")
 
     #: The number of the index read that this information is for.

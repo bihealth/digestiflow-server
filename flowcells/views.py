@@ -1,7 +1,5 @@
 """The views for the flowcells app."""
 
-import mimetypes
-import functools
 import json
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,6 +9,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.shortcuts import reverse, redirect, render
+from django.template.defaultfilters import pluralize
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from filesfolders.models import File, Folder
 from projectroles.plugins import get_backend_api
@@ -19,8 +18,8 @@ from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, Pro
 
 from barcodes.models import BarcodeSetEntry
 from digestiflow.utils import model_to_dict
-from .forms import FlowCellForm, MessageForm, FlowCellUpdateStatusForm
-from .models import FlowCell, Message, MSG_STATE_DRAFT, MSG_STATE_SENT
+from .forms import FlowCellForm, MessageForm, FlowCellUpdateStatusForm, FlowCellSuppressWarningForm
+from .models import FlowCell, Message, MSG_STATE_DRAFT, MSG_STATE_SENT, pretty_range
 
 
 class FlowCellListView(
@@ -256,6 +255,88 @@ class FlowCellUpdateStatusView(
         context["item"] = context["object"]
         context.update(context_data)
         return render(self.request, "flowcells/_flowcell_item.html", context)
+
+
+class FlowCellSuppressWarningView(
+    LoginRequiredMixin,
+    LoggedInPermissionMixin,
+    ProjectPermissionMixin,
+    ProjectContextMixin,
+    UpdateView,
+):
+    """Updating of FlowCell records, status field."""
+
+    template_name = "flowcells/flowcell_suppress_warning.html"
+    permission_required = "flowcells.modify_data"
+
+    model = FlowCell
+    form_class = FlowCellSuppressWarningForm
+
+    slug_url_kwarg = "flowcell"
+    slug_field = "sodar_uuid"
+
+    def get_form_kwargs(self):
+        result = super().get_form_kwargs()
+        result["warning"] = self.kwargs["warning"]
+        return result
+
+    def _kwarg_lanes(self):
+        return list(sorted(map(int, self.kwargs["lanes"].split(","))))
+
+    def _is_render_full(self):
+        return self.request.GET.get("render_full", "").lower() in ("true", "1")
+
+    def get_context_data(self, *args, **kwargs):
+        result = super().get_context_data()
+        result["render_full"] = self._is_render_full()
+        result["warning"] = self.kwargs["warning"]
+        result["selected_lanes"] = self._kwarg_lanes()
+        field_name = "lanes_suppress_%s_warning" % self.kwargs["warning"]
+        curr_lanes = getattr(result["object"], field_name)
+        result["other_lanes"] = list(sorted(set(curr_lanes) - set(result["selected_lanes"])))
+        result["return_to"] = self.request.GET.get("return_to")
+        result["render"] = self.request.GET.get("render")
+        return result
+
+    def form_invalid(self, form):
+        """Put errors into messages before redirecting to the view again"""
+        error_str = "; ".join(
+            "%s: %s" % (field, ", ".join(list(errors))) for field, errors in form.errors.items()
+        )
+        messages.error(self.request, error_str)
+        return redirect(self.object.get_absolute_url() + "#index-stats")
+
+    def _redirect_to(self, form):
+        """Redirect to flow cell detail view, appropriate tab."""
+        field_name = "lanes_suppress_%s_warning" % self.kwargs["warning"]
+        lanes = getattr(form.instance, field_name)
+        messages.success(
+            self.request,
+            "{} suppressions for {} {}".format(
+                "Activated" if (set(self._kwarg_lanes()) & set(lanes)) else "Deactivated",
+                pluralize(self._kwarg_lanes(), "lane,lanes"),
+                pretty_range(self._kwarg_lanes()),
+            ),
+        )
+        if self.request.GET.get("return_to", "properties") == "index-stats":
+            suffix = "#index-stats"
+        else:
+            suffix = "#properties"
+        return redirect(self.object.get_absolute_url() + suffix)
+
+    def _render_row(self, context_data={}):
+        """Just render one row."""
+        context = super().get_context_data()
+        context["item"] = context["object"]
+        context.update(context_data)
+        return render(self.request, "flowcells/_flowcell_item.html", context)
+
+    def form_valid(self, form):
+        super().form_valid(form)
+        if self.request.GET.get("return_to"):
+            return self._redirect_to(form)
+        else:  # self.request.GET.get('return_to') == "flowcell-line"
+            return self._render_row()
 
 
 class FlowCellDeleteView(

@@ -34,6 +34,9 @@
   {{ block.super }}
 
   <script type="text/javascript">
+    /**
+     * Allow clicking on the states of the flowcell list, display of update for, replace row in table.
+     */
     $(function () {
       function urlPopOverContent () {
         const div = $('<div>loading</div>')
@@ -44,9 +47,8 @@
           $(this).data('popover-url'),
           {
             success: function (response) {
-              {#console.log(response)#}
               div.html(response);
-              $(div).find('.flowcell-update-status-form').ajaxForm(function (response) {
+              $(div).find('.flowcell-update-status-form, .flowcell-suppress-warning-form').ajaxForm(function (response) {
                 self.popover("dispose")
                 let newLine = $(response)
                 newLine.find('*[data-popover-url]').popover({
