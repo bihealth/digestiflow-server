@@ -34,54 +34,6 @@
   {{ block.super }}
 
   <script type="text/javascript">
-    /**
-     * Allow clicking on the states of the flowcell list, display of update for, replace row in table.
-     */
-    $(function () {
-      function urlPopOverContent () {
-        const div = $('<div>loading</div>')
-        const self = $(this)
-        const itemRow = $(this).closest('.flowcell-item')
-
-        $.ajax(
-          $(this).data('popover-url'),
-          {
-            success: function (response) {
-              div.html(response);
-              $(div).find('.flowcell-update-status-form, .flowcell-suppress-warning-form').ajaxForm(function (response) {
-                self.popover("dispose")
-                let newLine = $(response)
-                newLine.find('*[data-popover-url]').popover({
-                  html: true,
-                  content: urlPopOverContent,
-                })
-                itemRow.replaceWith(newLine)
-                if (newLine.data('errors')) {
-                  $(
-                    '<div class="alert alert-danger sodar-alert-top mb-3">' +
-                    '  <div class="sodar-alert-top-content">' +
-                    newLine.data('errors') +
-                    '    <a href="#" class="pull-right sodar-alert-close-link"><i class="fa fa-close text-muted"></i></a>' +
-                    '  </div>' +
-                    '</div>'
-                  ).appendTo($('#ajax-form-errors'))
-                }
-                $('.sodar-alert-close-link').click(function () {
-                  $(this).closest('.sodar-alert-top').fadeOut('fast');
-                });
-              })
-            }
-          }
-        )
-
-        return div
-      }
-
-      $('*[data-popover-url]').popover({
-        {#trigger: 'focus',#}
-        html: true,
-        content: urlPopOverContent,
-      })
-    })
+    {% include "flowcells/_script_popover_forms.js" %}
   </script>
 {% endblock %}

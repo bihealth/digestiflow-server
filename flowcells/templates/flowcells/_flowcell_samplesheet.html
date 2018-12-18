@@ -9,7 +9,7 @@
   </div>
 {% endif %}
 
-<table class="table table-striped table-hover table-sm">
+<table class="table table-striped table-hover table-sm popover-form-container">
   <thead>
     <tr>
       <th style="width: 10px">#</th>
@@ -25,109 +25,8 @@
   </thead>
   <tbody>
     {% if object.libraries.all %}
-      {% for entry in object.libraries.all %}
-        <tr>
-          <td class="text-muted">{{ forloop.counter }}</td>
-          <td>
-            {% get_sheet_name_errors object entry as name_errors %}
-            {% get_sheet_barcode_errors object entry as barcode_errors %}
-            {% get_sheet_barcode2_errors object entry as barcode2_errors %}
-            {% get_sheet_lane_errors object entry as lane_errors %}
-            {% get_reverse_index_errors flowcell entry.sodar_uuid as reverse_errors %}
-
-            {% if name_errors or barcode_errors or barcode2_errors or lane_errors or reverse_errors %}
-              <i class="fa fa-fw fa-times text-danger"></i>
-            {% else %}
-              <i class="fa fa-fw fa-check text-success"></i>
-            {% endif %}
-          </td>
-          <td>
-            {% if name_errors %}
-              <span class="text-danger" data-toggle="tooltip" title="{{ name_errors|join:", " }}">
-            {% endif %}
-                {{ entry.name }}
-            {% if name_errors %}
-                <i class="fa fa-exclamation-triangle pl-1"></i>
-              </span>
-            {% endif %}
-          </td>
-          <td>{{ entry.reference|reference_label }}</td>
-
-          <td>
-            {% if not entry.barcode %}
-              -
-            {% else %}
-              <a href="{% url "barcodes:barcodeset-detail" project=project.sodar_uuid barcodeset=entry.barcode.barcode_set.sodar_uuid %}">
-                {{ entry.barcode.barcode_set.name }}
-              </a>
-            {% endif %}
-          </td>
-          <td class="text-nowrap">
-            {% if barcode_errors or reverse_errors.0 %}
-              <span class="text-danger" data-toggle="tooltip" title="{{ barcode_errors|chain:reverse_errors.0|join:", " }}">
-            {% endif %}
-
-            {% if not entry.barcode %}
-              {% if entry.barcode_seq %}
-                <span data-toggle="tooltip" title="manually entered barcode">
-                  {{ entry.get_barcode_seq }}
-                  <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
-                </span>
-              {% endif %}
-            {% else %}
-              {{ entry.get_barcode_seq }}
-              <span class="{% if not barcode_errors %}text-muted{% endif %}">({{ entry.barcode.name }})</span>
-            {% endif %}
-
-            {% if barcode_errors or reverse_errors.0 %}
-                <i class="fa fa-exclamation-triangle pl-1"></i>
-              </span>
-            {% endif %}
-          </td>
-
-          <td>
-            {% if not entry.barcode2 %}
-              -
-            {% else %}
-              <a href="{% url "barcodes:barcodeset-detail" project=project.sodar_uuid barcodeset=entry.barcode2.barcode_set.sodar_uuid %}">
-                {{ entry.barcode.barcode_set.name }}
-              </a>
-            {% endif %}
-          </td>
-          <td class="text-nowrap">
-            {% if barcode2_errors or reverse_errors.1 %}
-              <span class="text-danger" data-toggle="tooltip" title="{{ barcode2_errors|chain:reverse_errors.1|join:", " }}">
-            {% endif %}
-
-            {% if not entry.barcode2 %}
-              {% if entry.barcode2 %}
-                <span data-toggle="tooltip" title="manually entered barcode">
-                  {{ entry.get_barcode_seq2 }}
-                  <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
-                </span>
-              {% endif %}
-            {% else %}
-              {{ entry.get_barcode_seq2 }}
-              <span class="{% if not barcode2_errors %}text-muted{% endif %}">({{ entry.barcode2.name }})</span>
-            {% endif %}
-
-            {% if barcode2_errors or reverse_errors.1 %}
-                <i class="fa fa-exclamation-triangle pl-1"></i>
-              </span>
-            {% endif %}
-          </td>
-
-          <td>
-            {% if lane_errors %}
-              <span class="text-danger" data-toggle="tooltip" title="{{ lane_errors|join:", " }}">
-            {% endif %}
-                {{ entry.lane_numbers|pretty_range }}
-            {% if lane_errors %}
-                <i class="fa fa-exclamation-triangle pl-1"></i>
-              </span>
-            {% endif %}
-          </td>
-        </tr>
+      {% for item in object.libraries.all %}
+        {% include "flowcells/_library_item.html" %}
       {% endfor %}
     {% else %}
       <tr>

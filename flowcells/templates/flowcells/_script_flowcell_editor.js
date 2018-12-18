@@ -19,6 +19,11 @@ function barcodeValidator (query, report) {
 
 // Validate an integer range.
 function integerRangeValidator (query, report) {
+  if (!query) {
+    // allow empty field
+    report(true)
+    return
+  }
   try {
     new MultiRange(query) // eslint-disable-line
   } catch (_e) {
@@ -56,6 +61,20 @@ let labelToReference = {}
 references.forEach((entry) => {
   labelToReference[entry.label] = entry.key
 })
+
+function forEachInRange(sel, callback) {
+  for (let i = 0; i < sel.length; ++i) {
+    let frmCol = Math.min(sel[i].from.col, sel[i].to.col)
+    let toCol = Math.max(sel[i].from.col, sel[i].to.col)
+    let frmRow = Math.min(sel[i].from.row, sel[i].to.row)
+    let toRow = Math.max(sel[i].from.row, sel[i].to.row)
+    for (let col = frmCol; col <= toCol; ++col) {
+      for (let row = frmRow; row <= toRow; ++row) {
+        callback(row, col)
+      }
+    }
+  }
+}
 
 $(function () {
 
@@ -110,41 +129,34 @@ $(function () {
         'reverse_complement': {
           name: 'Reverse-complement',
           callback: function() {
-            let sel = this.getSelectedRange();
-            for (var i = 0; i < sel.length; ++i) {
-              let frmCol = Math.min(sel[i].from.col, sel[i].to.col)
-              let toCol = Math.max(sel[i].from.col, sel[i].to.col)
-              let frmRow = Math.min(sel[i].from.row, sel[i].to.row)
-              let toRow = Math.max(sel[i].from.row, sel[i].to.row)
-              for (var col = frmCol; col <= toCol; ++col) {
-                for (var row = frmRow; row <= toRow; ++row) {
-                  if (col == 3 || col == 5) {
-                    if (this.getDataAtCell(row, col - 1) == 'type barcode -->') {
-                      this.setDataAtCell(row, col, revComp(this.getDataAtCell(row, col)));
-                    }
-                  }
-                }
+            function callback (row, col) {
+              if (col == 3 || col == 5) {
+                this.setDataAtCell(row, col, revComp(this.getDataAtCell(row, col)));
               }
             }
+            forEachInRange(this.getSelectedRange(), callback.bind(this))
           }
         },
         'name_lookup' : {
           name: 'Re-do name lookup',
           callback: function() {
-            let sel = this.getSelectedRange();
-            for (var i = 0; i < sel.length; ++i) {
-              let frmCol = Math.min(sel[i].from.col, sel[i].to.col)
-              let toCol = Math.max(sel[i].from.col, sel[i].to.col)
-              let frmRow = Math.min(sel[i].from.row, sel[i].to.row)
-              let toRow = Math.max(sel[i].from.row, sel[i].to.row)
-              for (var col = frmCol; col <= toCol; ++col) {
-                for (var row = frmRow; row <= toRow; ++row) {
-                  if (col == 3 || col == 5) {
-                    performNameLookup(row, col, this.getDataAtCell(row, col))
-                  }
-                }
+            function callback (row, col) {
+              if (col == 3 || col == 5) {
+                performNameLookup(row, col, this.getDataAtCell(row, col))
               }
             }
+            forEachInRange(this.getSelectedRange(), callback.bind(this))
+          }
+        },
+        'replace_bad_chars': {
+          name: 'Fix sample names',
+          callback: function() {
+            function callback (row, col) {
+              if (col == 0) {
+                this.setDataAtCell(row, col, this.getDataAtCell(row, col).replace(/[^a-zA-Z0-9_-]/g, '_'))
+              }
+            }
+            forEachInRange(this.getSelectedRange(), callback.bind(this))
           }
         }
       }
@@ -197,7 +209,10 @@ $(function () {
         data: getDataFromLibrariesJson(originalLibrariesJson),
         cells: hotCells
       })
-      setTimeout(function() { hotTable.render() }, 200)
+      setTimeout(function() {
+        hotTable.validateCells()
+        hotTable.render()
+      }, 200)
     })
 
   // Get table data from libraries JSON data

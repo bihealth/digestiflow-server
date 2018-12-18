@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 {% load flowcells %}
 
-<form class="flowcell-suppress-warning-form" action="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=object.sodar_uuid warning=warning lanes=selected_lanes|join:"," %}?{% if render_full %}render_full=true{% endif %}{% if return_to %}&return_to={{ return_to }}{% endif %}" method="post">
+<form class="popover-ajax-form" action="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=object.sodar_uuid warning=warning lanes=selected_lanes|join:"," %}?{% if render_full %}render_full=true{% endif %}{% if return_to %}&return_to={{ return_to }}{% endif %}" method="post">
   {% csrf_token %}
 
   {% for lane in other_lanes %}

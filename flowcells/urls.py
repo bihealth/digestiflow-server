@@ -57,4 +57,12 @@ urlpatterns = [
         view=views.FlowCellSuppressWarningView.as_view(),
         name="flowcell-suppress-warning",
     ),
+    url(
+        regex=(
+            r"^(?P<project>[0-9a-f-]+)/flowcell/(?P<flowcell>[0-9a-f-]+)/suppress-warning/"
+            r"(?P<library>[0-9a-f-]+)/(?P<barcode_no>[12])/$"
+        ),
+        view=views.LibrarySuppressWarningView.as_view(),
+        name="library-suppress-warning",
+    ),
 ]

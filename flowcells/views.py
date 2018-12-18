@@ -18,8 +18,17 @@ from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, Pro
 
 from barcodes.models import BarcodeSetEntry
 from digestiflow.utils import model_to_dict
-from .forms import FlowCellForm, MessageForm, FlowCellUpdateStatusForm, FlowCellSuppressWarningForm
-from .models import FlowCell, Message, MSG_STATE_DRAFT, MSG_STATE_SENT, pretty_range
+from .forms import (
+    FlowCellForm,
+    MessageForm,
+    FlowCellUpdateStatusForm,
+    FlowCellSuppressWarningForm,
+    LibrarySuppressWarningForm,
+)
+from .models import FlowCell, Message, MSG_STATE_DRAFT, MSG_STATE_SENT, pretty_range, Library
+
+
+# TODO: need to provide query set by project?!
 
 
 class FlowCellListView(
@@ -264,7 +273,7 @@ class FlowCellSuppressWarningView(
     ProjectContextMixin,
     UpdateView,
 ):
-    """Updating of FlowCell records, status field."""
+    """Updating of FlowCell records lane suppress warnings fields."""
 
     template_name = "flowcells/flowcell_suppress_warning.html"
     permission_required = "flowcells.modify_data"
@@ -326,7 +335,7 @@ class FlowCellSuppressWarningView(
 
     def _render_row(self, context_data={}):
         """Just render one row."""
-        context = super().get_context_data()
+        context = self.get_context_data()
         context["item"] = context["object"]
         context.update(context_data)
         return render(self.request, "flowcells/_flowcell_item.html", context)
@@ -337,6 +346,61 @@ class FlowCellSuppressWarningView(
             return self._redirect_to(form)
         else:  # self.request.GET.get('return_to') == "flowcell-line"
             return self._render_row()
+
+
+class LibrarySuppressWarningView(
+    LoginRequiredMixin,
+    LoggedInPermissionMixin,
+    ProjectPermissionMixin,
+    ProjectContextMixin,
+    UpdateView,
+):
+    """Updating of Library records, suppression of index warnings."""
+
+    template_name = "flowcells/library_suppress_warning.html"
+    permission_required = "flowcells.modify_data"
+
+    model = Library
+    form_class = LibrarySuppressWarningForm
+
+    slug_url_kwarg = "library"
+    slug_field = "sodar_uuid"
+
+    def _is_render_full(self):
+        return self.request.GET.get("render_full", "").lower() in ("true", "1")
+
+    def get_context_data(self, *args, **kwargs):
+        result = super().get_context_data()
+        result["forloop_counter"] = self.request.GET.get("forloop_counter", "")
+        result["render_full"] = self._is_render_full()
+        result["barcode_no"] = self.kwargs["barcode_no"]
+        if result["barcode_no"] == "1":
+            result["other_barcode_no"] = "2"
+            result["other_state"] = self.object.suppress_barcode2_not_observed_error
+        else:
+            result["other_barcode_no"] = "1"
+            result["other_state"] = self.object.suppress_barcode1_not_observed_error
+        return result
+
+    def form_invalid(self, form):
+        """Put errors into messages before redirecting to the view again"""
+        error_str = "; ".join(
+            "%s: %s" % (field, ", ".join(list(errors))) for field, errors in form.errors.items()
+        )
+        messages.error(self.request, error_str)
+        return redirect(self.object.get_absolute_url() + "#sample-sheet")
+
+    def _render_row(self, context_data={}):
+        """Just render one row."""
+        context = self.get_context_data()
+        context["item"] = context["object"]
+        context["render_full"] = self._is_render_full()
+        context.update(context_data)
+        return render(self.request, "flowcells/_library_item.html", context)
+
+    def form_valid(self, form):
+        super().form_valid(form)
+        return self._render_row()
 
 
 class FlowCellDeleteView(

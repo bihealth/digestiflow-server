@@ -127,34 +127,7 @@
   </script>
 
   <script type="text/javascript">
-    /**
-     * Handling of error suppression forms.
-     *
-     * We don't use ajaxForm() here but simply do a full post.  Updating is simpler this way.
-     */
-    $(function () {
-      function urlPopOverContent () {
-        const div = $('<div>loading</div>')
-
-        $.ajax(
-          $(this).data('popover-url'),
-          {
-            success: function (response) {
-              console.log(response)
-              div.html(response)
-            }
-          }
-        )
-
-        return div
-      }
-
-      $('.index-histograms-table *[data-popover-url], .flowcell-properties *[data-popover-url]').popover({
-        {#trigger: 'focus',#}
-        html: true,
-        content: urlPopOverContent,
-      })
-    })
+    {% include "flowcells/_script_popover_forms.js" %}
   </script>
 
 {% endblock %}

@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 {% load flowcells %}
 
-<form class="flowcell-update-status-form" action="{% url 'flowcells:flowcell-update-status' project=project.sodar_uuid flowcell=object.sodar_uuid attribute=attribute %}{% if render_full %}?render_full=true{% endif %}" method="post">
+<form class="popover-ajax-form" action="{% url 'flowcells:flowcell-update-status' project=project.sodar_uuid flowcell=object.sodar_uuid attribute=attribute %}{% if render_full %}?render_full=true{% endif %}" method="post">
   {% csrf_token %}
 
   {% for field in form %}

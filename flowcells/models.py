@@ -369,6 +369,8 @@ class FlowCell(models.Model):
     def get_index_errors(self):
         """Analyze index histograms for problems and inconsistencies with sample sheet.
 
+        Finds index histogram sequences that are not present in the sample sheet.
+
         Return map from lane number, index read, and sequence to list of errors.
         """
         if hasattr(self, "_index_errors"):
@@ -456,14 +458,20 @@ class FlowCell(models.Model):
                     seen_seqs = set()
                     for hist in lane_histos.get(lane_number, {}).get(1, []):
                         seen_seqs |= set(hist.histogram.keys())
-                    if not prefix_match(library.get_barcode_seq(), seen_seqs):
+                    if (
+                        not prefix_match(library.get_barcode_seq(), seen_seqs)
+                        and not library.suppress_barcode1_not_observed_error
+                    ):
                         error_lanes.append(lane_number)
                 # Check for error in barcode2
                 if library.get_barcode_seq2():
                     seen_seqs2 = set()
                     for hist in lane_histos.get(lane_number, {}).get(2, []):
                         seen_seqs2 |= set(hist.histogram.keys())
-                    if not prefix_match(library.get_barcode_seq2(), seen_seqs2):
+                    if (
+                        not prefix_match(library.get_barcode_seq2(), seen_seqs2)
+                        and not library.suppress_barcode2_not_observed_error
+                    ):
                         error_lanes2.append(lane_number)
             # Build error message for this library, if any lanes are problematic
             msgs = []

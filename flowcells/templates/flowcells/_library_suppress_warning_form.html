@@ -1,0 +1,19 @@
+{% load crispy_forms_tags %}
+{% load flowcells %}
+
+<form class="popover-ajax-form" action="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=object.flow_cell.sodar_uuid library=object.sodar_uuid barcode_no=barcode_no %}?{% if forloop_counter %}forloop_counter={{ forloop_counter }}{% endif %}&{% if render_full %}render_full=true{% endif %}" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="suppress_barcode{{ other_barcode_no }}_not_observed_error" {% if other_state %}value="on"{% endif %} />
+  <button type="submit" class="btn btn-sm btn-primary" name="suppress_barcode{{ barcode_no }}_not_observed_error">
+    <i class="fa fa-exclamation-triangle"></i>
+    Show Warning
+  </button>
+</form>
+<form class="popover-ajax-form" action="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=object.flow_cell.sodar_uuid library=object.sodar_uuid barcode_no=barcode_no %}?{% if forloop_counter %}forloop_counter={{ forloop_counter }}{% endif %}&{% if render_full %}render_full=true{% endif %}" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="suppress_barcode{{ other_barcode_no }}_not_observed_error" {% if other_state %}value="on"{% endif %} />
+  <button type="submit" class="btn btn-sm btn-secondary" name="suppress_barcode{{ barcode_no }}_not_observed_error" value="1">
+    <i class="fa fa-ban"></i>
+    Suppress Warning
+  </button>
+</form>

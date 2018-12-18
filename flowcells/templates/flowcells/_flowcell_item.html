@@ -1,31 +1,47 @@
 {% load flowcells %}
 
-<tr class="flowcell-item" {% if errors %}data-errors="{{ errors }}"{% endif %}>
+<tr class="popover-replace-item" {% if errors %}data-errors="{{ errors }}"{% endif %}>
   <td class="text-nowrap">
+    {% get_lanes_with_missing_sheets flowcell False as lanes_with_missing_sheets %} {# EXCLUDES suppressed #}
     {% get_lanes_with_missing_sheets flowcell True as any_lanes_with_missing_sheets %} {# includes suppressed #}
-    {% get_lanes_with_missing_sheets flowcell as warning_lanes_with_missing_sheets %} {# EXCLUDES suppressed #}
+    {% get_libraries_with_suppressed_reverse_index_errors flowcell as libraries_with_suppressed_reverse_index_errors %}
+    {% get_index_error_lanes flowcell True as any_lanes_with_index_errors %}  {# includes suppressed #}
+
     {% if flowcell.get_sample_sheet_errors %}
+      {# sample sheet errors (sample name and uniqueness); cannot be suppressed #}
       <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
          data-toggle="tooltip"
          title="There were errors with the sample sheet!"></i>
-    {% elif flowcell.get_index_errors %}
-      {% if not flowcell.libraries.all %}
-        <i class="fa fc-fw fa-question-circle text-warning" aria-hidden="true"
-           data-toggle="tooltip"
-           title="The sample sheet is empty!"></i>
-      {% else %}
-        <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
-           data-toggle="tooltip"
-           title="There were errors with indexes!"></i>
-      {% endif %}
+    {% elif flowcell.get_index_errors and flowcell.libraries.all %}
+      {# index errors (BCL -> sheet) and sample sheet NOT empty, other case see below #}
+      <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
+         data-toggle="tooltip"
+         title="There were errors with indexes!"></i>
+    {% elif flowcell.get_index_errors and not flowcell.libraries.all %}
+      {# index errors (BCL -> sheet) and sample sheet IS empty, other case see above #}
+      <i class="fa fc-fw fa-exclamation-circle text-warning" aria-hidden="true"
+         data-toggle="tooltip"
+         title="The sample sheet is empty!"></i>
+    {% elif lanes_with_missing_sheets %}
+      {# missing sample sheet for some lanes; can be suppressed, see below #}
+      <i class="fa fc-fw fa-exclamation-circle text-warning" title="Missing sample sheet"
+         data-toggle="tooltip"
+         data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=any_lanes_with_missing_sheets|join:"," %}?render=flowcell-line"></i>
+    {% elif flowcell.get_reverse_index_errors %}
+      {# reverse index errors (sheet -> BCL); suppressed case #}
+      <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
+         data-toggle="tooltip"
+         title="Indexes from sample sheet cannot be found in BCLs!"></i>
+    {% elif libraries_with_suppressed_reverse_index_errors %}
+      {# reverse index errors (sheet -> BCL); can be suppressed, see below #}
+      <i class="fa fc-fw fa-exclamation-circle text-muted" aria-hidden="true"
+         data-toggle="tooltip"
+         title="Suppressed warnings about indices in sample sheet that cannot be found in BCLs."></i>
     {% elif any_lanes_with_missing_sheets %}
-        {% if warning_lanes_with_missing_sheets %}
-          <i class="fa fc-fw fa-exclamation-circle text-warning" title="Suppress Missing Sheet Warning{{ lanes_with_missing_sheets|pluralize:"s" }}?"
-           data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=any_lanes_with_missing_sheets|join:"," %}?render=flowcell-line"></i>
-        {% else %}
-          <i class="fa fc-fw fa-exclamation-circle text-muted" title="Suppress Missing Sheet Warning{{ lanes_with_missing_sheets|pluralize:"s" }}?"
-           data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=any_lanes_with_missing_sheets|join:"," %}?render=flowcell-line"></i>
-        {% endif %}
+      {# missing sample sheet for some lanes; suppressed case #}
+       <i class="fa fc-fw fa-exclamation-circle text-muted" title="Suppressed warning about missing sample sheet"
+          data-toggle="tooltip"
+          data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=any_lanes_with_missing_sheets|join:"," %}?render=flowcell-line"></i>
     {% else %}
       <i class="fa fc-fw fa-check text-muted fc-super-muted" aria-hidden="true"></i>
     {% endif %}

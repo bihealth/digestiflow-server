@@ -15,6 +15,7 @@ from .models import (
     SEQUENCING_STATUS_CHOICES,
     CONVERSION_STATUS_CHOICES,
     DELIVERY_STATUS_CHOICES,
+    Library,
 )
 
 
@@ -96,7 +97,8 @@ class FlowCellForm(forms.ModelForm):
             name_dict["date"], "%y%m%d"
         ).date()
         self.cleaned_data["sequencing_machine"] = get_object_or_none(
-            SequencingMachine, vendor_id=name_dict["machine_name"]
+            SequencingMachine.objects.filter(project=self.instance.project),
+            vendor_id=name_dict["machine_name"],
         )
         if self.cleaned_data["sequencing_machine"] is None:
             self.add_error("name", "Unknown sequencing machine")
@@ -170,7 +172,7 @@ class IntegerMultipleChoiceField(forms.MultipleChoiceField):
 
 
 class FlowCellSuppressWarningForm(forms.ModelForm):
-    """Helper form for suppressing warnings.
+    """Helper form for suppressing warnings on flow cells.
 
     This form can be used for updating the warning suppression lane list fields that are stored in the ``FlowCell`
     model itself ("no sample sheet information for lane" and "adapter found in BCL but not in sample sheet").
@@ -195,6 +197,17 @@ class FlowCellSuppressWarningForm(forms.ModelForm):
             "lanes_suppress_no_sample_found_for_observed_index_warning",
             "lanes_suppress_no_sample_sheet_warning",
         )
+
+
+class LibrarySuppressWarningForm(forms.ModelForm):
+    """Helper form for suppressing warnings on libraries.
+
+    This form can be used for updating the per-library warning suppression fields.
+    """
+
+    class Meta:
+        model = Library
+        fields = ("suppress_barcode1_not_observed_error", "suppress_barcode2_not_observed_error")
 
 
 class MessageForm(forms.ModelForm):

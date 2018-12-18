@@ -1,10 +1,10 @@
 import itertools
 
 from django import template
+from django.db.models import Q
 
 from ..models import (
     FlowCell,
-    KnownIndexContamination,
     REFERENCE_CHOICES,
     pretty_range,
     SEQUENCING_STATUS_CHOICES,
@@ -78,6 +78,21 @@ def get_lane_index_errors(flowcell, lane):
 
 
 @register.simple_tag
+def get_index_error_lanes(flowcell, ignore_suppressions=False):
+    if ignore_suppressions:
+        result = list(flowcell.lanes_suppress_no_sample_found_for_observed_index_warning)
+    else:
+        result = []
+    for (lane, _, _), _ in flowcell.get_index_errors().items():
+        if (
+            ignore_suppressions
+            or lane not in flowcell.lanes_suppress_no_sample_found_for_observed_index_warning
+        ):
+            result.append(lane)
+    return list(sorted(set(result)))
+
+
+@register.simple_tag
 def get_index_errors(flowcell, lane, index_read_no, sequence):
     return flowcell.get_index_errors().get((lane, index_read_no, sequence))
 
@@ -130,6 +145,14 @@ def get_known_contaminations(flowcell):
 @register.simple_tag
 def has_sheet_for_lane(flowcell, lane):
     return flowcell.has_sheet_for_lane(lane)
+
+
+@register.simple_tag
+def get_libraries_with_suppressed_reverse_index_errors(flowcell):
+    """Return libraries of flowcell with suppressed reversed index errors"""
+    return flowcell.libraries.filter(
+        Q(suppress_barcode1_not_observed_error=True) | Q(suppress_barcode2_not_observed_error=True)
+    )
 
 
 @register.simple_tag
