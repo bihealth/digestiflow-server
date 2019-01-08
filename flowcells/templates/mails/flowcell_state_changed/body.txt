@@ -1,0 +1,13 @@
+Dear {{ user.name }}.
+
+the flow cell
+
+    {{ flowcell.vendor_id }}
+
+has just been created.
+
+You are receiving this email because you are watching this flow cell.
+
+Cheers,
+
+Digestiflow Web UI

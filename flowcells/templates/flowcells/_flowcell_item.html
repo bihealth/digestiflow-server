@@ -6,6 +6,7 @@
     {% get_lanes_with_missing_sheets flowcell True as any_lanes_with_missing_sheets %} {# includes suppressed #}
     {% get_libraries_with_suppressed_reverse_index_errors flowcell as libraries_with_suppressed_reverse_index_errors %}
     {% get_index_error_lanes flowcell True as any_lanes_with_index_errors %}  {# includes suppressed #}
+    {% is_user_watching_flowcell request.user flowcell as is_watching %}
 
     {% if flowcell.get_sample_sheet_errors %}
       {# sample sheet errors (sample name and uniqueness); cannot be suppressed #}
@@ -45,6 +46,15 @@
     {% else %}
       <i class="fa fc-fw fa-check text-muted fc-super-muted" aria-hidden="true"></i>
     {% endif %}
+
+    {% if is_watching %}
+      <i class="fa fc-fw fa-eye text-muted" title="watching flow cell, click to toggle"
+         data-toggle-url="{% url 'flowcells:flowcell-toggle-watching' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}?render=flowcell-line"></i>
+    {% else %}
+      <i class="fa fc-fw fa-eye-slash fc-super-muted" title="not watching, click to toggle"
+         data-toggle-url="{% url 'flowcells:flowcell-toggle-watching' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}?render=flowcell-line"></i>
+    {% endif %}
+
     <i class="ml-3 {{ flowcell.status_sequencing|status_to_icon }}"
        title="Update sequencing status"
        data-popover-url="{% url 'flowcells:flowcell-update-status' project=project.sodar_uuid flowcell=flowcell.sodar_uuid attribute="status_sequencing" %}"

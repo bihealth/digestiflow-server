@@ -1,0 +1,15 @@
+Dear {{ user.name }}.
+
+the flow cell
+
+    {{ flowcell.vendor_id }}
+
+has just been created.
+
+You are receiving this email because you are subscribed to the project
+
+    {{ flowcell.project.title }}
+
+Cheers,
+
+Digestiflow Web UI

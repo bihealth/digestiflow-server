@@ -178,7 +178,7 @@ def status_to_icon(status):
         "ready": "fa fc-fw fa-hourglass-1 text-info",
         "in_progress": "fc-fw fa fa-hourglass-half",
         "complete": "fa fc-fw fa-hourglass-end text-success",
-        "complete_warnings": "fa fc-fw fa-warning -end text-warning",
+        "complete_warnings": "fa fc-fw fa-warning text-warning",
         "failed": "fa fc-fw fa-hourglass-end text-danger",
         "closed": "fa fc-fw fa-check text-success",
         "closed_warnings": "fa fc-fw fa-warning text-warning",
@@ -213,3 +213,9 @@ def valid_status(attribute, value):
         return value in dict(DELIVERY_STATUS_CHOICES)
     else:
         return False
+
+
+@register.simple_tag
+def is_user_watching_flowcell(user, flowcell):
+    """Wehther the ``user`` is watching ``flowcell``"""
+    return flowcell.is_user_watching(user)

@@ -50,6 +50,11 @@ urlpatterns = [
         name="flowcell-update-status",
     ),
     url(
+        regex=r"^(?P<project>[0-9a-f-]+)/flowcell/(?P<flowcell>[0-9a-f-]+)/toggle-watching/$",
+        view=views.FlowCellToggleWatchingView.as_view(),
+        name="flowcell-toggle-watching",
+    ),
+    url(
         regex=(
             r"^(?P<project>[0-9a-f-]+)/flowcell/(?P<flowcell>[0-9a-f-]+)/suppress-warning/"
             r"(?P<warning>no_sample_sheet|no_sample_found_for_observed_index)/(?P<lanes>[0-9]+(?:,[0-9]+)*)/$"

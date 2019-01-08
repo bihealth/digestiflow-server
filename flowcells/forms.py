@@ -199,6 +199,12 @@ class FlowCellSuppressWarningForm(forms.ModelForm):
         )
 
 
+class FlowCellToggleWatchingForm(forms.ModelForm):
+    class Meta:
+        model = FlowCell
+        fields = ()
+
+
 class LibrarySuppressWarningForm(forms.ModelForm):
     """Helper form for suppressing warnings on libraries.
 

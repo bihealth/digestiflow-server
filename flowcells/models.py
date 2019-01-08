@@ -1,6 +1,7 @@
 import re
 import uuid as uuid_object
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.core.urlresolvers import reverse
@@ -15,6 +16,10 @@ from digestiflow.users.models import User
 from digestiflow.utils import revcomp
 from barcodes.models import BarcodeSet, BarcodeSetEntry
 from sequencers.models import SequencingMachine, INDEX_WORKFLOW_B
+
+
+# Access Django user model
+AUTH_USER_MODEL = getattr(settings, "AUTH_USER_MODEL", "auth.User")
 
 
 def pretty_range(value):
@@ -608,12 +613,62 @@ class FlowCell(models.Model):
         self._sheet_errors = result
         return result
 
+    def is_user_watching(self, user):
+        """Return whether the given user is watching."""
+        return self.tags.filter(user=user, name=FLOWCELL_TAG_WATCHING).exists()
+
     def __str__(self):
         return "FlowCell %s" % self.get_full_name()
 
     class Meta:
         unique_together = ("vendor_id", "run_number", "sequencing_machine")
         ordering = ("-run_date", "sequencing_machine", "run_number", "slot")
+
+
+#: Identifier for "watching" tag.
+FLOWCELL_TAG_WATCHING = "WATCHING"
+
+
+class FlowCellTag(models.Model):
+    """Tag assigned by a user to a project"""
+
+    #: FlowCell to which the tag is assigned
+    flowcell = models.ForeignKey(
+        FlowCell, null=False, related_name="tags", help_text="FlowCell to which the tag is assigned"
+    )
+
+    #: User for whom the tag is assigned
+    user = models.ForeignKey(
+        AUTH_USER_MODEL,
+        null=False,
+        related_name="flowcell_tags",
+        help_text="User for whom the tag is assigned",
+    )
+
+    #: Name of tag to be assigned
+    name = models.CharField(
+        max_length=64,
+        unique=False,
+        null=False,
+        blank=False,
+        default=FLOWCELL_TAG_WATCHING,
+        help_text="Name of tag to be assigned",
+    )
+
+    #: FlowCellTag SODAR UUID
+    sodar_uuid = models.UUIDField(
+        default=uuid_object.uuid4, unique=True, help_text="FlowCellTag SODAR UUID"
+    )
+
+    class Meta:
+        ordering = ["flowcell__vendor_id", "user__username", "name"]
+
+    def __str__(self):
+        return "{}: {}: {}".format(self.flowcell.title, self.user.username, self.name)
+
+    def __repr__(self):
+        values = (self.flowcell.title, self.user.username, self.name)
+        return "ProjectUserTag({})".format(", ".join(repr(v) for v in values))
 
 
 #: Reference used for identifying human samples

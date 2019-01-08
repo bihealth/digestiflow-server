@@ -1,5 +1,7 @@
 /**
  * Allow clicking on the states of the flowcell list, display of update for, replace row in table.
+ *
+ * Also enable toggling by clicking on small eye.
  */
 $(function () {
   function urlPopOverContent () {
@@ -19,7 +21,7 @@ $(function () {
               html: true,
               content: urlPopOverContent,
             })
-            console.log(newLine.find('*[data-popover-url]'))
+            newLine.find('*[data-toggle-url]').click(urlToggle)
             itemRow.replaceWith(newLine)
             if (newLine.data('errors')) {
               $(
@@ -42,10 +44,30 @@ $(function () {
     return div
   }
 
+  function urlToggle () {
+    const itemRow = $(this).closest('.popover-replace-item')
+
+    $.ajax(
+      $(this).data('toggle-url'),
+      {
+        success: function (response) {
+          let newLine = $(response)
+          newLine.find('*[data-toggle-url]').click(urlToggle)
+          newLine.find('*[data-popover-url]').popover({
+            html: true,
+            content: urlPopOverContent,
+          })
+          itemRow.replaceWith(newLine)
+        }
+      }
+    )
+  }
+
   $('.popover-form-container *[data-popover-url]').popover({
     html: true,
     content: urlPopOverContent,
   })
+  $('*[data-toggle-url]').click(urlToggle)
 })
 
 

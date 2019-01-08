@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.files.base import ContentFile
 from django.db import transaction
+from django.http import HttpResponse
 from django.shortcuts import reverse, redirect, render
 from django.template.defaultfilters import pluralize
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
@@ -23,9 +24,18 @@ from .forms import (
     MessageForm,
     FlowCellUpdateStatusForm,
     FlowCellSuppressWarningForm,
+    FlowCellToggleWatchingForm,
     LibrarySuppressWarningForm,
 )
-from .models import FlowCell, Message, MSG_STATE_DRAFT, MSG_STATE_SENT, pretty_range, Library
+from .models import (
+    FlowCell,
+    Message,
+    MSG_STATE_DRAFT,
+    MSG_STATE_SENT,
+    pretty_range,
+    Library,
+    FLOWCELL_TAG_WATCHING,
+)
 
 
 # TODO: need to provide query set by project?!
@@ -353,6 +363,51 @@ class FlowCellUpdateStatusView(
         context["item"] = context["object"]
         context.update(context_data)
         return render(self.request, "flowcells/_flowcell_item.html", context)
+
+
+class FlowCellToggleWatchingView(
+    LoginRequiredMixin,
+    LoggedInPermissionMixin,
+    ProjectPermissionMixin,
+    ProjectContextMixin,
+    UpdateView,
+):
+    """Updating of FlowCell records, tag ``FLOWCELL_TAG_WATCHING``."""
+
+    permission_required = "flowcells.view_data"
+    template_name = "flowcells/flowcell_update_status.html"
+
+    model = FlowCell
+    form_class = FlowCellToggleWatchingForm
+
+    slug_url_kwarg = "flowcell"
+    slug_field = "sodar_uuid"
+
+    def form_invalid(self, form):
+        return self.form_valid(form)
+
+    def form_valid(self, form):
+        self._toggle_tag()
+        return self._render_row()
+
+    def _toggle_tag(self):
+        flowcell = super().get_context_data()["object"]
+        tags = flowcell.tags.filter(user=self.request.user, name=FLOWCELL_TAG_WATCHING)
+        if tags.exists():
+            tags.delete()
+        else:
+            flowcell.tags.create(user=self.request.user, name=FLOWCELL_TAG_WATCHING)
+
+    def _render_row(self, context_data={}):
+        """Just render one row."""
+        # Fresh rendering of the template row
+        context = super().get_context_data()
+        context["item"] = context["object"]
+        context.update(context_data)
+        return render(self.request, "flowcells/_flowcell_item.html", context)
+
+    def get(self, *args, **kwargs):
+        return self.post(*args, **kwargs)
 
 
 class FlowCellSuppressWarningView(

@@ -1,0 +1,1 @@
+[Digestiflow] Flow Cell State Changed: {{ flowcell.vendor_id }}
