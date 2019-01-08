@@ -66,7 +66,6 @@ class FlowCellDetailView(
     slug_url_kwarg = "flowcell"
     slug_field = "sodar_uuid"
 
-    @transaction.atomic()
     def get_context_data(self, *args, **kwargs):
         result = super().get_context_data(*args, **kwargs)
         flowcell = result["object"]
@@ -76,7 +75,97 @@ class FlowCellDetailView(
         except Message.DoesNotExit:
             instance = Message()
         result["message_form"] = MessageForm(instance=instance)
+        result["csv_v1"] = self._build_v1_csv(flowcell)
+        result["csv_v2"] = self._build_v2_csv(flowcell)
         return result
+
+    def _build_v1_csv(self, flowcell):
+        rows = [
+            [
+                "FCID",
+                "Lane",
+                "SampleID",
+                "SampleRef",
+                "Index",
+                "Description",
+                "Control",
+                "Recipe",
+                "Operator",
+                "SampleProject",
+            ]
+        ]
+        recipe = "PE_Indexing" if flowcell.is_paired else "SE_indexing"
+        for lib in flowcell.libraries.order_by("name"):
+            if lib.get_barcode_seq2():
+                barcode = "{}-{}".format(lib.get_barcode_seq(), lib.get_barcode_seq2())
+            else:
+                barcode = lib.get_barcode_seq()
+            for lane_no in sorted(lib.lane_numbers):
+                rows.append(
+                    [
+                        flowcell.vendor_id,
+                        lane_no,
+                        lib.name,
+                        lib.reference,
+                        barcode,
+                        "",
+                        "N",  # not PhiX
+                        recipe,
+                        flowcell.operator,
+                        "Project",
+                    ]
+                )
+        return "\n".join("\t".join(map(str, row)) for row in rows)
+
+    def _build_v2_csv(self, flowcell):
+        date = flowcell.run_date.strftime("%y/%m/%d")
+        rows = [
+            ["[Header]"],
+            ["IEMFileVersion", "4"],
+            ["Investigator Name", flowcell.operator],
+            ["Experiment Name", "Project"],
+            ["Date", date],
+            ["Workflow", "GenerateFASTQ"],
+            ["Applications", "FASTQ Only"],
+            ["Assay", "TruSeq HT"],
+            ["Description", ""],
+            [],
+            ["[Reads]"],
+        ]
+        for tup in flowcell.get_planned_reads_tuples():
+            if tup[1] == "T":
+                rows.append([str(tup[0])])
+        rows += [
+            [],
+            ["[Data]"],
+            [
+                "Lane",
+                "Sample_ID",
+                "Sample_Name",
+                "Sample_Plate",
+                "Sample_Well",
+                "i7_Index_ID",
+                "index",
+                "Sample_Project",
+                "Description",
+            ],
+        ]
+        for lib in flowcell.libraries.order_by("name"):
+            for lane_no in sorted(lib.lane_numbers):
+                rows.append(
+                    [
+                        lane_no,
+                        lib.name,
+                        "",
+                        "",
+                        "",
+                        lib.barcode.name,
+                        lib.barcode.sequence,
+                        "Project",
+                        "",
+                    ]
+                )
+        return "\n".join(",".join(map(str, row)) for row in rows) + "\n"  # noqa
 
 
 class FlowCellRecreateLibrariesMixin:

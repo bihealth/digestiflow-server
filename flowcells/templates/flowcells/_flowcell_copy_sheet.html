@@ -1,0 +1,21 @@
+{% load flowcells %}
+
+<div class="row">
+  <div class="col px-0">
+    <div class="card card-body bg-light pb-3">
+      <h5 class="card-title">bcl2fastq v2 Sample Sheet</h5>
+
+      <textarea rows="5" class="form-control">{{ csv_v2 }}</textarea>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col px-0">
+    <div class="card card-body bg-light pb-3 mb-0">
+      <h5 class="card-title">bcl2fastq v1 Sample Sheet</h5>
+
+      <textarea rows="5" class="form-control">{{ csv_v1 }}</textarea>
+    </div>
+  </div>
+</div>

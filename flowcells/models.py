@@ -307,6 +307,19 @@ class FlowCell(models.Model):
     #: Search-enabled manager.
     objects = FlowCellManager()
 
+    @property
+    def is_paired(self):
+        """Return whether flow cell contains paired read data."""
+        return self.planned_reads.count("T") > 1
+
+    def get_planned_reads_tuples(self):
+        """Return a tuple of planned read descriptions ``((count, letter))``."""
+        regex = re.compile("([0-9]+)([a-zA-Z])")
+        result = []
+        for count, letter in re.findall(regex, self.planned_reads):
+            result.append((count, letter))
+        return tuple(result)
+
     def get_sent_messages(self):
         """Return all published messages that are no drafts."""
         return self.messages.filter(state=MSG_STATE_SENT)
