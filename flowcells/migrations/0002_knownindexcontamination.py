@@ -34,7 +34,7 @@ def forwards_func(apps, schema_editor):
             ),
             KnownIndexContamination(
                 title="i5 single-index contamination",
-                sequence="NNNNNNNN",
+                sequence="NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN",
                 description=(
                     """Sometimes seen in i5 reads of a dual indexing library that is "contamined" with a single """
                     """index library. Also see [Illumina index sequencing – where is my sample?]"""
