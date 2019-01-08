@@ -53,6 +53,9 @@ django-debug-toolbar ==1.9.1
 # Required for collectstatic
 django-extensions ==2.1.4
 
+# Helpful for creating emails.
+django-mail-factory==0.21
+
 #####################
 # SODAR Core imports
 #####################

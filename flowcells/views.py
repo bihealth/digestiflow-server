@@ -35,6 +35,9 @@ from .models import (
     pretty_range,
     Library,
     FLOWCELL_TAG_WATCHING,
+    message_created,
+    flow_cell_created,
+    flow_cell_updated,
 )
 
 
@@ -242,6 +245,8 @@ class FlowCellCreateView(
         except Exception as e:
             messages.error(self.request, "Could not create libraries: %s" % e)
             return self.form_invalid(form)
+        # Send out Emails.
+        flow_cell_created(form.instance)
         # Register event with timeline.
         timeline = get_backend_api("timeline_backend")
         if timeline:
@@ -282,14 +287,17 @@ class FlowCellUpdateView(
     @transaction.atomic
     def form_valid(self, form):
         # Save form, get ``self.object``, ready for updating libraries.
+        original = FlowCell.objects.get(pk=form.instance.pk)
         self.object = form.save()
         try:
             self._update_libraries(self.object, form)
         except Exception as e:
             messages.error(self.request, "Could not update libraries entries: %s" % e)
             return self.form_invalid(form)
-        # Call into super class.
+        # Call into super class, store original object before saving.
         result = super().form_valid(form)
+        # Send out Emails.
+        flow_cell_updated(original, form.instance)
         # Register event with timeline.
         timeline = get_backend_api("timeline_backend")
         if timeline:
@@ -721,11 +729,13 @@ class MessageCreateView(
         self._handle_file_uploads(form.instance)
         if form.cleaned_data["submit"] == "save":
             form.instance.state = MSG_STATE_DRAFT
+            form.save()
             messages.success(self.request, "Your message has been saved as a draft.")
             return super().form_valid(form)
         else:  # form.cleaned_data["submit"] == "send"
             form.instance.state = MSG_STATE_SENT
             form.save()
+            message_created(form.instance)
             messages.success(self.request, "Your message has been successfully sent.")
             return redirect(flow_cell.get_absolute_url() + "#message-%s" % form.instance.sodar_uuid)
 

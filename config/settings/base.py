@@ -60,6 +60,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",  # For API views
     "knox",  # For token auth
     "docs",  # For the online user documentation/manual
+    "mail_factory",  # Helpers for creating emails
     # SODAR Projectroles app
     "projectroles.apps.ProjectrolesConfig",
     # SODAR Timeline app

@@ -8,8 +8,9 @@ from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Q
+from mail_factory import factory
 import pagerange
-from projectroles.models import Project
+from projectroles.models import Project, PROJECT_TAG_STARRED
 from filesfolders.models import File, Folder
 
 from digestiflow.users.models import User
@@ -671,6 +672,34 @@ class FlowCellTag(models.Model):
         return "ProjectUserTag({})".format(", ".join(repr(v) for v in values))
 
 
+def flow_cell_created(instance):
+    """Handle "save" event for ``FlowCell`` objects."""
+    # Subscribe the users that have the project starred.
+    users = [tag.user for tag in instance.project.tags.filter(name=PROJECT_TAG_STARRED)]
+    if instance.demux_operator not in users:
+        users.append(instance.demux_operator)
+    for user in users:
+        instance.flowcell_tags.create(user=user, name=PROJECT_TAG_STARRED)
+    # Notify subscribers
+    for user in users:
+        factory.mail("flowcell_created", (user.email,), {"user": user, "flowcell": instance})
+
+
+def flow_cell_updated(original, updated):
+    # Notify subscribers only on status change
+    users = [tag.user for tag in updated.tags.filter(name=FLOWCELL_TAG_WATCHING)]
+    print(original.status_conversion, updated.status_conversion)
+    if (
+        original.status_sequencing != updated.status_sequencing
+        or original.status_conversion != updated.status_conversion
+        or original.status_delivery != updated.status_delivery
+    ):
+        for user in users:
+            factory.mail(
+                "flowcell_state_changed", (user.email,), {"user": user, "flowcell": updated}
+            )
+
+
 #: Reference used for identifying human samples
 REFERENCE_HUMAN = "hg19"
 
@@ -1008,6 +1037,20 @@ class Message(models.Model):
             return self.attachment_folder.filesfolders_file_children.all()
         except Folder.DoesNotExist:
             return Folder.objects.none()
+
+
+def message_created(message):
+    """Handle "save" event for ``Message`` objects."""
+    # Notify subscribers only on status change
+    flowcell = message.flow_cell
+    users = [tag.user for tag in flowcell.tags.filter(name=FLOWCELL_TAG_WATCHING)]
+    for user in users:
+        if user != message.author:
+            factory.mail(
+                "flowcell_message",
+                (user.email,),
+                {"user": user, "flowcell": flowcell, "message": message},
+            )
 
 
 class KnownIndexContamination(models.Model):

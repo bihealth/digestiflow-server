@@ -1,10 +1,8 @@
 Dear {{ user.name }}.
 
-the flow cell
+a message was added for the following flow cell:
 
     {{ flowcell.vendor_id }}
-
-has just changed its state.
 
 You are receiving this email because you are watching this flow cell.
 
