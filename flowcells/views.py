@@ -781,6 +781,7 @@ class MessageUpdateView(
             return redirect(form.instance.flow_cell.get_absolute_url())
 
         # Handle submission with "save" or "send"
+        original = Message.objects.get(pk=form.instance.pk)
         self._handle_attachment_removal(form)
         self._handle_file_uploads(form.instance)
         if form.cleaned_data["submit"] == "save":
@@ -790,6 +791,8 @@ class MessageUpdateView(
         else:  # form.cleaned_data["submit"] == "send"
             form.instance.state = MSG_STATE_SENT
             form.instance.save()
+            if original.state == MSG_STATE_DRAFT:  # now is MSG_STATE_SENT
+                message_created(form.instance)
             messages.success(self.request, "Your message has been successfully sent.")
             flow_cell = form.instance.flow_cell
             return redirect(flow_cell.get_absolute_url() + "#message-%s" % form.instance.sodar_uuid)

@@ -15,7 +15,7 @@ from rest_framework.parsers import MultiPartParser
 
 from digestiflow.utils import ProjectMixin
 from filesfolders.models import File
-from ..models import FlowCell, LaneIndexHistogram, Message
+from ..models import FlowCell, LaneIndexHistogram, Message, flow_cell_created, flow_cell_updated, message_created, MSG_STATE_SENT, MSG_STATE_DRAFT
 from .serializers import (
     FlowCellSerializer,
     LaneIndexHistogramSerializer,
@@ -43,6 +43,10 @@ class FlowCellListCreateApiView(FlowCellApiViewMixin, ListCreateAPIView):
     serializer_class = FlowCellSerializer
     permission_required = "flowcells.modify_data"
 
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        flow_cell_created(serializer.instance)
+
 
 class FlowCellUpdateDestroyApiView(FlowCellApiViewMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
@@ -50,6 +54,11 @@ class FlowCellUpdateDestroyApiView(FlowCellApiViewMixin, RetrieveUpdateDestroyAP
     lookup_url_kwarg = "flowcell"
     lookup_field = "sodar_uuid"
     permission_required = "flowcells.modify_data"
+
+    def perform_update(self, serializer):
+        original = FlowCell.objects.get(pk=serializer.instance.pk)
+        super().perform_update(serializer)
+        flow_cell_updated(original, serializer.instance)
 
 
 class FlowCellResolveApiView(FlowCellApiViewMixin, ModelViewSet):
@@ -133,6 +142,10 @@ class MessageListCreateApiView(MessageApiViewMixin, ListCreateAPIView):
     # lookup_field = "sodar_uuid"
     permission_required = "flowcells.modify_data"
 
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        message_created(serializer.instance)
+
 
 class MessageUpdateDestroyApiView(MessageApiViewMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
@@ -140,6 +153,12 @@ class MessageUpdateDestroyApiView(MessageApiViewMixin, RetrieveUpdateDestroyAPIV
     lookup_url_kwarg = "message"
     lookup_field = "sodar_uuid"
     permission_required = "flowcells.modify_data"
+
+    def perform_update(self, serializer):
+        original = Message.objects.get(pk=serializer.instance.pk)
+        super().perform_update(serializer)
+        if original.state == MSG_STATE_DRAFT and serializer.instance.state == MSG_STATE_SENT:
+            message_created(serializer.instance)
 
 
 class AttachmentApiViewMixin(ProjectMixin):
