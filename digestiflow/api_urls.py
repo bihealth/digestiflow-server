@@ -18,6 +18,12 @@ urlpatterns = [
         view=sequencer_views.SequencingMachineCreateApiView.as_view(),
         name="sequencers",
     ),
+    # /sequencers/by-vendor-id/:project/:vendor_id/
+    url(
+        regex=r"^sequencers/by-vendor-id/(?P<project>[0-9a-f-]+)/(?P<sequencer>[^/]+)/$",
+        view=sequencer_views.SequencingMachineByVendorApiView.as_view(),
+        name="sequencers",
+    ),
     # /sequencers/:project/:sequencer/
     url(
         regex=r"^sequencers/(?P<project>[0-9a-f-]+)/(?P<sequencer>([0-9a-f-]+))$",
@@ -47,9 +53,15 @@ urlpatterns = [
     ),
     # /barcodesetentries/:project/:barcodeset/
     url(
-        regex=r"^barcodesetentries/(?P<project>[0-9a-f-]+)/(?P<barcodeset>[0-9a-f-]+)/(?P<barcodesetentry>[0-9a-f-]+)$",
+        regex=r"^barcodesetentries/(?P<project>[0-9a-f-]+)/(?P<barcodeset>[0-9a-f-]+)/(?P<barcodesetentry>[0-9a-f-]+)/$",
         view=barcode_views.BarcodeSetEntryUpdateDestroyApiView.as_view(),
         name="barcodesetentries",
+    ),
+    # /barcodesetentries/retrieve/:project/:barcodesetentry/ -- WITHOUT barcode set!
+    url(
+        regex=r"^barcodesetentries/retrieve/(?P<project>[0-9a-f-]+)/(?P<barcodesetentry>[0-9a-f-]+)/$",
+        view=barcode_views.BarcodeSetEntryRetrieveApiView.as_view(),
+        name="barcodesetentries-detail",
     ),
     #
     # App "flowcells"
@@ -68,7 +80,7 @@ urlpatterns = [
     ),
     # /flowcells/:project/resolve/:instrument/:run_no/:flowcell_id/
     url(
-        regex=r"^flowcells/(?P<project>[0-9a-f-]+)/resolve/(?P<instrument_id>.+)/(?P<run_no>.+)/(?P<flowcell_id>.+)/$",
+        regex=r"^flowcells/resolve/(?P<project>[0-9a-f-]+)/(?P<instrument_id>[^/]+)/(?P<run_no>[^/]+)/(?P<flowcell_id>[^/]+)/$",
         view=flowcell_views.FlowCellResolveApiView.as_view({"get": "resolve"}),
         name="flowcells",
     ),

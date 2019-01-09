@@ -1,6 +1,6 @@
 """API Views for the sequencers app."""
 
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from digestiflow.utils import ProjectMixin
@@ -23,7 +23,6 @@ class BarcodeSetViewMixin(ProjectMixin):
 
 
 class BarcodeSetCreateApiView(BarcodeSetViewMixin, ListCreateAPIView):
-    queryset = BarcodeSet.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = BarcodeSetSerializer
     permission_required = "barcodes.modify_data"
@@ -33,7 +32,6 @@ class BarcodeSetCreateApiView(BarcodeSetViewMixin, ListCreateAPIView):
 
 
 class BarcodeSetUpdateDestroyApiView(BarcodeSetViewMixin, RetrieveUpdateDestroyAPIView):
-    queryset = BarcodeSet.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = BarcodeSetSerializer
     permission_required = "barcodes.modify_data"
@@ -60,16 +58,27 @@ class BarcodeSetEntryApiViewMixin(ProjectMixin):
 
 
 class BarcodeSetEntryCreateApiView(BarcodeSetEntryApiViewMixin, ListCreateAPIView):
-    queryset = BarcodeSetEntry.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = BarcodeSetEntrySerializer
-    lookup_field = "barcodesetentry"
+    lookup_url_kwarg = "barcodesetentry"
+    lookup_field = "sodar_uuid"
 
 
 class BarcodeSetEntryUpdateDestroyApiView(
     BarcodeSetEntryApiViewMixin, RetrieveUpdateDestroyAPIView
 ):
-    queryset = BarcodeSetEntry.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = BarcodeSetEntrySerializer
-    lookup_field = "barcodesetentry"
+    lookup_url_kwarg = "barcodesetentry"
+    lookup_field = "sodar_uuid"
+
+
+class BarcodeSetEntryRetrieveApiView(ProjectMixin, RetrieveAPIView):
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = BarcodeSetEntrySerializer
+    lookup_url_kwarg = "barcodesetentry"
+    lookup_field = "sodar_uuid"
+
+    def get_queryset(self):
+        return BarcodeSetEntry.objects.filter(barcode_set__project=self.get_project())

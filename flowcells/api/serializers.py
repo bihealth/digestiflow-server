@@ -165,22 +165,24 @@ class FlowCellSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         validated_data["project"] = self.context["project"]
-        sequencing_machine = validated_data.pop("sequencing_machine")
-        sequencing_machine = get_object_or_404(
-            SequencingMachine.objects.filter(project=self.context["project"]),
-            vendor_id=sequencing_machine.get("vendor_id"),
-        )
-        validated_data["sequencing_machine"] = sequencing_machine
+        if "sequencing_machine" in validated_data:
+            sequencing_machine = validated_data.pop("sequencing_machine")
+            sequencing_machine = get_object_or_404(
+                SequencingMachine.objects.filter(project=self.context["project"]),
+                vendor_id=sequencing_machine.get("vendor_id"),
+            )
+            validated_data["sequencing_machine"] = sequencing_machine
         return super().update(instance, validated_data)
 
     def create(self, validated_data):
         validated_data["project"] = self.context["project"]
-        sequencing_machine = validated_data.pop("sequencing_machine")
-        sequencing_machine = get_object_or_404(
-            SequencingMachine.objects.filter(project=self.context["project"]),
-            vendor_id=sequencing_machine.get("vendor_id"),
-        )
-        validated_data["sequencing_machine"] = sequencing_machine
+        if "sequencing_machine" in validated_data:
+            sequencing_machine = validated_data.pop("sequencing_machine")
+            sequencing_machine = get_object_or_404(
+                SequencingMachine.objects.filter(project=self.context["project"]),
+                vendor_id=sequencing_machine.get("vendor_id"),
+            )
+            validated_data["sequencing_machine"] = sequencing_machine
         return super().create(validated_data)
 
     class Meta:

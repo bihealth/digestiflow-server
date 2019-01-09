@@ -15,7 +15,16 @@ from rest_framework.parsers import MultiPartParser
 
 from digestiflow.utils import ProjectMixin
 from filesfolders.models import File
-from ..models import FlowCell, LaneIndexHistogram, Message, flow_cell_created, flow_cell_updated, message_created, MSG_STATE_SENT, MSG_STATE_DRAFT
+from ..models import (
+    FlowCell,
+    LaneIndexHistogram,
+    Message,
+    flow_cell_created,
+    flow_cell_updated,
+    message_created,
+    MSG_STATE_SENT,
+    MSG_STATE_DRAFT,
+)
 from .serializers import (
     FlowCellSerializer,
     LaneIndexHistogramSerializer,
