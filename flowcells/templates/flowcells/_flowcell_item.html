@@ -145,9 +145,10 @@
     <a href="{% url 'sequencers:sequencer-detail' project=project.sodar_uuid sequencer=flowcell.sequencing_machine.sodar_uuid %}"
        data-toggle="tooltip"
        title="{{ flowcell.sequencing_machine.vendor_id }}: {{ flowcell.sequencing_machine.machine_model }}">
-      {{ flowcell.sequencing_machine.label }}
+      {{ flowcell.sequencing_machine.vendor_id }}
     </a>
-    </td>
+  </td>
+  <td class="text-right">{{ flowcell.run_number }}</td>
   <td>
     <a href="{% url 'flowcells:flowcell-detail' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}"
        title="Show flow cell {{ flowcell.vendor_id }} details">
