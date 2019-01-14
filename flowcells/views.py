@@ -641,12 +641,7 @@ class MessageAttachmentHelpersMixin:
                     secret=build_secret(),
                 )
                 content_file = ContentFile(uploaded.read())
-                print("uploaded.name", uploaded.name)
-                import ipdb
-
-                ipdb.set_trace()
                 new_file.file.save(uploaded.name, content_file)
-                raise Exception("Foo")
                 new_file.save()
 
     def _get_attachment_folder(self, message):
