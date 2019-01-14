@@ -120,13 +120,23 @@
       ></i>
     {% endif %}
     {% if flowcell.count_files %}
-      <i class="fa fc-fw fa-files-o mr-3" aria-hidden="true"
+      <i class="fa fc-fw fa-files-o" aria-hidden="true"
          data-toggle="tooltip"
          title="{{ flowcell.count_files }} file(s)"></i>
     {% else %}
-      <i class="fa fc-fw fa-files-o text-muted mr-3" aria-hidden="true" style="opacity: 0.3;"
+      <i class="fa fc-fw fa-files-o text-muted" aria-hidden="true" style="opacity: 0.3;"
          data-toggle="tooltip"
          title="no files"
+      ></i>
+    {% endif %}
+    {% if flowcell.index_histograms.all %}
+      <i class="fa fc-fw fa-bar-chart-o mr-3" aria-hidden="true"
+         data-toggle="tooltip"
+         title="has index histograms"></i>
+    {% else %}
+      <i class="fa fc-fw fa-bar-chart-o text-muted mr-3" aria-hidden="true" style="opacity: 0.3;"
+         data-toggle="tooltip"
+         title="no index histograms"
       ></i>
     {% endif %}
   </td>
@@ -142,8 +152,11 @@
     <a href="{% url 'flowcells:flowcell-detail' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}"
        title="Show flow cell {{ flowcell.vendor_id }} details">
       {{ flowcell.vendor_id }}
-      {% if flowcell.label %} <small class="text-muted text-small">{{ flowcell.label }}</small>{% endif %}
-      {% if flowcell.manual_label %} <small class="text-muted text-small">{{ flowcell.manual_label }}</small>{% endif %}
+      {% if flowcell.manual_label %}
+        <small class="text-muted text-small">{{ flowcell.manual_label }}</small>
+      {% elif flowcell.label %}
+        <small class="text-muted text-small">{{ flowcell.label }}</small>
+      {% endif %}
     </a>
   </td>
   <td>
