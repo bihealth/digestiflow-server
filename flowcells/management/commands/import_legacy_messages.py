@@ -1,4 +1,5 @@
 from datetime import datetime
+
 import json
 
 from django.contrib.auth import get_user_model
@@ -6,7 +7,7 @@ from django.db import transaction
 from django.core.management.base import BaseCommand
 from projectroles.models import Project
 
-from flowcells.models import FlowCell, Message, MSG_STATE_SENT
+from flowcells.models import Message, MSG_STATE_SENT
 
 
 class Command(BaseCommand):

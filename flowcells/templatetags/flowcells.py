@@ -63,12 +63,6 @@ def multiply(value, arg):
 
 
 @register.simple_tag
-def get_details_flowcells(project):
-    """Return error messages for the given barcode seq"""
-    return FlowCell.objects.filter(project=project)[:5]
-
-
-@register.simple_tag
 def get_lane_index_errors(flowcell, lane):
     result = []
     for (err_lane, _, _), val in flowcell.get_index_errors().items():

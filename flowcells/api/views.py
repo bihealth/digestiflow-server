@@ -2,19 +2,13 @@
 
 from django.shortcuts import get_object_or_404
 from projectroles.models import Project
-from rest_framework.generics import (
-    ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-)
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.parsers import MultiPartParser
 
 from digestiflow.utils import ProjectMixin
-from filesfolders.models import File
 from ..models import (
     FlowCell,
     LaneIndexHistogram,

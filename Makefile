@@ -25,3 +25,5 @@ serve:
 test:
 	coverage run --rcfile=setup.cfg manage.py test -v2 --settings=config.settings.test
 	coverage report
+	black -l 100 --check --exclude "/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|src)/" .
+	flake8 .

@@ -7,7 +7,7 @@ from django.views.generic.list import ListView
 from django.urls import reverse
 from knox.models import AuthToken
 
-from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, ProjectPermissionMixin
+from projectroles.views import LoggedInPermissionMixin
 from .forms import UserTokenCreateForm
 
 

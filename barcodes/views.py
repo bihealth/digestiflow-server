@@ -10,12 +10,7 @@ from django.db.models import ProtectedError
 from django.shortcuts import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from projectroles.plugins import get_backend_api
-from projectroles.views import (
-    LoggedInPermissionMixin,
-    ProjectContextMixin,
-    ProjectPermissionMixin,
-    ModelFormMixin,
-)
+from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, ProjectPermissionMixin
 
 from digestiflow.utils import model_to_dict
 from .forms import BarcodeSetForm

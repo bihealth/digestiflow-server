@@ -11,11 +11,11 @@ from django.db.models import Q
 from mail_factory import factory
 import pagerange
 from projectroles.models import Project, PROJECT_TAG_STARRED
-from filesfolders.models import File, Folder
+from filesfolders.models import Folder
 
 from digestiflow.users.models import User
 from digestiflow.utils import revcomp
-from barcodes.models import BarcodeSet, BarcodeSetEntry
+from barcodes.models import BarcodeSetEntry
 from sequencers.models import SequencingMachine, INDEX_WORKFLOW_B
 
 
@@ -30,8 +30,8 @@ def pretty_range(value):
 def prefix_match(query, db):
     """Naive implementation of "is seq prefix of one in expecteds or vice versa"."""
     for entry in db:
-        l = min(len(query), len(entry))
-        if query[:l] == entry[:l]:
+        min_len = min(len(query), len(entry))
+        if query[:min_len] == entry[:min_len]:
             return True
     return False
 

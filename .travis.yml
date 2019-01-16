@@ -1,0 +1,41 @@
+os: linux
+dist: xenial
+sudo: enabled
+language: python
+python:
+  - "3.6"
+
+env:
+  - DATABASE_URL=postgres://digestiflow:digestiflow@127.0.0.1:5432/digestiflow
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq build-essential zlib1g-dev libtiff5-dev libjpeg8-dev libfreetype6-dev
+  - sudo apt-get install -qq liblcms2-dev libwebp-dev libpq-dev graphviz-dev
+
+addons:
+  apt:
+    sources:
+      - sourceline: "ppa:jonathonf/python-3.6"
+    packages:
+      - python3.6
+      - python3.6-dev
+      - chromium-chromedriver
+  postgresql: "9.6"
+  chrome: stable
+
+install:
+  - utility/install_python_dependencies.sh
+
+before_script:
+  - psql -c "CREATE DATABASE digestiflow;" -U postgres
+  - psql -c "CREATE USER digestiflow WITH PASSWORD 'digestiflow';" -U postgres
+  - psql -c "GRANT ALL PRIVILEGES ON DATABASE digestiflow to digestiflow;" -U postgres
+  - psql -c "ALTER USER digestiflow CREATEDB;" -U postgres
+  - ln -s /usr/lib/chromium-browser/chromedriver ~/bin/chromedriver
+
+script:
+  - python manage.py collectstatic --noinput
+  - python manage.py test -v 2 --settings=config.settings.test
+  - black -l 100 --check --exclude "/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|src)/" .
+  - flake8 .

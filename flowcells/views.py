@@ -8,7 +8,6 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.files.base import ContentFile
 from django.db import transaction
-from django.http import HttpResponse
 from django.shortcuts import reverse, redirect, render
 from django.template.defaultfilters import pluralize
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
