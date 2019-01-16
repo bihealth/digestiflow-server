@@ -8,7 +8,7 @@ python-dotenv ==0.9.1
 wheel==0.30.0
 
 # Conservative Django
-django==1.11.16 # pyup: <2.0
+django==1.11.18
 
 # Configuration
 django-environ==0.4.5
