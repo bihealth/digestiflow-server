@@ -5,9 +5,9 @@ from django.db import transaction
 from django.shortcuts import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from projectroles.plugins import get_backend_api
-from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, ProjectPermissionMixin
+from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin
 
-from digestiflow.utils import model_to_dict
+from digestiflow.utils import model_to_dict, ProjectPermissionMixin
 from .forms import SequencingMachineForm
 from .models import SequencingMachine
 
@@ -22,7 +22,7 @@ class SequencingMachineListView(
     """Display list of all SequencingMachine records"""
 
     template_name = "sequencers/sequencer_list.html"
-    permission_required = "sequencers.view_data"
+    permission_required = "sequencers.view_sequencingmachine"
 
     model = SequencingMachine
 
@@ -40,7 +40,7 @@ class SequencingMachineDetailView(
     """Display detail of SequencingMachine records"""
 
     template_name = "sequencers/sequencer_detail.html"
-    permission_required = "sequencers.view_data"
+    permission_required = "sequencers.view_sequencingmachine"
 
     model = SequencingMachine
 
@@ -58,7 +58,7 @@ class SequencingMachineCreateView(
     """Display list of all SequencingMachine records"""
 
     template_name = "sequencers/sequencer_create.html"
-    permission_required = "sequencers.modify_data"
+    permission_required = "sequencers.add_sequencingmachine"
 
     model = SequencingMachine
     form_class = SequencingMachineForm
@@ -95,7 +95,7 @@ class SequencingMachineUpdateView(
     """Updating of SequencingMachine records"""
 
     template_name = "sequencers/sequencer_update.html"
-    permission_required = "sequencers.modify_data"
+    permission_required = "sequencers.change_sequencingmachine"
 
     model = SequencingMachine
     form_class = SequencingMachineForm
@@ -133,7 +133,7 @@ class SequencingMachineDeleteView(
     """Deletion of SequencingMachine records"""
 
     template_name = "sequencers/sequencer_confirm_delete.html"
-    permission_required = "sequencers.modify_data"
+    permission_required = "sequencers.delete_sequencingmachine"
 
     model = SequencingMachine
 

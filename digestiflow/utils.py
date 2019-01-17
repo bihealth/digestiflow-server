@@ -3,9 +3,11 @@
 import json
 
 from crispy_forms.helper import FormHelper
-from django.forms.models import model_to_dict as _model_to_dict
 from django.core.serializers.json import DjangoJSONEncoder
+from django.forms.models import model_to_dict as _model_to_dict
+from rest_framework.permissions import DjangoModelPermissions
 from projectroles.models import Project
+from projectroles.views import ProjectPermissionMixin as _ProjectPermissionMixin
 
 
 class HorizontalFormHelper(FormHelper):
@@ -62,3 +64,55 @@ def revcomp(s):
     """Reverse complement function"""
     comp_map = {"A": "T", "a": "t", "C": "G", "c": "g", "g": "c", "G": "C", "T": "A", "t": "a"}
     return "".join(reversed([comp_map.get(x, x) for x in s]))
+
+
+class SodarObjectInProjectPermissions(DjangoModelPermissions):
+    """DRF ``Permissions`` implementation for objects in SODAR ``projectroles.models.Project``s.
+
+    Permissions can only be checked on models having a ``project`` attribute.  Access control is based on the
+    convention action names (``${app_label}.${action}_${model_name}``) but based on roles on the containing
+    ``Project``.
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Override to patch ``self.perms_map`` to set required permissions on ``GET`` et al."""
+        super().__init__(*args, **kwargs)
+        patch = {
+            "GET": ["%(app_label)s.view_%(model_name)s"],
+            "OPTIONS": ["%(app_label)s.view_%(model_name)s"],
+            "HEAD": ["%(app_label)s.view_%(model_name)s"],
+        }
+        self.perms_map = {**self.perms_map, **patch}
+
+    def has_permission(self, request, view):
+        """Override to base permission check on project only"""
+        if getattr(view, "_ignore_model_permissions", False):
+            return True
+
+        if not request.user or (
+            not request.user.is_authenticated and self.authenticated_users_only
+        ):
+            return False
+
+        queryset = self._queryset(view)
+        perms = self.get_required_permissions(request.method, queryset.model)
+
+        return request.user.has_perms(perms, view.get_project())
+
+
+class ProjectPermissionMixin(_ProjectPermissionMixin):
+    """Mixin for providing a Project object for permission checking"""
+
+    def get_queryset(self, *args, **kwargs):
+        """Override ``get_query_set()`` to filter down to the currently selected object."""
+        qs = super().get_queryset(*args, **kwargs)
+        if hasattr(qs.model, "project"):
+            return qs.filter(project=self._get_project(self.request, self.kwargs))
+        elif hasattr(qs.model, "get_project_filter_key"):
+            return qs.filter(
+                **{qs.model.get_project_filter_key(): self._get_project(self.request, self.kwargs)}
+            )
+        else:
+            raise AttributeError(
+                'Model does not have "project" member or "get_project_filter_key()" function'
+            )

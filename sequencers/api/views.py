@@ -1,43 +1,45 @@
-"""API Views for the sequencers app."""
+"""API Views for the ``sequencers`` app."""
 
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
 
-from digestiflow.utils import ProjectMixin
+from digestiflow.utils import ProjectMixin, SodarObjectInProjectPermissions
 from ..models import SequencingMachine
 from .serializers import SequencingMachineSerializer
 
-# TODO: authorization still missing, need mixin for this!
 
+class SequencingMachineApiViewMixin(ProjectMixin):
+    """Common behaviour of FlowCell API views."""
 
-class SequencingMachineCreateApiView(ProjectMixin, ListCreateAPIView):
-    queryset = SequencingMachine.objects.all()
-    permission_classes = (IsAuthenticated,)
-    serializer_class = SequencingMachineSerializer
-    lookup_url_kwarg = "sequencer"
-    lookup_field = "sodar_uuid"
-
-    def get_queryset(self):
-        return SequencingMachine.objects.filter(project=self.get_project())
-
-
-class SequencingMachineUpdateDestroyApiView(ProjectMixin, RetrieveUpdateDestroyAPIView):
-    queryset = SequencingMachine.objects.all()
-    permission_classes = (IsAuthenticated,)
-    serializer_class = SequencingMachineSerializer
-    lookup_url_kwarg = "sequencer"
-    lookup_field = "sodar_uuid"
+    def get_serializer_context(self):
+        result = super().get_serializer_context()
+        result["project"] = self.get_project()
+        return result
 
     def get_queryset(self):
         return SequencingMachine.objects.filter(project=self.get_project())
 
 
-class SequencingMachineByVendorApiView(ProjectMixin, RetrieveAPIView):
+class SequencingMachineCreateApiView(SequencingMachineApiViewMixin, ListCreateAPIView):
     queryset = SequencingMachine.objects.all()
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
+    serializer_class = SequencingMachineSerializer
+    lookup_url_kwarg = "sequencer"
+    lookup_field = "sodar_uuid"
+
+
+class SequencingMachineUpdateDestroyApiView(
+    SequencingMachineApiViewMixin, RetrieveUpdateDestroyAPIView
+):
+    queryset = SequencingMachine.objects.all()
+    permission_classes = (SodarObjectInProjectPermissions,)
+    serializer_class = SequencingMachineSerializer
+    lookup_url_kwarg = "sequencer"
+    lookup_field = "sodar_uuid"
+
+
+class SequencingMachineByVendorApiView(SequencingMachineApiViewMixin, RetrieveAPIView):
+    queryset = SequencingMachine.objects.all()
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = SequencingMachineSerializer
     lookup_url_kwarg = "sequencer"
     lookup_field = "vendor_id"
-
-    def get_queryset(self):
-        return SequencingMachine.objects.filter(project=self.get_project())
