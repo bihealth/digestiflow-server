@@ -1,8 +1,11 @@
 .. image:: https://img.shields.io/travis/bihealth/digestiflow-web.svg
-    :target: https://travis-ci.org/bihealth/sodar_core
+    :target: https://travis-ci.org/bihealth/digestiflow-web
 
 .. image:: https://img.shields.io/badge/License-MIT-green.svg
     :target: https://opensource.org/licenses/MIT
+
+.. image:: https://api.codacy.com/project/badge/Grade/7e9c21b3ba844a1588a7d7fa6e4f82d4
+    :target: https://www.codacy.com/app/bihealth/digestiflow-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bihealth/digestiflow-web&amp;utm_campaign=Badge_Grade
 
 ===============
 Digestiflow Web
