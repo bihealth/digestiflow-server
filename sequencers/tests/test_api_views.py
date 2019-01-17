@@ -3,13 +3,9 @@
 import json
 from test_plus.test import APITestCase
 
-from sequencers.models import SequencingMachine
-from ..tests import (
-    SetupUserMixin,
-    SetupProjectMixin,
-    SetupSequencingMachineMixin,
-    AuthenticatedRequestMixin,
-)
+from digestiflow.test_utils import SetupUserMixin, SetupProjectMixin, AuthenticatedRequestMixin
+from ..models import SequencingMachine
+from ..tests import SetupSequencingMachineMixin
 
 
 class SequencingMachineListCreateApiViewTest(
@@ -94,7 +90,7 @@ class SequencingMachineUpdateApiViewTest(
         self.runGet(None, sequencer=self.hiseq2000.sodar_uuid)
         self.response_401()
         for user in (self.norole, self.unrelated_owner):
-            self.runGet(user)
+            self.runGet(user, sequencer=self.hiseq2000.sodar_uuid)
             self.response_403()
 
     def testGetAccessAllowed(self):

@@ -10,9 +10,9 @@ from django.db.models import ProtectedError
 from django.shortcuts import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from projectroles.plugins import get_backend_api
-from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin, ProjectPermissionMixin
+from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin
 
-from digestiflow.utils import model_to_dict
+from digestiflow.utils import model_to_dict, ProjectPermissionMixin
 from .forms import BarcodeSetForm
 from .models import BarcodeSet, BarcodeSetEntry
 
@@ -27,7 +27,7 @@ class BarcodeSetListView(
     """Display list of all BarcodeSet records"""
 
     template_name = "barcodes/barcodeset_list.html"
-    permission_required = "barcodes.view_data"
+    permission_required = "barcodes.view_barcodeset"
 
     model = BarcodeSet
 
@@ -45,7 +45,7 @@ class BarcodeSetDetailView(
     """Display detail of BarcodeSet records"""
 
     template_name = "barcodes/barcodeset_detail.html"
-    permission_required = "barcodes.view_data"
+    permission_required = "barcodes.view_barcodeset"
 
     model = BarcodeSet
 
@@ -65,7 +65,7 @@ class BarcodeSetCreateView(
 
     success_message = "Barcode set successfully created."
     template_name = "barcodes/barcodeset_create.html"
-    permission_required = "barcodes.modify_data"
+    permission_required = "barcodes.add_barcodeset"
 
     model = BarcodeSet
     form_class = BarcodeSetForm
@@ -115,7 +115,7 @@ class BarcodeSetUpdateView(
 
     success_message = "Barcode set successfully updated."
     template_name = "barcodes/barcodeset_update.html"
-    permission_required = "barcodes.modify_data"
+    permission_required = "barcodes.change_barcodeset"
 
     model = BarcodeSet
     form_class = BarcodeSetForm
@@ -129,7 +129,7 @@ class BarcodeSetUpdateView(
         self.object = form.save()
         try:
             self._update_entries(self.object, form)
-        except ProtectedError as e:
+        except ProtectedError as e:  # pragma: no cover
             messages.error(self.request, "Could not update barcode set entries: %s" % e)
             return self.form_invalid(form)
         # Call into super class.
@@ -196,7 +196,7 @@ class BarcodeSetDeleteView(
 
     success_message = "Barcode set successfully deleted."
     template_name = "barcodes/barcodeset_confirm_delete.html"
-    permission_required = "barcodes.modify_data"
+    permission_required = "barcodes.delete_barcodeset"
 
     model = BarcodeSet
 

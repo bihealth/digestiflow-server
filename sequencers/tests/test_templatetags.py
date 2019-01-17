@@ -1,7 +1,8 @@
 from test_plus.test import TestCase
 
 from ..templatetags import sequencers
-from ..tests import SetupUserMixin, SetupProjectMixin, SetupSequencingMachineMixin
+from digestiflow.test_utils import SetupUserMixin, SetupProjectMixin
+from ..tests import SetupSequencingMachineMixin
 
 
 class TemplateTagsTest(SetupSequencingMachineMixin, SetupProjectMixin, SetupUserMixin, TestCase):

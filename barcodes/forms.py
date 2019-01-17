@@ -1,5 +1,7 @@
 """Forms for the barcodes app."""
 
+# TODO: add validation for entries JSON?
+
 import json
 
 from django import forms

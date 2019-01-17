@@ -23,7 +23,7 @@ class BarcodeSetEntrySerializer(serializers.ModelSerializer):
 
 
 class BarcodeSetSerializer(serializers.ModelSerializer):
-    entries = BarcodeSetEntrySerializer(many=True)
+    entries = BarcodeSetEntrySerializer(many=True, read_only=True)
 
     def update(self, instance, validated_data):
         validated_data["project"] = self.context["project"]

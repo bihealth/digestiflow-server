@@ -8,7 +8,6 @@ from django.db.models import Q
 
 from projectroles.models import Project
 
-# SequencingMachine and related ------------------------------------------
 
 #: Key value for machine model iSeq
 MACHINE_MODEL_ISEQ = "iSeq"

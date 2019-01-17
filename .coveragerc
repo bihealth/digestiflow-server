@@ -1,8 +1,0 @@
-[run]
-omit = *migrations*, *tests*, *config*, *docs*, manage.py, *env/lib/*,
-       *templates/bootstrap4/*, *__init__.py
-plugins =
-    django_coverage_plugin
-
-[report]
-exclude_lines =

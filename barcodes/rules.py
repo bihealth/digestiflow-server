@@ -4,22 +4,19 @@ import rules
 from projectroles import rules as pr_rules
 
 
-# ``barcodes.view_data`` -- Allow to view the barcodes in a project.
-rules.add_perm(
-    "barcodes.view_data",
-    rules.is_superuser
-    | pr_rules.is_project_owner
-    | pr_rules.is_project_delegate
-    | pr_rules.is_project_contributor
-    | pr_rules.is_project_guest,
-)
-
-
-# ``barcodes.modify_data`` -- Allow to modify the barcodes in a project.
-rules.add_perm(
-    "barcodes.modify_data",
-    rules.is_superuser
-    | pr_rules.is_project_owner
-    | pr_rules.is_project_delegate
-    | pr_rules.is_project_contributor,
-)
+rules.add_perm("barcodes", rules.always_allow)
+for model in ("barcodeset", "barcodesetentry"):
+    rules.add_perm(
+        "barcodes.view_%s" % model,
+        pr_rules.is_project_owner
+        | pr_rules.is_project_delegate
+        | pr_rules.is_project_contributor
+        | pr_rules.is_project_guest,
+    )
+    for action in ("add", "change", "delete"):
+        rules.add_perm(
+            "barcodes.%s_%s" % (action, model),
+            pr_rules.is_project_owner
+            | pr_rules.is_project_delegate
+            | pr_rules.is_project_contributor,
+        )

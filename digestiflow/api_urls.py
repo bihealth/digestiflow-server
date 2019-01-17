@@ -61,7 +61,7 @@ urlpatterns = [
     url(
         regex=r"^barcodesetentries/retrieve/(?P<project>[0-9a-f-]+)/(?P<barcodesetentry>[0-9a-f-]+)/$",
         view=barcode_views.BarcodeSetEntryRetrieveApiView.as_view(),
-        name="barcodesetentries-detail",
+        name="barcodesetentries-retrieve",
     ),
     #
     # App "flowcells"

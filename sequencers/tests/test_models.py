@@ -1,8 +1,9 @@
 from test_plus.test import TestCase
 from django.shortcuts import reverse
 
+from digestiflow.test_utils import SetupUserMixin, SetupProjectMixin
 from ..models import SequencingMachine, MACHINE_MODEL_HISEQ2000, INDEX_WORKFLOW_A
-from ..tests import SetupUserMixin, SetupProjectMixin, SetupSequencingMachineMixin
+from ..tests import SetupSequencingMachineMixin
 
 
 class SequencingMachineTest(

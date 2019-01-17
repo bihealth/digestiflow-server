@@ -1,8 +1,9 @@
 from test_plus.test import TestCase
 
+from digestiflow.test_utils import SetupUserMixin, SetupProjectMixin
 from ..models import INDEX_WORKFLOW_A, MACHINE_MODEL_HISEQ2000
 from ..forms import SequencingMachineForm
-from ..tests import SetupUserMixin, SetupProjectMixin, SetupSequencingMachineMixin
+from ..tests import SetupSequencingMachineMixin
 
 
 class SequencingMachineFormTest(
@@ -10,11 +11,11 @@ class SequencingMachineFormTest(
 ):
     """Test ``SequencingMachineForm``"""
 
-    def testInitWithObject(self):
+    def testInitWithoutObject(self):
         """Test initialization of ``SequencingMachineForm`` with model object"""
         SequencingMachineForm()
 
-    def testInitWithoutObject(self):
+    def testInitWithObject(self):
         """Test initialization of ``SequencingMachineForm`` without model object"""
         SequencingMachineForm(self.hiseq2000)
 

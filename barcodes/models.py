@@ -30,7 +30,9 @@ class BarcodeSetManager(models.Manager):
         """
         objects = super().get_queryset().order_by("name")
         objects = objects.filter(
-            Q(name__icontains=search_term) | Q(description__icontains=search_term)
+            Q(name__icontains=search_term)
+            | Q(short_name__icontains=search_term)
+            | Q(description__icontains=search_term)
         )
         return objects
 
@@ -108,13 +110,11 @@ class BarcodeSet(models.Model):
         unique_together = ("project", "short_name")
 
     def __str__(self):
-        return "Barcode set: {} ({})".format(self.name, self.short_name)
+        return "{} ({})".format(self.name, self.short_name)
 
 
 class BarcodeSetEntryManager(models.Manager):
     """Manager for custom table-level ``BarcodeSetEntry`` queries"""
-
-    # TODO: properly test searching..
 
     def find(self, search_term, _keywords=None):
         """Return objects or links matching the query.
@@ -189,4 +189,4 @@ class BarcodeSetEntry(models.Model):
         )
 
     def __str__(self):
-        return "BarcodeSetEntry: {} ({})".format(self.name, self.sequence)
+        return "{} ({})".format(self.name, self.sequence)

@@ -1,13 +1,10 @@
 """API Views for the sequencers app."""
 
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticated
 
-from digestiflow.utils import ProjectMixin
+from digestiflow.utils import ProjectMixin, SodarObjectInProjectPermissions
 from ..models import BarcodeSet, BarcodeSetEntry
 from .serializers import BarcodeSetSerializer, BarcodeSetEntrySerializer
-
-# TODO: authorization still missing, need mixin for this!
 
 
 class BarcodeSetViewMixin(ProjectMixin):
@@ -23,7 +20,7 @@ class BarcodeSetViewMixin(ProjectMixin):
 
 
 class BarcodeSetCreateApiView(BarcodeSetViewMixin, ListCreateAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = BarcodeSetSerializer
     permission_required = "barcodes.modify_data"
 
@@ -32,7 +29,7 @@ class BarcodeSetCreateApiView(BarcodeSetViewMixin, ListCreateAPIView):
 
 
 class BarcodeSetUpdateDestroyApiView(BarcodeSetViewMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = BarcodeSetSerializer
     permission_required = "barcodes.modify_data"
     lookup_url_kwarg = "barcodeset"
@@ -58,7 +55,7 @@ class BarcodeSetEntryApiViewMixin(ProjectMixin):
 
 
 class BarcodeSetEntryCreateApiView(BarcodeSetEntryApiViewMixin, ListCreateAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = BarcodeSetEntrySerializer
     lookup_url_kwarg = "barcodesetentry"
     lookup_field = "sodar_uuid"
@@ -67,15 +64,14 @@ class BarcodeSetEntryCreateApiView(BarcodeSetEntryApiViewMixin, ListCreateAPIVie
 class BarcodeSetEntryUpdateDestroyApiView(
     BarcodeSetEntryApiViewMixin, RetrieveUpdateDestroyAPIView
 ):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = BarcodeSetEntrySerializer
     lookup_url_kwarg = "barcodesetentry"
     lookup_field = "sodar_uuid"
 
 
 class BarcodeSetEntryRetrieveApiView(ProjectMixin, RetrieveAPIView):
-
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = BarcodeSetEntrySerializer
     lookup_url_kwarg = "barcodesetentry"
     lookup_field = "sodar_uuid"
