@@ -1,13 +1,5 @@
 {% extends "projectroles/project_base.html" %}
 
-{% block navi_sub_project_extend %}
-  <li class="breadcrumb-item">
-    <a href="{% url 'tokens:token-list' %}">API Tokens</a>
-  </li>
-  <li class="breadcrumb-item">{{ object.token_key }}</li>
-  <li class="breadcrumb-item active">Delete</li>
-{% endblock %}
-
 {% block title %}
   Confirm Deletion of API Token {{ object.token_key }}
 {% endblock title %}

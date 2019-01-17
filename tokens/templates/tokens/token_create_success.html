@@ -1,14 +1,5 @@
 {% extends "projectroles/project_base.html" %}
 
-{% block navi_sub_project_extend %}
-  <li class="breadcrumb-item">
-    <a href="{% url 'tokens:token-list' %}">API Tokens</a>
-  </li>
-  <li class="breadcrumb-item active">
-    Create
-  </li>
-{% endblock %}
-
 {% block title %}
   API Token created for {{ project.title }}
 {% endblock title %}

@@ -2,15 +2,6 @@
 
 {% load crispy_forms_tags %}
 
-{% block navi_sub_project_extend %}
-  <li class="breadcrumb-item">
-    <a href="{% url 'tokens:token-list' %}">API Tokens</a>
-  </li>
-  <li class="breadcrumb-item active">
-    Create
-  </li>
-{% endblock %}
-
 {% block title %}
   Create API Token for {{ project.title }}
 {% endblock title %}
