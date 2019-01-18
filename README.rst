@@ -7,6 +7,9 @@
 .. image:: https://api.codacy.com/project/badge/Grade/7e9c21b3ba844a1588a7d7fa6e4f82d4
     :target: https://www.codacy.com/app/bihealth/digestiflow-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bihealth/digestiflow-web&amp;utm_campaign=Badge_Grade
 
+.. image:: https://api.codacy.com/project/badge/Coverage/7e9c21b3ba844a1588a7d7fa6e4f82d4
+    :target: https://www.codacy.com/app/bihealth/digestiflow-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bihealth/digestiflow-web&amp;utm_campaign=Badge_Coverage
+
 ===============
 Digestiflow Web
 ===============

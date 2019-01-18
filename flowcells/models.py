@@ -569,7 +569,7 @@ class FlowCell(models.Model):
 
         # Check uniqueness of sample name with lane.
         bad_lanes = {}
-        for (lane, name), libraries in by_name.items():
+        for (lane, _name), libraries in by_name.items():
             if len(libraries) != 1:
                 for library in libraries:
                     bad_lanes.setdefault(library.sodar_uuid, []).append(lane)
@@ -584,7 +584,7 @@ class FlowCell(models.Model):
         # Check uniqueness of barcode sequence combination with lane.  This is a bit more involved as a clash in
         # one of the indices is not yet an error, it has to be in both.
         bad_lanes = {}
-        for (lane, seq), libraries in by_barcode.items():
+        for (lane, _seq), libraries in by_barcode.items():
             for library in libraries.values():
                 other_libraries = by_barcode2[(lane, library.get_barcode_seq2())]
                 clashes = (set(libraries.keys()) & set(other_libraries.keys())) - {
