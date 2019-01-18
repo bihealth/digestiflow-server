@@ -24,7 +24,7 @@ def forwards_func(apps, schema_editor):
             ),
             KnownIndexContamination(
                 title="i7 phix sequence",
-                sequence="AAAAAAAA",
+                sequence="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                 description=(
                     """Sometimes seen in i7 reads, adapter does not properly bind to PhiX. """
                     """Also see [Illumina index sequencing – where is my sample?]"""
@@ -54,7 +54,7 @@ def forwards_func(apps, schema_editor):
             ),
             KnownIndexContamination(
                 title="2-color chemistry no signal",
-                sequence="GGGGGGGG",
+                sequence="GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
                 description=(
                     """Illumina 2 color chemistry cannot distinguish between all-guanine sequence and "no signal"."""
                 ),

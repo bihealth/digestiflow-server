@@ -153,6 +153,7 @@ class FlowCellManager(models.Manager):
             Q(vendor_id__icontains=search_term)
             | Q(label__icontains=search_term)
             | Q(manual_label__icontains=search_term)
+            | Q(description__icontains=search_term)
         )
         return objects
 
@@ -323,7 +324,7 @@ class FlowCell(models.Model):
         regex = re.compile("([0-9]+)([a-zA-Z])")
         result = []
         for count, letter in re.findall(regex, self.planned_reads):
-            result.append((count, letter))
+            result.append((int(count), letter))
         return tuple(result)
 
     def get_sent_messages(self):
@@ -516,7 +517,7 @@ class FlowCell(models.Model):
                     )
                 ]
             if msgs or msgs2:
-                result[library.sodar_uuid] = (msgs, msgs2)
+                result[str(library.sodar_uuid)] = (msgs, msgs2)
         return result
 
     def get_sample_sheet_errors(self):
@@ -538,7 +539,7 @@ class FlowCell(models.Model):
 
         # Gather information about libraries, directly validate names and lane numbers
         for library in self.libraries.prefetch_related("barcode", "barcode2").all():
-            by_uuid[library.sodar_uuid] = library
+            by_uuid[str(library.sodar_uuid)] = library
             # Directly check for invalid characters
             if not re.match("^[a-zA-Z0-9_-]+$", library.name):
                 result.setdefault(library.sodar_uuid, {}).setdefault("name", []).append(
@@ -572,7 +573,7 @@ class FlowCell(models.Model):
         for (lane, _name), libraries in by_name.items():
             if len(libraries) != 1:
                 for library in libraries:
-                    bad_lanes.setdefault(library.sodar_uuid, []).append(lane)
+                    bad_lanes.setdefault(str(library.sodar_uuid), []).append(lane)
         for sodar_uuid, lanes in bad_lanes.items():
             library = by_uuid[sodar_uuid]
             result.setdefault(sodar_uuid, {}).setdefault("name", []).append(
@@ -591,7 +592,7 @@ class FlowCell(models.Model):
                     library.sodar_uuid
                 }
                 if clashes:
-                    bad_lanes.setdefault(library.sodar_uuid, []).append(lane)
+                    bad_lanes.setdefault(str(library.sodar_uuid), []).append(lane)
         for sodar_uuid, lanes in bad_lanes.items():
             library = by_uuid[sodar_uuid]
             keys = []
@@ -666,10 +667,6 @@ class FlowCellTag(models.Model):
 
     def __str__(self):
         return "{}: {}: {}".format(self.flowcell.title, self.user.username, self.name)
-
-    def __repr__(self):
-        values = (self.flowcell.title, self.user.username, self.name)
-        return "ProjectUserTag({})".format(", ".join(repr(v) for v in values))
 
 
 def flow_cell_created(instance):
@@ -1078,3 +1075,6 @@ class KnownIndexContamination(models.Model):
 
     #: Whether or not an immutable factory default.
     factory_default = models.BooleanField(default=False, help_text="Is immutable factory default")
+
+    def __str__(self):
+        return "{}: {}".format(self.sequence, self.title)
