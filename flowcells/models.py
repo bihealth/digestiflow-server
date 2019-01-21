@@ -674,7 +674,7 @@ def flow_cell_created(instance):
     if instance.demux_operator not in users:
         users.append(instance.demux_operator)
     for user in users:
-        instance.flowcell_tags.create(user=user, name=PROJECT_TAG_STARRED)
+        instance.tags.create(user=user, name=PROJECT_TAG_STARRED)
     # Notify subscribers
     for user in users:
         factory.mail("flowcell_created", (user.email,), {"user": user, "flowcell": instance})
