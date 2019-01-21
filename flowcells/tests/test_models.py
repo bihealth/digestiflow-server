@@ -6,7 +6,15 @@ from django.shortcuts import reverse
 from barcodes.tests import SetupBarcodeSetMixin
 from digestiflow.test_utils import SetupUserMixin, SetupProjectMixin
 from sequencers.tests import SetupSequencingMachineMixin
-from ..models import pretty_range, prefix_match, FlowCell, KnownIndexContamination, Library, Message
+from ..models import (
+    pretty_range,
+    prefix_match,
+    FlowCell,
+    FlowCellTag,
+    KnownIndexContamination,
+    Library,
+    Message,
+)
 from ..tests import SetupFlowCellMixin
 
 
@@ -210,6 +218,41 @@ class FlowCellManagerTest(
         """Test finding by ``manual_label``"""
         result = FlowCell.objects.find("first")
         self.assertEqual(list(result), [self.flow_cell])
+
+
+class FlowCellTagTest(
+    SetupFlowCellMixin,
+    SetupSequencingMachineMixin,
+    SetupBarcodeSetMixin,
+    SetupProjectMixin,
+    SetupUserMixin,
+    TestCase,
+):
+    """Test the ``FlowCellTag`` model"""
+
+    def testCreate(self):
+        """Test creating ``FlowCellTag`` objects"""
+        self.assertEqual(FlowCellTag.objects.count(), 1)
+        self.flow_cell.tags.create(user=self.user, name="hearting")
+        self.assertEqual(FlowCellTag.objects.count(), 2)
+
+    def testUpdate(self):
+        """Test updating ``FlowCellTag`` objects"""
+        self.tag_user_watches_flow_cell.name = "yay"
+        self.tag_user_watches_flow_cell.save()
+
+        other = FlowCellTag.objects.get(pk=self.tag_user_watches_flow_cell.pk)
+        self.assertEqual(other.name, self.tag_user_watches_flow_cell.name)
+
+    def testDelete(self):
+        """Test deleting ``FlowCellTag`` objects"""
+        self.assertEqual(FlowCellTag.objects.count(), 1)
+        self.tag_user_watches_flow_cell.delete()
+        self.assertEqual(FlowCellTag.objects.count(), 0)
+
+    def testStr(self):
+        """Test ``__str__()``"""
+        self.assertEqual(str(self.tag_user_watches_flow_cell), "Hasdfghijkl: author: WATCHING")
 
 
 class LibraryTest(

@@ -662,9 +662,10 @@ class FlowCellTag(models.Model):
 
     class Meta:
         ordering = ["flowcell__vendor_id", "user__username", "name"]
+        unique_together = (("flowcell", "user", "name"),)
 
     def __str__(self):
-        return "{}: {}: {}".format(self.flowcell.title, self.user.username, self.name)
+        return "{}: {}: {}".format(self.flowcell.name, self.user.username, self.name)
 
 
 def flow_cell_created(instance):
