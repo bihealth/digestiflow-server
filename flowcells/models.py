@@ -672,10 +672,10 @@ def flow_cell_created(instance):
     """Handle "save" event for ``FlowCell`` objects."""
     # Subscribe the users that have the project starred.
     users = [tag.user for tag in instance.project.tags.filter(name=PROJECT_TAG_STARRED)]
-    if instance.demux_operator not in users:
+    if instance.demux_operator and instance.demux_operator not in users:
         users.append(instance.demux_operator)
     for user in users:
-        instance.tags.create(user=user, name=PROJECT_TAG_STARRED)
+        instance.tags.create(user=user, name=FLOWCELL_TAG_WATCHING)
     # Notify subscribers
     for user in users:
         factory.mail("flowcell_created", (user.email,), {"user": user, "flowcell": instance})
@@ -684,7 +684,6 @@ def flow_cell_created(instance):
 def flow_cell_updated(original, updated):
     # Notify subscribers only on status change
     users = [tag.user for tag in updated.tags.filter(name=FLOWCELL_TAG_WATCHING)]
-    print(original.status_conversion, updated.status_conversion)
     if (
         original.status_sequencing != updated.status_sequencing
         or original.status_conversion != updated.status_conversion

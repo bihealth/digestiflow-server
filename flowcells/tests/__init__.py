@@ -93,7 +93,7 @@ class SetupFlowCellMixin:
             title="Some Contamination", description="Some description", sequence="CGATCGATCGAT"
         )
 
-    def make_flow_cell(self):
+    def make_flow_cell(self, **kwargs):
         return FlowCell.objects.create(
             project=self.project,
             run_date=datetime.date.today(),
@@ -103,6 +103,7 @@ class SetupFlowCellMixin:
             vendor_id="Hasdfasdf",
             label="a_third_flow_cell",
             description="Let's see, the third.",
+            **kwargs,
         )
 
     def make_library(self, flow_cell=None):

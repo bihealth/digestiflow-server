@@ -1,7 +1,9 @@
 import datetime
 
-from test_plus.test import TestCase
+from django.core import mail
 from django.shortcuts import reverse
+from projectroles.models import PROJECT_TAG_STARRED
+from test_plus.test import TestCase
 
 from barcodes.tests import SetupBarcodeSetMixin
 from digestiflow.test_utils import SetupUserMixin, SetupProjectMixin
@@ -11,9 +13,13 @@ from ..models import (
     prefix_match,
     FlowCell,
     FlowCellTag,
+    flow_cell_updated,
+    flow_cell_created,
     KnownIndexContamination,
     Library,
     Message,
+    FLOWCELL_TAG_WATCHING,
+    STATUS_COMPLETE,
 )
 from ..tests import SetupFlowCellMixin
 
@@ -253,6 +259,83 @@ class FlowCellTagTest(
     def testStr(self):
         """Test ``__str__()``"""
         self.assertEqual(str(self.tag_user_watches_flow_cell), "Hasdfghijkl: author: WATCHING")
+
+
+class FlowCellCreatedTest(
+    SetupFlowCellMixin,
+    SetupSequencingMachineMixin,
+    SetupBarcodeSetMixin,
+    SetupProjectMixin,
+    SetupUserMixin,
+    TestCase,
+):
+    """Tests for ``flow_cell_created()```."""
+
+    def testProjectStargazersNotified(self):
+        """Test that those having the project starred are emailed and subscribed"""
+        # setup
+        self.project.tags.create(user=self.user, name=PROJECT_TAG_STARRED)
+        flow_cell2 = self.make_flow_cell()
+        self.assertEqual(flow_cell2.tags.count(), 0)
+        # test code
+        flow_cell_created(flow_cell2)
+        # check created objects
+        self.assertEqual(flow_cell2.tags.count(), 1)
+        tag = list(flow_cell2.tags.all())[0]
+        self.assertEqual(tag.user, self.user)
+        self.assertEqual(tag.name, FLOWCELL_TAG_WATCHING)
+        # check email
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["author@example.com"])
+        self.assertEqual(mail.outbox[0].subject, "[Digestiflow] Flow Cell Created: Hasdfasdf")
+        self.assertIn("Hasdfasdf", mail.outbox[0].body)
+
+    def testDemuxOperatorNotified(self):
+        """Test that the flow cell demultiplexer is notified"""
+        # setup
+        flow_cell2 = self.make_flow_cell(demux_operator=self.user)
+        self.assertEqual(flow_cell2.tags.count(), 0)
+        # test code
+        flow_cell_created(flow_cell2)
+        # check created objects
+        self.assertEqual(flow_cell2.tags.count(), 1)
+        tag = list(flow_cell2.tags.all())[0]
+        self.assertEqual(tag.user, self.user)
+        self.assertEqual(tag.name, FLOWCELL_TAG_WATCHING)
+        # check email
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["author@example.com"])
+        self.assertEqual(mail.outbox[0].subject, "[Digestiflow] Flow Cell Created: Hasdfasdf")
+        self.assertIn("Hasdfasdf", mail.outbox[0].body)
+
+
+class FlowCellUpdatedTest(
+    SetupFlowCellMixin,
+    SetupSequencingMachineMixin,
+    SetupBarcodeSetMixin,
+    SetupProjectMixin,
+    SetupUserMixin,
+    TestCase,
+):
+    """Tests for ``flow_cell_updated()```."""
+
+    def testWatchersNotifiedOnStateChange(self):
+        """Test that the flow cell watchers are notified"""
+        self.flow_cell.status_conversion = STATUS_COMPLETE
+        original = FlowCell.objects.get(pk=self.flow_cell.pk)
+        flow_cell_updated(original, self.flow_cell)
+        # check email
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["author@example.com"])
+        self.assertEqual(
+            mail.outbox[0].subject, "[Digestiflow] Flow Cell State Changed: Hasdfghijkl"
+        )
+        self.assertIn("Hasdfghijkl", mail.outbox[0].body)
+
+    def testNobodyNofiedOnStateNochange(self):
+        """Test that the flow cell watchers are notified"""
+        flow_cell_updated(self.flow_cell, self.flow_cell)
+        self.assertEqual(len(mail.outbox), 0)
 
 
 class LibraryTest(
