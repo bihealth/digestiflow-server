@@ -77,7 +77,7 @@ class BarcodeSetManagerTest(SetupBarcodeSetMixin, SetupProjectMixin, SetupUserMi
 class BarcodeSetEntryTest(SetupBarcodeSetMixin, SetupProjectMixin, SetupUserMixin, TestCase):
     """Test the ``BarcodeSetEntry`` model"""
 
-    # TODO: add validation for unique name and sequence in barcode set
+    # TODO: add test for validation for unique name and sequence in barcode set
 
     def testCreate(self):
         """Test creating ``BarcodeSetEntry`` objects"""

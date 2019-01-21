@@ -1,7 +1,14 @@
 import datetime
 import json
 
-from ..models import FlowCell, FlowCellTag, FLOWCELL_TAG_WATCHING, MSG_STATE_SENT
+from ..models import (
+    FlowCell,
+    FlowCellTag,
+    FLOWCELL_TAG_WATCHING,
+    MSG_STATE_SENT,
+    MSG_STATE_DRAFT,
+    KnownIndexContamination,
+)
 
 
 class SetupFlowCellMixin:
@@ -15,7 +22,7 @@ class SetupFlowCellMixin:
         self.maxDiff = None
         self.flow_cell = FlowCell.objects.create(
             project=self.project,
-            run_date=datetime.date.today(),
+            run_date=datetime.date(2019, 1, 18),
             sequencing_machine=self.hiseq2000,
             run_number=1,
             slot="A",
@@ -34,7 +41,7 @@ class SetupFlowCellMixin:
         # Additional data for posting to views
         self.barcode_set_form_post_data = {
             "project": self.project,
-            "run_date": datetime.date.today(),
+            "run_date": datetime.date(2019, 1, 18),
             "sequencing_machine": self.hiseq2000,
             "run_number": 2,
             "slot": "A",
@@ -48,7 +55,7 @@ class SetupFlowCellMixin:
         # Additional data for posting to API
         self.barcode_set_api_post_data = {
             "project": self.project,
-            "run_date": datetime.date.today(),
+            "run_date": datetime.date(2019, 1, 18),
             "sequencing_machine": self.hiseq2000,
             "run_number": 2,
             "slot": "A",
@@ -64,7 +71,16 @@ class SetupFlowCellMixin:
             flowcell=self.flow_cell, user=self.user, name=FLOWCELL_TAG_WATCHING
         )
         self.sent_message = self.flow_cell.messages.create(
-            author=self.user, state=MSG_STATE_SENT, body="The message body"
+            author=self.user,
+            state=MSG_STATE_SENT,
+            subject="the message subject",
+            body="The message body",
+        )
+        self.draft_message = self.flow_cell.messages.create(
+            author=self.user,
+            state=MSG_STATE_DRAFT,
+            subject="the draft message subject",
+            body="The draft message body",
         )
         for lane in range(1, 5):
             self.flow_cell.index_histograms.create(
@@ -73,6 +89,9 @@ class SetupFlowCellMixin:
                 sample_size=1000,
                 histogram={self.barcode_set_entry.sequence: 500, "ACGTACGTAG": 500},
             )
+        self.known_index_contamination = KnownIndexContamination.objects.create(
+            title="Some Contamination", description="Some description", sequence="CGATCGATCGAT"
+        )
 
     def make_flow_cell(self):
         return FlowCell.objects.create(
@@ -86,10 +105,17 @@ class SetupFlowCellMixin:
             description="Let's see, the third.",
         )
 
-    def make_library(self, barcode_set=None):
-        return (barcode_set or self.barcode_set).entries.create(
-            name="THREE",
-            barcode=self.barcode_set_entry,
-            barcode2=self.barcode_set_entry,
-            lane_numbers=[3, 4, 5],
+    def make_library(self, flow_cell=None):
+        return (flow_cell or self.flow_cell).libraries.create(
+            name="THREE", barcode_seq="ATATATATA", barcode_seq2="GCGCGCGCG", lane_numbers=[3, 4, 5]
+        )
+
+    def make_message(self, flow_cell=None):
+        return (flow_cell or self.flow_cell).messages.create(
+            subject="the third subject", body="the third body", author=self.user
+        )
+
+    def make_known_index_contamination(self):
+        return KnownIndexContamination.objects.create(
+            title="Another contamination", description="Another description", sequence="ACACACACACA"
         )

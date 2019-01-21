@@ -6,11 +6,7 @@ from django.shortcuts import reverse
 from barcodes.tests import SetupBarcodeSetMixin
 from digestiflow.test_utils import SetupUserMixin, SetupProjectMixin
 from sequencers.tests import SetupSequencingMachineMixin
-from ..models import (
-    pretty_range,
-    prefix_match,
-    FlowCell,
-)  # FlowCellTag, Library, LaneIndexHistogram, Message, KnownIndexContamination
+from ..models import pretty_range, prefix_match, FlowCell, KnownIndexContamination, Library, Message
 from ..tests import SetupFlowCellMixin
 
 
@@ -49,7 +45,7 @@ class FlowCellTest(
         self.assertEqual(FlowCell.objects.count(), 1)
         FlowCell.objects.create(
             project=self.project,
-            run_date=datetime.date.today(),
+            run_date=datetime.date(2019, 1, 18),
             sequencing_machine=self.hiseq2000,
             run_number=42,
             slot="A",
@@ -123,7 +119,7 @@ class FlowCellTest(
     def testGetKnownContaminations(self):
         """Test ``get_known_contaminations()``"""
         result = self.flow_cell.get_known_contaminations()
-        self.assertEqual(len(result), 8)
+        self.assertEqual(len(result), 10)
         self.assertIn("AAAAAAAA", result)
         self.assertIn("AAAAAAAAAA", result)
 
@@ -216,63 +212,202 @@ class FlowCellManagerTest(
         self.assertEqual(list(result), [self.flow_cell])
 
 
-# class BarcodeSetEntryTest(SetupBarcodeSetMixin, SetupProjectMixin, SetupUserMixin, TestCase):
-#     """Test the ``BarcodeSetEntry`` model"""
-#
-#     # TODO: add validation for unique name and sequence in barcode set
-#
-#     def testCreate(self):
-#         """Test creating ``BarcodeSetEntry`` objects"""
-#         self.assertEqual(BarcodeSetEntry.objects.count(), 1)
-#         self.barcode_set.entries.create(name="My name", sequence="ATATATAGCGCGC")
-#         self.assertEqual(BarcodeSetEntry.objects.count(), 2)
-#
-#     def testUpdate(self):
-#         """Test updating ``BarcodeSetEntry`` objects"""
-#         self.barcode_set_entry.name = "yay"
-#         self.barcode_set_entry.save()
-#
-#         other = BarcodeSetEntry.objects.get(pk=self.barcode_set_entry.pk)
-#         self.assertEqual(other.name, self.barcode_set_entry.name)
-#
-#     def testDelete(self):
-#         """Test deleting``BarcodeSetEntry`` objects"""
-#         self.assertEqual(BarcodeSetEntry.objects.count(), 1)
-#         self.barcode_set_entry.delete()
-#         self.assertEqual(BarcodeSetEntry.objects.count(), 0)
-#
-#     def testStr(self):
-#         """Test ``__str__()``"""
-#         self.assertEqual(str(self.barcode_set_entry), "First entry (AAAAAAAA)")
-#
-#     def testGetAbsoluteUrl(self):
-#         """Test ``get_absolute_url()``"""
-#         self.assertEqual(
-#             self.barcode_set_entry.get_absolute_url(),
-#             reverse(
-#                 "flowcells:flowcell-detail",
-#                 kwargs={
-#                     "project": self.project.sodar_uuid,
-#                     "barcodeset": self.barcode_set_entry.barcode_set.sodar_uuid,
-#                 },
-#             )
-#             + "?barcode_set_entry=%s" % self.barcode_set_entry.sodar_uuid,
-#         )
-#
-#
-# class BarcodeSetEntryManagerTest(SetupBarcodeSetMixin, SetupProjectMixin, SetupUserMixin, TestCase):
-#     """Test the ``BarcodeSetEntryManager``"""
-#
-#     def testFindByName(self):
-#         """Test finding by ``name``"""
-#         barcode_set = self.make_barcode_set()
-#         barcode_set_entry = self.make_barcode_set_entry(barcode_set)
-#         result = BarcodeSetEntry.objects.find("third")
-#         self.assertEqual(list(result), [barcode_set_entry])
-#
-#     def testFindBySequence(self):
-#         """Test finding by ``sequence``"""
-#         barcode_set = self.make_barcode_set()
-#         barcode_set_entry = self.make_barcode_set_entry(barcode_set)
-#         result = BarcodeSetEntry.objects.find("GATTACA")
-#         self.assertEqual(list(result), [barcode_set_entry])
+class LibraryTest(
+    SetupFlowCellMixin,
+    SetupSequencingMachineMixin,
+    SetupBarcodeSetMixin,
+    SetupProjectMixin,
+    SetupUserMixin,
+    TestCase,
+):
+    """Test the ``Library`` model"""
+
+    def testCreate(self):
+        """Test creating ``Library`` objects"""
+        self.assertEqual(Library.objects.count(), 1)
+        self.flow_cell.libraries.create(
+            name="The_Name", barcode_seq="ATATATAGCGCGC", lane_numbers=[1, 2]
+        )
+        self.assertEqual(Library.objects.count(), 2)
+
+    def testUpdate(self):
+        """Test updating ``Library`` objects"""
+        self.library.name = "yay"
+        self.library.save()
+
+        other = Library.objects.get(pk=self.library.pk)
+        self.assertEqual(other.name, self.library.name)
+
+    def testDelete(self):
+        """Test deleting``Library`` objects"""
+        self.assertEqual(Library.objects.count(), 1)
+        self.library.delete()
+        self.assertEqual(Library.objects.count(), 0)
+
+    def testStr(self):
+        """Test ``__str__()``"""
+        self.assertEqual(
+            str(self.library),
+            "Library ONE on lane(s) [1, 2, 3, 4] for FlowCell 190118_Hxxxxxxxx_0001_A_Hasdfghijkl_my_flow_cell",
+        )
+
+    def testGetAbsoluteUrl(self):
+        """Test ``get_absolute_url()``"""
+        self.assertEqual(
+            self.library.get_absolute_url(),
+            reverse(
+                "flowcells:flowcell-detail",
+                kwargs={
+                    "project": self.project.sodar_uuid,
+                    "flowcell": self.library.flow_cell.sodar_uuid,
+                },
+            )
+            + "?library=%s" % self.library.sodar_uuid,
+        )
+
+
+class LibraryManagerTest(
+    SetupFlowCellMixin,
+    SetupSequencingMachineMixin,
+    SetupBarcodeSetMixin,
+    SetupProjectMixin,
+    SetupUserMixin,
+    TestCase,
+):
+    """Test the ``LibraryManagerTest``"""
+
+    def testFindByName(self):
+        """Test finding by ``name``"""
+        flow_cell = self.make_flow_cell()
+        library = self.make_library(flow_cell)
+        result = Library.objects.find("three")
+        self.assertEqual(list(result), [library])
+
+    def testFindByBarcodeSeq(self):
+        """Test finding by ``barcode_seq``"""
+        flow_cell = self.make_flow_cell()
+        library = self.make_library(flow_cell)
+        result = Library.objects.find("atatat")
+        self.assertEqual(list(result), [library])
+
+    def testFindByBarcodeSeq2(self):
+        """Test finding by ``barcode_seq2``"""
+        flow_cell = self.make_flow_cell()
+        library = self.make_library(flow_cell)
+        result = Library.objects.find("gcgcgcgc")
+        self.assertEqual(list(result), [library])
+
+
+class MessageTest(
+    SetupFlowCellMixin,
+    SetupSequencingMachineMixin,
+    SetupBarcodeSetMixin,
+    SetupProjectMixin,
+    SetupUserMixin,
+    TestCase,
+):
+    """Test the ``Message`` model"""
+
+    def testCreate(self):
+        """Test creating ``Message`` objects"""
+        self.assertEqual(Message.objects.count(), 2)
+        self.flow_cell.messages.create(subject="my subject", body="my body", author=self.user)
+        self.assertEqual(Message.objects.count(), 3)
+
+    def testUpdate(self):
+        """Test updating ``Message`` objects"""
+        self.sent_message.subject = "yay"
+        self.sent_message.save()
+
+        other = Message.objects.get(pk=self.sent_message.pk)
+        self.assertEqual(other.subject, self.sent_message.subject)
+
+    def testDelete(self):
+        """Test deleting``Message`` objects"""
+        self.assertEqual(Message.objects.count(), 2)
+        self.sent_message.delete()
+        self.assertEqual(Message.objects.count(), 1)
+
+    def testStr(self):
+        """Test ``__str__()``"""
+        self.assertTrue(str(self.sent_message).endswith("] the message subject"))
+
+    def testGetAbsoluteUrl(self):
+        """Test ``get_absolute_url()``"""
+        self.assertEqual(
+            self.sent_message.get_absolute_url(),
+            reverse(
+                "flowcells:flowcell-detail",
+                kwargs={
+                    "project": self.project.sodar_uuid,
+                    "flowcell": self.sent_message.flow_cell.sodar_uuid,
+                },
+            )
+            + "#message-%s" % self.sent_message.sodar_uuid,
+        )
+
+
+class MessageManagerTest(
+    SetupFlowCellMixin,
+    SetupSequencingMachineMixin,
+    SetupBarcodeSetMixin,
+    SetupProjectMixin,
+    SetupUserMixin,
+    TestCase,
+):
+    """Test the ``MessageManagerTest``"""
+
+    def testFindBySubject(self):
+        """Test finding by ``subject``"""
+        flow_cell = self.make_flow_cell()
+        message = self.make_message(flow_cell)
+        result = Message.objects.find("third subject")
+        self.assertEqual(list(result), [message])
+
+    def testFindByBody(self):
+        """Test finding by ``body``"""
+        flow_cell = self.make_flow_cell()
+        message = self.make_message(flow_cell)
+        result = Message.objects.find("third body")
+        self.assertEqual(list(result), [message])
+
+
+class KnownIndexContaminationTest(
+    SetupFlowCellMixin,
+    SetupSequencingMachineMixin,
+    SetupBarcodeSetMixin,
+    SetupProjectMixin,
+    SetupUserMixin,
+    TestCase,
+):
+    """Test the ``KnownIndexContamination`` model"""
+
+    def testFactoryDefaultsFromMigrations(self):
+        """Test Presence of index contaminations inserted by migration"""
+        self.assertEqual(KnownIndexContamination.objects.count(), 6)
+
+    def testCreate(self):
+        """Test creating ``KnownIndexContamination`` objects"""
+        self.assertEqual(KnownIndexContamination.objects.count(), 6)
+        KnownIndexContamination.objects.create(
+            title="Yet another title", description="Yet another description", sequence="TCTCTCTCTC"
+        )
+        self.assertEqual(KnownIndexContamination.objects.count(), 7)
+
+    def testUpdate(self):
+        """Test updating ``KnownIndexContamination`` objects"""
+        self.known_index_contamination.title = "yay"
+        self.known_index_contamination.save()
+
+        other = KnownIndexContamination.objects.get(pk=self.known_index_contamination.pk)
+        self.assertEqual(other.title, self.known_index_contamination.title)
+
+    def testDelete(self):
+        """Test deleting ``KnownIndexContamination`` objects"""
+        self.assertEqual(KnownIndexContamination.objects.count(), 6)
+        self.known_index_contamination.delete()
+        self.assertEqual(KnownIndexContamination.objects.count(), 5)
+
+    def testStr(self):
+        """Test ``__str__()``"""
+        self.assertEqual(str(self.known_index_contamination), "CGATCGATCGAT: Some Contamination")

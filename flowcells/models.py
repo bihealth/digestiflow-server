@@ -139,10 +139,8 @@ RTA_VERSION_CHOICES = (
 class FlowCellManager(models.Manager):
     """Manager for custom table-level SequencingMachine queries"""
 
-    # TODO: properly test searching..
-
     def find(self, search_term, _keywords=None):
-        """Return objects or links matching the query.
+        """Return objects matching the query.
 
         :param search_term: Search term (string)
         :param keywords: Optional search keywords as key/value pairs (dict)
@@ -745,10 +743,8 @@ REFERENCE_CHOICES = (
 class LibraryManager(models.Manager):
     """Manager for custom table-level Library queries"""
 
-    # TODO: properly test searching..
-
     def find(self, search_term, _keywords=None):
-        """Return objects or links matching the query.
+        """Return objects matching the query.
 
         :param search_term: Search term (string)
         :param keywords: Optional search keywords as key/value pairs (dict)
@@ -756,11 +752,11 @@ class LibraryManager(models.Manager):
         """
         objects = super().get_queryset()
         objects = objects.filter(
-            Q(name=search_term)
-            | Q(barcode__sequence=search_term)
-            | Q(barcode_seq=search_term)
-            | Q(barcode2__sequence=search_term)
-            | Q(barcode_seq2=search_term)
+            Q(name__icontains=search_term)
+            | Q(barcode__sequence__icontains=search_term)
+            | Q(barcode_seq__icontains=search_term)
+            | Q(barcode2__sequence__icontains=search_term)
+            | Q(barcode_seq2__icontains=search_term)
         )
         return objects
 
@@ -850,7 +846,7 @@ class Library(models.Model):
         return seq
 
     def get_absolute_url(self):
-        return self.flow_cell.get_absolute_url()
+        return self.flow_cell.get_absolute_url() + "?library=%s" % self.sodar_uuid
 
     def __str__(self):
         return "Library {} on lane(s) {} for {}".format(
@@ -920,6 +916,21 @@ FORMAT_MARKDOWN = "text/markdown"
 FORMAT_CHOICES = ((FORMAT_PLAIN, "Plain Text"), (FORMAT_MARKDOWN, "Markdown"))
 
 
+class MessageManager(models.Manager):
+    """Manager for custom table-level Message queries"""
+
+    def find(self, search_term, _keywords=None):
+        """Return objects matching the query.
+
+        :param search_term: Search term (string)
+        :param keywords: Optional search keywords as key/value pairs (dict)
+        :return: Python list of BaseFilesfolderClass objects
+        """
+        objects = super().get_queryset()
+        objects = objects.filter(Q(subject__icontains=search_term) | Q(body__icontains=search_term))
+        return objects
+
+
 class Message(models.Model):
     """A message that is attached to a FlowCell."""
 
@@ -971,6 +982,9 @@ class Message(models.Model):
     attachment_folder = models.ForeignKey(
         Folder, help_text="Folder for the attachments, if any.", on_delete=models.PROTECT
     )
+
+    #: Search-enabled manager.
+    objects = MessageManager()
 
     def save(self, *args, **kwargs):
         try:
@@ -1034,6 +1048,9 @@ class Message(models.Model):
             return self.attachment_folder.filesfolders_file_children.all()
         except Folder.DoesNotExist:
             return Folder.objects.none()
+
+    def __str__(self):
+        return "[%s] %s" % (self.date_created, self.subject if self.subject else "<no subject>")
 
 
 def message_created(message):

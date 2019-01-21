@@ -75,10 +75,8 @@ INDEX_WORKFLOWS = (
 class SequencingMachineManager(models.Manager):
     """Manager for custom table-level SequencingMachine queries"""
 
-    # TODO: properly test searching..
-
     def find(self, search_term, _keywords=None):
-        """Return objects or links matching the query.
+        """Return objects matching the query.
 
         :param search_term: Search term (string)
         :param keywords: Optional search keywords as key/value pairs (dict)

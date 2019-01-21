@@ -1,7 +1,7 @@
 from projectroles.plugins import ProjectAppPluginPoint
 
 from digestiflow.utils import humanize_dict
-from .models import FlowCell, Library
+from .models import FlowCell, Library, Message, MSG_STATE_SENT
 from .urls import urlpatterns
 
 
@@ -25,7 +25,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     search_enable = True
 
     #: List of search object types for the app
-    search_types = ["flowcell", "library"]
+    search_types = ["flowcell", "library", "message"]
 
     #: Search results template
     search_template = "flowcells/_search_results.html"
@@ -60,6 +60,8 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
             items = FlowCell.objects.find(search_term, keywords)
         elif search_type == "library":
             items = Library.objects.find(search_term, keywords)
+        elif search_type == "message":
+            items = Message.objects.find(search_term, keywords).filter(state=MSG_STATE_SENT)
 
         return {
             "all": {
