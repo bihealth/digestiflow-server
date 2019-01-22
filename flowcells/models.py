@@ -684,6 +684,8 @@ def flow_cell_created(instance):
 def flow_cell_updated(original, updated):
     # Notify subscribers only on status change
     users = [tag.user for tag in updated.tags.filter(name=FLOWCELL_TAG_WATCHING)]
+    if updated.demux_operator and updated.demux_operator not in users:
+        users.append(updated.demux_operator)
     if (
         original.status_sequencing != updated.status_sequencing
         or original.status_conversion != updated.status_conversion
@@ -1058,6 +1060,8 @@ def message_created(message):
     # Notify subscribers only on status change
     flowcell = message.flow_cell
     users = [tag.user for tag in flowcell.tags.filter(name=FLOWCELL_TAG_WATCHING)]
+    if flowcell.demux_operator and flowcell.demux_operator not in users:
+        users.append(flowcell.demux_operator)
     for user in users:
         if user != message.author:
             factory.mail(

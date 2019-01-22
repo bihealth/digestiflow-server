@@ -18,6 +18,7 @@ from ..models import (
     KnownIndexContamination,
     Library,
     Message,
+    message_created,
     FLOWCELL_TAG_WATCHING,
     STATUS_COMPLETE,
 )
@@ -332,6 +333,21 @@ class FlowCellUpdatedTest(
         )
         self.assertIn("Hasdfghijkl", mail.outbox[0].body)
 
+    def testDemuxOperatorNotifiedOnStateChange(self):
+        """Test that the flow demux operator are notified"""
+        self.flow_cell.status_conversion = STATUS_COMPLETE
+        original = FlowCell.objects.get(pk=self.flow_cell.pk)
+        self.tag_user_watches_flow_cell.delete()
+        self.flow_cell.demux_operator = self.make_user(username="foo")
+        flow_cell_updated(original, self.flow_cell)
+        # check email
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["foo@example.com"])
+        self.assertEqual(
+            mail.outbox[0].subject, "[Digestiflow] Flow Cell State Changed: Hasdfghijkl"
+        )
+        self.assertIn("Hasdfghijkl", mail.outbox[0].body)
+
     def testNobodyNofiedOnStateNochange(self):
         """Test that the flow cell watchers are notified"""
         flow_cell_updated(self.flow_cell, self.flow_cell)
@@ -471,6 +487,44 @@ class MessageTest(
             )
             + "#message-%s" % self.sent_message.sodar_uuid,
         )
+
+
+class MessageCreatedTest(
+    SetupFlowCellMixin,
+    SetupSequencingMachineMixin,
+    SetupBarcodeSetMixin,
+    SetupProjectMixin,
+    SetupUserMixin,
+    TestCase,
+):
+    """Test ``message_created()``"""
+
+    def testWatchersNotifiedOnNewMessage(self):
+        """Test that the flow cell watchers are notified"""
+        self.sent_message.author = self.make_user(username="foo")
+        self.sent_message.save()
+        message_created(self.sent_message)
+        # check email
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["author@example.com"])
+        self.assertEqual(
+            mail.outbox[0].subject, "[Digestiflow] New Message for Flow Cell: Hasdfghijkl"
+        )
+        self.assertIn("Hasdfghijkl", mail.outbox[0].body)
+
+    def testDemuxOperatorNotifiedOnNewMessage(self):
+        """Test that the flow demux operator are notified"""
+        self.flow_cell.demux_operator = self.make_user(username="foo")
+        self.flow_cell.save()
+        self.tag_user_watches_flow_cell.delete()
+        message_created(self.sent_message)
+        # check email
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["foo@example.com"])
+        self.assertEqual(
+            mail.outbox[0].subject, "[Digestiflow] New Message for Flow Cell: Hasdfghijkl"
+        )
+        self.assertIn("Hasdfghijkl", mail.outbox[0].body)
 
 
 class MessageManagerTest(
