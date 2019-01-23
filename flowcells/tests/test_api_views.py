@@ -705,124 +705,154 @@ class AttachmentListCreateApiViewTest(
             File.objects.filter(sodar_uuid=data["sodar_uuid"]).delete()
 
 
-# class AttachmentUpdateDeleteApiViewTest(
-#     SetupFlowCellMixin,
-#     SetupSequencingMachineMixin,
-#     SetupBarcodeSetMixin,
-#     SetupProjectMixin,
-#     SetupUserMixin,
-#     AuthenticatedRequestMixin,
-#     APITestCase,
-# ):
-#     """Tests for update and delete action using REST API"""
-#
-#     url_name = "api:attachments"
-#
-#     def testGet(self):
-#         """Test that querying API for messages works (with super user)"""
-#         response = self.runGet(
-#             self.root, flowcell=self.flow_cell.sodar_uuid, message=self.sent_message.sodar_uuid
-#         )
-#         self.response_200(response)
-#         data = json.loads(response.content.decode("utf-8"))
-#         self.assertEqual(data["sodar_uuid"], str(self.sent_message.sodar_uuid))
-#
-#     def testGetAccessDenied(self):
-#         """Test that access is denied if role assignment is missing"""
-#         self.runGet(None, flowcell=self.flow_cell.sodar_uuid, message=self.sent_message.sodar_uuid)
-#         self.response_401()
-#         for user in (self.norole, self.unrelated_owner):
-#             self.runGet(
-#                 user, flowcell=self.flow_cell.sodar_uuid, message=self.sent_message.sodar_uuid
-#             )
-#             self.response_403()
-#
-#     def testGetAccessAllowed(self):
-#         """Test that access is allowed if role assignment is correct"""
-#         for user in (self.guest, self.contributor, self.delegate, self.owner, self.root):
-#             response = self.runGet(
-#                 user, flowcell=self.flow_cell.sodar_uuid, message=self.sent_message.sodar_uuid
-#             )
-#             self.response_200(response)
-#             data = json.loads(response.content.decode("utf-8"))
-#             self.assertEqual(data["sodar_uuid"], str(self.sent_message.sodar_uuid))
-#
-#     def testUpdate(self):
-#         """Test that updating messages via API works (with super user)"""
-#         response = self.runPut(
-#             self.root,
-#             flowcell=self.flow_cell.sodar_uuid,
-#             message=self.sent_message.sodar_uuid,
-#             data=self.sent_message_api_post_data,
-#         )
-#         self.response_200(response)
-#         data = json.loads(response.content.decode("utf-8"))
-#         self.assertEqual(data["subject"], self.sent_message_api_post_data["subject"])
-#
-#     def testUpdateAccessDenied(self):
-#         """Test that updating messages via API is denied if role assignment is missing"""
-#         self.runPut(
-#             None,
-#             flowcell=self.flow_cell.sodar_uuid,
-#             message=self.sent_message.sodar_uuid,
-#             data=self.sent_message_api_post_data,
-#         )
-#         self.response_401()
-#         for user in (self.guest, self.norole, self.unrelated_owner):
-#             self.runPut(
-#                 user,
-#                 flowcell=self.flow_cell.sodar_uuid,
-#                 message=self.sent_message.sodar_uuid,
-#                 data=self.sent_message_api_post_data,
-#             )
-#             self.response_403()
-#
-#     def testUpdateAccessAllowed(self):
-#         """Test that updating messages via API is allowed if role assignment is correct"""
-#         for user in (self.contributor, self.delegate, self.owner, self.root):
-#             response = self.runPut(
-#                 user,
-#                 flowcell=self.flow_cell.sodar_uuid,
-#                 message=self.sent_message.sodar_uuid,
-#                 data=self.sent_message_api_post_data,
-#             )
-#             self.response_200(response)
-#             data = json.loads(response.content.decode("utf-8"))
-#             self.assertEqual(data["subject"], self.sent_message_api_post_data["subject"])
-#
-#     def testDelete(self):
-#         """Test that deleting messages via API works (with super user)"""
-#         self.assertEqual(Attachment.objects.count(), 2)
-#         response = self.runDelete(
-#             self.root, flowcell=self.flow_cell.sodar_uuid, message=self.sent_message.sodar_uuid
-#         )
-#         self.response_204(response)
-#         self.assertEqual(Attachment.objects.count(), 1)
-#
-#     def testDeleteAccessDenied(self):
-#         """Test that deleting messages via API is denied if role assignment is missing"""
-#         self.assertEqual(Attachment.objects.count(), 2)
-#         self.runDelete(
-#             None, flowcell=self.flow_cell.sodar_uuid, message=self.sent_message.sodar_uuid
-#         )
-#         self.assertEqual(Attachment.objects.count(), 2)
-#         self.response_401()
-#         for user in (self.guest, self.norole, self.unrelated_owner):
-#             self.assertEqual(Attachment.objects.count(), 2)
-#             self.runDelete(
-#                 user, flowcell=self.flow_cell.sodar_uuid, message=self.sent_message.sodar_uuid
-#             )
-#             self.assertEqual(Attachment.objects.count(), 2)
-#             self.response_403()
-#
-#     def testDeleteAccessAllowed(self):
-#         """Test that deleting messages via API is allowed if role assignment is correct"""
-#         for user in (self.contributor, self.delegate, self.owner, self.root):
-#             Attachment.objects.all().delete()
-#             message = self.make_message()
-#             self.assertEqual(Attachment.objects.count(), 1)
-#             response = self.runDelete(
-#                 user, flowcell=self.flow_cell.sodar_uuid, message=message.sodar_uuid
-#             )
-#             self.response_204(response)
-#             self.assertEqual(Attachment.objects.count(), 0)
+class AttachmentUpdateDeleteApiViewTest(
+    SetupFlowCellMixin,
+    SetupSequencingMachineMixin,
+    SetupBarcodeSetMixin,
+    SetupProjectMixin,
+    SetupUserMixin,
+    AuthenticatedRequestMixin,
+    APITestCase,
+):
+    """Tests for update and delete action using REST API"""
+
+    url_name = "api:attachments"
+
+    def testGet(self):
+        """Test that querying API for attachments works (with super user)"""
+        response = self.runGet(
+            self.root,
+            flowcell=self.flow_cell.sodar_uuid,
+            message=self.draft_message.sodar_uuid,
+            file=self.attached_file.sodar_uuid,
+        )
+        self.response_200(response)
+        data = json.loads(response.content.decode("utf-8"))
+        self.assertEqual(data["sodar_uuid"], str(self.attached_file.sodar_uuid))
+
+    def testGetAccessDenied(self):
+        """Test that access is denied if role assignment is missing"""
+        self.runGet(
+            None,
+            flowcell=self.flow_cell.sodar_uuid,
+            message=self.draft_message.sodar_uuid,
+            file=self.attached_file.sodar_uuid,
+        )
+        self.response_401()
+        for user in (self.norole, self.unrelated_owner):
+            self.runGet(
+                user,
+                flowcell=self.flow_cell.sodar_uuid,
+                message=self.draft_message.sodar_uuid,
+                file=self.attached_file.sodar_uuid,
+            )
+            self.response_403()
+
+    def testGetAccessAllowed(self):
+        """Test that access is allowed if role assignment is correct"""
+        for user in (self.guest, self.contributor, self.delegate, self.owner, self.root):
+            response = self.runGet(
+                user,
+                flowcell=self.flow_cell.sodar_uuid,
+                message=self.draft_message.sodar_uuid,
+                file=self.attached_file.sodar_uuid,
+            )
+            self.response_200(response)
+            data = json.loads(response.content.decode("utf-8"))
+            self.assertEqual(data["sodar_uuid"], str(self.attached_file.sodar_uuid))
+
+    def testUpdate(self):
+        """Test that updating attachments via API works (with super user)"""
+        response = self.runPut(
+            self.root,
+            flowcell=self.flow_cell.sodar_uuid,
+            message=self.draft_message.sodar_uuid,
+            file=self.attached_file.sodar_uuid,
+            data=self.get_file_post_data(),
+        )
+        self.response_200(response)
+        data = json.loads(response.content.decode("utf-8"))
+        self.assertEqual(data["sodar_uuid"], str(self.attached_file.sodar_uuid))
+
+    def testUpdateAccessDenied(self):
+        """Test that updating attachments via API is denied if role assignment is missing"""
+        self.runPut(
+            None,
+            flowcell=self.flow_cell.sodar_uuid,
+            message=self.draft_message.sodar_uuid,
+            file=self.attached_file.sodar_uuid,
+            data=self.get_file_post_data(),
+        )
+        self.response_401()
+        for user in (self.guest, self.norole, self.unrelated_owner):
+            self.runPut(
+                user,
+                flowcell=self.flow_cell.sodar_uuid,
+                message=self.draft_message.sodar_uuid,
+                file=self.attached_file.sodar_uuid,
+                data=self.get_file_post_data(),
+            )
+            self.response_403()
+
+    def testUpdateAccessAllowed(self):
+        """Test that updating attachments via API is allowed if role assignment is correct"""
+        for user in (self.contributor, self.delegate, self.owner, self.root):
+            response = self.runPut(
+                user,
+                flowcell=self.flow_cell.sodar_uuid,
+                message=self.draft_message.sodar_uuid,
+                file=self.attached_file.sodar_uuid,
+                data=self.get_file_post_data(),
+            )
+            self.response_200(response)
+            data = json.loads(response.content.decode("utf-8"))
+            self.assertEqual(data["sodar_uuid"], str(self.attached_file.sodar_uuid))
+
+    def testDelete(self):
+        """Test that deleting attachments via API works (with super user)"""
+        self.assertEqual(self.draft_message.get_attachment_files().count(), 1)
+        response = self.runDelete(
+            self.root,
+            flowcell=self.flow_cell.sodar_uuid,
+            message=self.draft_message.sodar_uuid,
+            file=self.attached_file.sodar_uuid,
+        )
+        self.response_204(response)
+        self.assertEqual(self.draft_message.get_attachment_files().count(), 0)
+
+    def testDeleteAccessDenied(self):
+        """Test that deleting attachments via API is denied if role assignment is missing"""
+        self.assertEqual(self.draft_message.get_attachment_files().count(), 1)
+        self.runDelete(
+            None,
+            flowcell=self.flow_cell.sodar_uuid,
+            message=self.draft_message.sodar_uuid,
+            file=self.attached_file.sodar_uuid,
+        )
+        self.assertEqual(self.draft_message.get_attachment_files().count(), 1)
+        self.response_401()
+        for user in (self.guest, self.norole, self.unrelated_owner):
+            self.assertEqual(self.draft_message.get_attachment_files().count(), 1)
+            self.runDelete(
+                user,
+                flowcell=self.flow_cell.sodar_uuid,
+                message=self.draft_message.sodar_uuid,
+                file=self.attached_file.sodar_uuid,
+            )
+            self.assertEqual(self.draft_message.get_attachment_files().count(), 1)
+            self.response_403()
+
+    def testDeleteAccessAllowed(self):
+        """Test that deleting attachments via API is allowed if role assignment is correct"""
+        for user in (self.contributor, self.delegate, self.owner, self.root):
+            self.draft_message.get_attachment_files().delete()
+            attachment_file = self.make_attachment_file()
+            self.assertEqual(self.draft_message.get_attachment_files().count(), 1)
+            response = self.runDelete(
+                user,
+                flowcell=self.flow_cell.sodar_uuid,
+                message=self.draft_message.sodar_uuid,
+                file=attachment_file.sodar_uuid,
+            )
+            self.response_204(response)
+            self.assertEqual(self.draft_message.get_attachment_files().count(), 0)

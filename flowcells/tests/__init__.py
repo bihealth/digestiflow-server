@@ -93,7 +93,7 @@ class SetupFlowCellMixin:
             subject="the draft message subject",
             body="The draft message body",
         )
-        self.draft_message.attachment_folder.filesfolders_file_children.create(
+        self.attached_file = self.draft_message.attachment_folder.filesfolders_file_children.create(
             name="foo.txt", project=self.project, owner=self.user, secret=build_secret()
         )
         self.histograms = []
@@ -132,6 +132,11 @@ class SetupFlowCellMixin:
     def make_library(self, flow_cell=None):
         return (flow_cell or self.flow_cell).libraries.create(
             name="THREE", barcode_seq="ATATATATA", barcode_seq2="GCGCGCGCG", lane_numbers=[3, 4, 5]
+        )
+
+    def make_attachment_file(self, message=None):
+        return (message or self.draft_message).attachment_folder.filesfolders_file_children.create(
+            name="foo.txt", project=self.project, owner=self.user, secret=build_secret()
         )
 
     def make_index_histogram(self, flow_cell=None, lane=5):
