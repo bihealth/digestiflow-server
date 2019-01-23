@@ -78,19 +78,21 @@
                     {% elif entry_contamination %}
                       {% render_markdown entry_contamination.description as description %}
                       <span class="text-info" data-toggle="tooltip" data-html="true" title="Known contamination &quot;{{ entry_contamination.title }}&quot;: {{ description|striptags }}" data-html="true">
+                    {% elif count|divide:entry.sample_size < 0.01 %}
+                      <span class="text-muted" data-toggle="tooltip" data-html="true" title="Low frequency index: less than 1% of the reads show this index. Failure to find this index in the sample sheet is not an error.">
+                    {% else %}
+                      <span>
                     {% endif %}
                       {{ seq }}
                       ({{ count|divide:entry.sample_size|multiply:100|stringformat:".2f"|stringformat:"05s" }}%)
-                    {% if index_errors or entry_contamination %}
-                      </span>
-                    {% endif %}
+                    </span>
                   </small>
                 </span>
               {% endfor %}
             {% endwith %}
 
             <small class="text-muted text-nowrap">
-              Based on {{ entry.sample_size|intcomma }} sampled index reads, showing if above 1%.
+              Based on {{ entry.sample_size|intcomma }} sampled index reads, showing if above 0.1%.
             </small>
           </td>
         </tr>

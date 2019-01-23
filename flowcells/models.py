@@ -22,6 +22,9 @@ from sequencers.models import SequencingMachine, INDEX_WORKFLOW_B
 # Access Django user model
 AUTH_USER_MODEL = getattr(settings, "AUTH_USER_MODEL", "auth.User")
 
+#: Threshold on read fraction showing an index to ignore if found in index histogram but not in library.
+THRESH_MIN_INDEX_FRAC = 0.01
+
 
 def pretty_range(value):
     return pagerange.PageRange(value).range
@@ -434,7 +437,8 @@ class FlowCell(models.Model):
                     the_seq = revcomp(the_seq)
                 expected_seqs.add(the_seq)
             # Collect errors and write into result
-            for seq, _ in hist.histogram.items():
+            sample_size = hist.sample_size
+            for seq, count in hist.histogram.items():
                 errors = []
                 if not seq or seq in self.get_known_contaminations():
                     continue  # contamination are not errors, will be displayed in template
@@ -448,7 +452,7 @@ class FlowCell(models.Model):
                                 seq, hist.lane, hist.index_read_no
                             )
                         ]
-                if errors:
+                if errors and (count / sample_size >= THRESH_MIN_INDEX_FRAC):
                     result[(hist.lane, hist.index_read_no, seq)] = errors
         self._index_errors = result
         return result
