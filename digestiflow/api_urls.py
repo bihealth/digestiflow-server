@@ -117,7 +117,7 @@ urlpatterns = [
     # /attachments/:project/:flowcell/:message/:file/
     url(
         regex=(
-            r"^attachments/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<message>[0-9a-f-]+)/"
+            r"^attachments/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<message>[0-9a-f-]+)/$"
             "(?P<file>[0-9a-f-]+)/$"
         ),
         view=flowcell_views.AttachmentRetrieveApiView.as_view(),

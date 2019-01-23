@@ -1,5 +1,8 @@
 import datetime
+import tempfile
 import json
+
+from projectroles.utils import build_secret
 
 from ..models import (
     FlowCell,
@@ -90,6 +93,9 @@ class SetupFlowCellMixin:
             subject="the draft message subject",
             body="The draft message body",
         )
+        self.draft_message.attachment_folder.filesfolders_file_children.create(
+            name="foo.txt", project=self.project, owner=self.user, secret=build_secret()
+        )
         self.histograms = []
         for lane in range(1, 5):
             self.histograms.append(
@@ -103,6 +109,12 @@ class SetupFlowCellMixin:
         self.known_index_contamination = KnownIndexContamination.objects.create(
             title="Some Contamination", description="Some description", sequence="CGATCGATCGAT"
         )
+
+    def get_file_post_data(self):
+        tmpf = tempfile.NamedTemporaryFile(prefix="digestiflow-test", suffix=".txt")
+        tmpf.write(b"foo")
+        tmpf.seek(0)
+        return {"file": tmpf}
 
     def make_flow_cell(self, **kwargs):
         return FlowCell.objects.create(
