@@ -130,6 +130,7 @@ class FlowCellForm(forms.ModelForm):
             "barcode_mismatches",
             "planned_reads",
             "current_reads",
+            "demux_reads",
         )
         widgets = {"description": forms.Textarea(attrs={"rows": 3})}
 

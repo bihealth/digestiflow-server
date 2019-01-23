@@ -288,6 +288,14 @@ class FlowCell(models.Model):
         max_length=200, blank=True, null=True, help_text="Specification of the current reads"
     )
 
+    #: Optional override for reads information to override ``planned_reads`` in demultiplexing (in Picard notation)
+    demux_reads = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        help_text="Specification of the reads to use for demultiplexing (defaults to planned reads_",
+    )
+
     #: Number of mismatches to allow, defaults to ``None`` which triggers to use the default.
     barcode_mismatches = models.PositiveSmallIntegerField(
         null=True, blank=True, help_text="Number of mismatches to allow"
