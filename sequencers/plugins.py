@@ -19,7 +19,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     description = "Management of sequencing machines"
 
     #: Required permission for accessing the app
-    app_permission = "sequencers.view_data"
+    app_permission = "sequencers"
 
     #: Enable or disable general search from project title bar
     search_enable = True

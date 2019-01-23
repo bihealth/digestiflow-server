@@ -19,7 +19,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     description = "Management of barcodes and barcode sets"
 
     #: Required permission for accessing the app
-    app_permission = "barcodes.view_data"
+    app_permission = "barcodes"
 
     #: Enable or disable general search from project title bar
     search_enable = True

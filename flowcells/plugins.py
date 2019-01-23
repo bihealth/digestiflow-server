@@ -19,7 +19,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     description = "Management of flow cells"
 
     #: Required permission for accessing the app
-    app_permission = "flowcells.view_data"
+    app_permission = "flowcells"
 
     #: Enable or disable general search from project title bar
     search_enable = True
