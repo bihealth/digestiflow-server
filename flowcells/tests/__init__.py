@@ -66,8 +66,13 @@ class SetupFlowCellMixin:
         self.lane_index_histo_api_post_data = {
             "lane": 1,
             "index_read_no": 1,
-            "sample_size": 1000,
-            "histogram": json.dumps({"ACGT": 1000}),
+            "sample_size": 10000,
+            "histogram": json.dumps({"ACGT": 10000}),
+        }
+        self.sent_message_api_post_data = {
+            "subject": "My Message Subject",
+            "state": MSG_STATE_SENT,
+            "body": "The message body",
         }
         self.user = self.make_user(username="author")
         self.tag_user_watches_flow_cell = FlowCellTag.objects.create(
@@ -85,12 +90,15 @@ class SetupFlowCellMixin:
             subject="the draft message subject",
             body="The draft message body",
         )
+        self.histograms = []
         for lane in range(1, 5):
-            self.flow_cell.index_histograms.create(
-                lane=lane,
-                index_read_no=1,
-                sample_size=1000,
-                histogram={self.barcode_set_entry.sequence: 500, "ACGTACGTAG": 500},
+            self.histograms.append(
+                self.flow_cell.index_histograms.create(
+                    lane=lane,
+                    index_read_no=1,
+                    sample_size=1000,
+                    histogram={self.barcode_set_entry.sequence: 500, "ACGTACGTAG": 500},
+                )
             )
         self.known_index_contamination = KnownIndexContamination.objects.create(
             title="Some Contamination", description="Some description", sequence="CGATCGATCGAT"
@@ -112,6 +120,14 @@ class SetupFlowCellMixin:
     def make_library(self, flow_cell=None):
         return (flow_cell or self.flow_cell).libraries.create(
             name="THREE", barcode_seq="ATATATATA", barcode_seq2="GCGCGCGCG", lane_numbers=[3, 4, 5]
+        )
+
+    def make_index_histogram(self, flow_cell=None, lane=5):
+        return (flow_cell or self.flow_cell).index_histograms.create(
+            lane=lane,
+            index_read_no=1,
+            sample_size=10000,
+            histogram={self.barcode_set_entry.sequence: 500, "ACGTACGTAG": 500},
         )
 
     def make_message(self, flow_cell=None):
