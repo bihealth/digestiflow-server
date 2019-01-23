@@ -22,7 +22,6 @@ class BarcodeSetViewMixin(ProjectMixin):
 class BarcodeSetCreateApiView(BarcodeSetViewMixin, ListCreateAPIView):
     permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = BarcodeSetSerializer
-    permission_required = "barcodes.modify_data"
 
     def perform_create(self, serializer):
         serializer.save(project=self.get_project())
@@ -31,7 +30,6 @@ class BarcodeSetCreateApiView(BarcodeSetViewMixin, ListCreateAPIView):
 class BarcodeSetUpdateDestroyApiView(BarcodeSetViewMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = BarcodeSetSerializer
-    permission_required = "barcodes.modify_data"
     lookup_url_kwarg = "barcodeset"
     lookup_field = "sodar_uuid"
 

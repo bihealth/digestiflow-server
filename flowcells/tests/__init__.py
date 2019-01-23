@@ -39,10 +39,10 @@ class SetupFlowCellMixin:
             lane_numbers=[1, 2, 3, 4],
         )
         # Additional data for posting to views
-        self.barcode_set_form_post_data = {
+        self.flow_cell_form_post_data = {
             "project": self.project,
             "run_date": datetime.date(2019, 1, 18),
-            "sequencing_machine": self.hiseq2000,
+            "sequencing_machine": self.hiseq2000.vendor_id,
             "run_number": 2,
             "slot": "A",
             "vendor_id": "HxXxXxXxXxX",
@@ -53,18 +53,21 @@ class SetupFlowCellMixin:
             ),
         }
         # Additional data for posting to API
-        self.barcode_set_api_post_data = {
+        self.flow_cell_api_post_data = {
             "project": self.project,
             "run_date": datetime.date(2019, 1, 18),
-            "sequencing_machine": self.hiseq2000,
+            "sequencing_machine": self.hiseq2000.vendor_id,
             "run_number": 2,
             "slot": "A",
             "vendor_id": "HxXxXxXxXxX",
             "label": "a_second_flow_cell",
             "description": "yay, my second one",
         }
-        self.barcode_set_entry_api_post_data = {
-            # TODO
+        self.lane_index_histo_api_post_data = {
+            "lane": 1,
+            "index_read_no": 1,
+            "sample_size": 1000,
+            "histogram": json.dumps({"ACGT": 1000}),
         }
         self.user = self.make_user(username="author")
         self.tag_user_watches_flow_cell = FlowCellTag.objects.create(

@@ -82,9 +82,9 @@ urlpatterns = [
     url(
         regex=r"^flowcells/resolve/(?P<project>[0-9a-f-]+)/(?P<instrument_id>[^/]+)/(?P<run_no>[^/]+)/(?P<flowcell_id>[^/]+)/$",
         view=flowcell_views.FlowCellResolveApiView.as_view({"get": "resolve"}),
-        name="flowcells",
+        name="flowcells-resolve",
     ),
-    # /flowcells/:project/:flowcell/
+    # /indexhistos/:project/:flowcell/
     url(
         regex=r"^indexhistos/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/$",
         view=flowcell_views.LaneIndexHistogramListCreateApiView.as_view(),
@@ -92,19 +92,7 @@ urlpatterns = [
     ),
     # /indexhistos/:project/:flowcell/:indexhistogram/
     url(
-        regex=r"^indexhistograms/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<indexhistogram>[0-9a-f-]+)/$",
-        view=flowcell_views.LaneIndexHistogramUpdateDestroyApiView.as_view(),
-        name="indexhistos",
-    ),
-    # /indexhistos/:project/:flowcell/
-    url(
-        regex=r"^indexhistos/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/$",
-        view=flowcell_views.LaneIndexHistogramListCreateApiView.as_view(),
-        name="libraries",
-    ),
-    # /indexhistos/:project/:flowcell/:library/
-    url(
-        regex=r"^indexhistos/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<library>[0-9a-f-]+)/$",
+        regex=r"^indexhistos/(?P<project>[0-9a-f-]+)/(?P<flowcell>[0-9a-f-]+)/(?P<indexhistogram>[0-9a-f-]+)/$",
         view=flowcell_views.LaneIndexHistogramUpdateDestroyApiView.as_view(),
         name="indexhistos",
     ),

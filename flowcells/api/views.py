@@ -1,14 +1,13 @@
-"""API Views for the sequencers app."""
+"""API Views for the flowcells app."""
 
 from django.shortcuts import get_object_or_404
 from projectroles.models import Project
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.parsers import MultiPartParser
 
-from digestiflow.utils import ProjectMixin
+from digestiflow.utils import ProjectMixin, SodarObjectInProjectPermissions
 from ..models import (
     FlowCell,
     LaneIndexHistogram,
@@ -42,9 +41,8 @@ class FlowCellApiViewMixin(ProjectMixin):
 
 
 class FlowCellListCreateApiView(FlowCellApiViewMixin, ListCreateAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = FlowCellSerializer
-    permission_required = "flowcells.modify_data"
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
@@ -52,11 +50,10 @@ class FlowCellListCreateApiView(FlowCellApiViewMixin, ListCreateAPIView):
 
 
 class FlowCellUpdateDestroyApiView(FlowCellApiViewMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = FlowCellSerializer
     lookup_url_kwarg = "flowcell"
     lookup_field = "sodar_uuid"
-    permission_required = "flowcells.modify_data"
 
     def perform_update(self, serializer):
         original = FlowCell.objects.get(pk=serializer.instance.pk)
@@ -67,10 +64,8 @@ class FlowCellUpdateDestroyApiView(FlowCellApiViewMixin, RetrieveUpdateDestroyAP
 class FlowCellResolveApiView(FlowCellApiViewMixin, ModelViewSet):
     """Resolve flow cell attributes to UUID"""
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = FlowCellSerializer
-    lookup_field = "flowcell"
-    permission_required = "flowcells.modify_data"
 
     def resolve(self, _request, project, instrument_id, run_no, flowcell_id):
         project = Project.objects.get(sodar_uuid=project)
@@ -103,21 +98,17 @@ class LaneIndexHistogramApiViewMixin(ProjectMixin):
 
 
 class LaneIndexHistogramListCreateApiView(LaneIndexHistogramApiViewMixin, ListCreateAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = LaneIndexHistogramSerializer
-    # lookup_url_kwarg = "indexhistogram"
-    # lookup_field = "sodar_uuid"
-    permission_required = "flowcells.modify_data"
 
 
 class LaneIndexHistogramUpdateDestroyApiView(
     LaneIndexHistogramApiViewMixin, RetrieveUpdateDestroyAPIView
 ):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = LaneIndexHistogramSerializer
     lookup_url_kwarg = "indexhistogram"
     lookup_field = "sodar_uuid"
-    permission_required = "flowcells.modify_data"
 
 
 class MessageApiViewMixin(ProjectMixin):
@@ -139,11 +130,8 @@ class MessageApiViewMixin(ProjectMixin):
 
 
 class MessageListCreateApiView(MessageApiViewMixin, ListCreateAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = MessageSerializer
-    # lookup_url_kwarg = "message"
-    # lookup_field = "sodar_uuid"
-    permission_required = "flowcells.modify_data"
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
@@ -151,11 +139,10 @@ class MessageListCreateApiView(MessageApiViewMixin, ListCreateAPIView):
 
 
 class MessageUpdateDestroyApiView(MessageApiViewMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = MessageSerializer
     lookup_url_kwarg = "message"
     lookup_field = "sodar_uuid"
-    permission_required = "flowcells.modify_data"
 
     def perform_update(self, serializer):
         original = Message.objects.get(pk=serializer.instance.pk)
@@ -189,15 +176,13 @@ class AttachmentApiViewMixin(ProjectMixin):
 
 class AttachmentListApiView(AttachmentApiViewMixin, ListCreateAPIView):
     parser_classes = (MultiPartParser,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = AttachmentSerializer
-    permission_required = "flowcells.modify_data"
 
 
 class AttachmentRetrieveApiView(AttachmentApiViewMixin, RetrieveUpdateDestroyAPIView):
     parser_classes = (MultiPartParser,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = AttachmentSerializer
     lookup_url_kwarg = "file"
     lookup_field = "sodar_uuid"
-    permission_required = "flowcells.modify_data"

@@ -53,7 +53,7 @@ class FlowCellListView(
     """Display list of all FlowCell records"""
 
     template_name = "flowcells/flowcell_list.html"
-    permission_required = "flowcells.view_data"
+    permission_required = "flowcells.view_flowcell"
 
     model = FlowCell
 
@@ -71,7 +71,7 @@ class FlowCellDetailView(
     """Display detail of FlowCell records"""
 
     template_name = "flowcells/flowcell_detail.html"
-    permission_required = "flowcells.view_data"
+    permission_required = "flowcells.view_flowcell"
 
     model = FlowCell
 
@@ -228,7 +228,7 @@ class FlowCellCreateView(
 
     success_message = "Flow cell successfully created."
     template_name = "flowcells/flowcell_create.html"
-    permission_required = "flowcells.modify_data"
+    permission_required = "flowcells.add_flowcell"
 
     model = FlowCell
     form_class = FlowCellForm
@@ -275,7 +275,7 @@ class FlowCellUpdateView(
 
     success_message = "Flow cell successfully updated."
     template_name = "flowcells/flowcell_update.html"
-    permission_required = "flowcells.modify_data"
+    permission_required = "flowcells.change_flowcell"
 
     model = FlowCell
     form_class = FlowCellForm
@@ -323,7 +323,7 @@ class FlowCellUpdateStatusView(
     """Updating of FlowCell records, status field."""
 
     template_name = "flowcells/flowcell_update_status.html"
-    permission_required = "flowcells.modify_data"
+    permission_required = "flowcells.change_flowcell"
 
     model = FlowCell
     form_class = FlowCellUpdateStatusForm
@@ -381,7 +381,7 @@ class FlowCellToggleWatchingView(
 ):
     """Updating of FlowCell records, tag ``FLOWCELL_TAG_WATCHING``."""
 
-    permission_required = "flowcells.view_data"
+    permission_required = "flowcells.change_flowcell"
     template_name = "flowcells/flowcell_update_status.html"
 
     model = FlowCell
@@ -427,7 +427,7 @@ class FlowCellSuppressWarningView(
     """Updating of FlowCell records lane suppress warnings fields."""
 
     template_name = "flowcells/flowcell_suppress_warning.html"
-    permission_required = "flowcells.modify_data"
+    permission_required = "flowcells.change_flowcell"
 
     model = FlowCell
     form_class = FlowCellSuppressWarningForm
@@ -509,7 +509,7 @@ class LibrarySuppressWarningView(
     """Updating of Library records, suppression of index warnings."""
 
     template_name = "flowcells/library_suppress_warning.html"
-    permission_required = "flowcells.modify_data"
+    permission_required = "flowcells.change_flowcell"
 
     model = Library
     form_class = LibrarySuppressWarningForm
@@ -566,7 +566,7 @@ class FlowCellDeleteView(
 
     success_message = "Flow cell successfully deleted."
     template_name = "flowcells/flowcell_confirm_delete.html"
-    permission_required = "flowcells.modify_data"
+    permission_required = "flowcells.delete_flowcell"
 
     model = FlowCell
 
@@ -677,7 +677,7 @@ class MessageCreateView(
     """Creation of messages."""
 
     template_name = "flowcells/flowcell_detail.html"
-    permission_required = "flowcells.modify_data"
+    permission_required = "flowcells.add_message"
 
     model = Message
     form_class = MessageForm
@@ -745,7 +745,7 @@ class MessageUpdateView(
     """Updating of Message records"""
 
     template_name = "flowcells/flowcell_update.html"
-    permission_required = "flowcells.modify_data"
+    permission_required = "flowcells.change_message"
 
     model = Message
     form_class = MessageForm
@@ -804,7 +804,7 @@ class MessageDeleteView(
 
     success_message = "Message has been successfully deleted."
     template_name = "flowcells/message_confirm_delete.html"
-    permission_required = "flowcells.modify_data"
+    permission_required = "flowcells.delete_message"
 
     model = Message
 
