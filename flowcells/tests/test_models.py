@@ -134,7 +134,7 @@ class FlowCellTest(
     def testGetKnownContaminations(self):
         """Test ``get_known_contaminations()``"""
         result = self.flow_cell.get_known_contaminations()
-        self.assertEqual(len(result), 10)
+        self.assertEqual(len(result), 11)
         self.assertIn("AAAAAAAA", result)
         self.assertIn("AAAAAAAAAA", result)
 
@@ -564,15 +564,15 @@ class KnownIndexContaminationTest(
 
     def testFactoryDefaultsFromMigrations(self):
         """Test Presence of index contaminations inserted by migration"""
-        self.assertEqual(KnownIndexContamination.objects.count(), 6)
+        self.assertEqual(KnownIndexContamination.objects.count(), 7)
 
     def testCreate(self):
         """Test creating ``KnownIndexContamination`` objects"""
-        self.assertEqual(KnownIndexContamination.objects.count(), 6)
+        self.assertEqual(KnownIndexContamination.objects.count(), 7)
         KnownIndexContamination.objects.create(
             title="Yet another title", description="Yet another description", sequence="TCTCTCTCTC"
         )
-        self.assertEqual(KnownIndexContamination.objects.count(), 7)
+        self.assertEqual(KnownIndexContamination.objects.count(), 8)
 
     def testUpdate(self):
         """Test updating ``KnownIndexContamination`` objects"""
@@ -584,9 +584,9 @@ class KnownIndexContaminationTest(
 
     def testDelete(self):
         """Test deleting ``KnownIndexContamination`` objects"""
-        self.assertEqual(KnownIndexContamination.objects.count(), 6)
+        self.assertEqual(KnownIndexContamination.objects.count(), 7)
         self.known_index_contamination.delete()
-        self.assertEqual(KnownIndexContamination.objects.count(), 5)
+        self.assertEqual(KnownIndexContamination.objects.count(), 6)
 
     def testStr(self):
         """Test ``__str__()``"""
