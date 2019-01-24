@@ -901,6 +901,12 @@ class LaneIndexHistogram(models.Model):
     #: The histogram information as a dict from sequence to count.
     histogram = JSONField(help_text="The index histogram information")
 
+    #: The threshold on fraction for including an adapter.
+    min_index_fraction = models.FloatField(
+        default=0.01,
+        help_text="Minimal fraction that an adapter must have to appear in index histogram",
+    )
+
     def __str__(self):
         return "Index Histogram index {} lane {} flowcell {}".format(
             self.index_read_no, self.lane, self.flowcell.get_full_name()

@@ -27,7 +27,15 @@ class LaneIndexHistogramSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LaneIndexHistogram
-        fields = ("sodar_uuid", "flowcell", "lane", "index_read_no", "sample_size", "histogram")
+        fields = (
+            "sodar_uuid",
+            "flowcell",
+            "lane",
+            "index_read_no",
+            "sample_size",
+            "min_index_fraction",
+            "histogram",
+        )
         read_only_fields = ("sodar_uuid", "flowcell")
 
 
@@ -204,6 +212,7 @@ class FlowCellSerializer(serializers.ModelSerializer):
             "delivery_type",
             "planned_reads",
             "current_reads",
+            "demux_reads",
             "barcode_mismatches",
             "sequencing_machine",
             "demux_operator",
