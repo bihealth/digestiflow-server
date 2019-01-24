@@ -93,27 +93,27 @@ def get_index_errors(flowcell, lane, index_read_no, sequence):
 
 @register.simple_tag
 def get_reverse_index_errors(flowcell, library_uuid):
-    return flowcell.get_reverse_index_errors().get(library_uuid)
+    return flowcell.get_reverse_index_errors().get(str(library_uuid))
 
 
 @register.simple_tag
 def get_sheet_name_errors(flowcell, entry):
-    return flowcell.get_sample_sheet_errors().get(entry.sodar_uuid, {}).get("name")
+    return flowcell.get_sample_sheet_errors().get(str(entry.sodar_uuid), {}).get("name")
 
 
 @register.simple_tag
 def get_sheet_lane_errors(flowcell, entry):
-    return flowcell.get_sample_sheet_errors().get(entry.sodar_uuid, {}).get("lane")
+    return flowcell.get_sample_sheet_errors().get(str(entry.sodar_uuid), {}).get("lane")
 
 
 @register.simple_tag
 def get_sheet_barcode_errors(flowcell, entry):
-    return flowcell.get_sample_sheet_errors().get(entry.sodar_uuid, {}).get("barcode")
+    return flowcell.get_sample_sheet_errors().get(str(entry.sodar_uuid), {}).get("barcode")
 
 
 @register.simple_tag
 def get_sheet_barcode2_errors(flowcell, entry):
-    return flowcell.get_sample_sheet_errors().get(entry.sodar_uuid, {}).get("barcode2")
+    return flowcell.get_sample_sheet_errors().get(str(entry.sodar_uuid), {}).get("barcode2")
 
 
 @register.filter
