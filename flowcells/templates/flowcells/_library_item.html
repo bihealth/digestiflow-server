@@ -21,105 +21,115 @@
       <i class="fa fa-fw fa-check text-success"></i>
     {% endif %}
   </td>
-  <td>
-    {% if name_errors %}
-      <span class="text-danger" data-toggle="tooltip" title="{{ name_errors|join:", " }}">
-    {% endif %}
-        {{ item.name }}
-    {% if name_errors %}
-        <i class="fa fa-exclamation-triangle pl-1"></i>
-      </span>
-    {% endif %}
+  <td class="text-nowrap">
+    <div class="sodar-overflow-container sodar-overflow-hover">
+      {% if name_errors %}
+        <span class="text-danger" data-toggle="tooltip" title="{{ name_errors|join:", " }}">
+      {% endif %}
+          {{ item.name }}
+      {% if name_errors %}
+          <i class="fa fa-exclamation-triangle pl-1"></i>
+        </span>
+      {% endif %}
+    </div>
   </td>
   <td>{{ item.reference|reference_label }}</td>
 
-  <td>
-    {% if not item.barcode %}
-      -
-    {% else %}
-      <a href="{% url "barcodes:barcodeset-detail" project=project.sodar_uuid barcodeset=item.barcode.barcode_set.sodar_uuid %}">
-        {{ item.barcode.barcode_set.name }}
-      </a>
-    {% endif %}
+  <td style="max-width: 150px;">
+    <div class="sodar-overflow-container sodar-overflow-hover">
+      {% if not item.barcode %}
+        -
+      {% else %}
+        <a href="{% url "barcodes:barcodeset-detail" project=project.sodar_uuid barcodeset=item.barcode.barcode_set.sodar_uuid %}">
+          {{ item.barcode.barcode_set.name }}
+        </a>
+      {% endif %}
+    </div>
   </td>
-  <td class="text-nowrap">
-    {% if barcode_errors or reverse_errors.0 %}
-      <span class="text-danger" data-toggle="tooltip" title="{{ barcode_errors|chain:reverse_errors.0|join:", " }}">
-    {% elif item.suppress_barcode1_not_observed_error %}
-      <span class="text-muted" data-toggle="tooltip" title="Suppressed index error for barcode #1">
-    {% endif %}
+  <td style="max-width: 150px;">
+    <div class="sodar-overflow-container sodar-overflow-hover">
+      {% if barcode_errors or reverse_errors.0 %}
+        <span class="text-danger" data-toggle="tooltip" title="{{ barcode_errors|chain:reverse_errors.0|join:", " }}">
+      {% elif item.suppress_barcode1_not_observed_error %}
+        <span class="text-muted" data-toggle="tooltip" title="Suppressed index error for barcode #1">
+      {% endif %}
 
-    {% if not item.barcode %}
-      {% if item.barcode_seq %}
-        <span data-toggle="tooltip" title="manually entered barcode">
-          {{ item.get_barcode_seq }}
-          <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
+      {% if not item.barcode %}
+        {% if item.barcode_seq %}
+          <span data-toggle="tooltip" title="manually entered barcode">
+            {{ item.get_barcode_seq }}
+            <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
+          </span>
+        {% endif %}
+      {% else %}
+        {{ item.get_barcode_seq }}
+        <span class="{% if not barcode_errors %}text-muted{% endif %}">({{ item.barcode.name }})</span>
+      {% endif %}
+
+      {% if barcode_errors or reverse_errors.0 %}
+          <i class="fa fa-exclamation-triangle pl-1"
+            title="Suppress Barcode #1 Error"
+            data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=1 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
+          ></i>
+        </span>
+      {% elif item.suppress_barcode1_not_observed_error %}
+          <i class="fa fa-exclamation-circle pl-1"
+            title="Suppress Barcode #1 Error"
+            data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=1 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
+          ></i>
         </span>
       {% endif %}
-    {% else %}
-      {{ item.get_barcode_seq }}
-      <span class="{% if not barcode_errors %}text-muted{% endif %}">({{ item.barcode.name }})</span>
-    {% endif %}
-
-    {% if barcode_errors or reverse_errors.0 %}
-        <i class="fa fa-exclamation-triangle pl-1"
-          title="Suppress Barcode #1 Error"
-          data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=1 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
-        ></i>
-      </span>
-    {% elif item.suppress_barcode1_not_observed_error %}
-        <i class="fa fa-exclamation-circle pl-1"
-          title="Suppress Barcode #1 Error"
-          data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=1 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
-        ></i>
-      </span>
-    {% endif %}
+    </td>
   </td>
 
-  <td>
-    {% if not item.barcode2 %}
-      -
-    {% else %}
-      <a href="{% url "barcodes:barcodeset-detail" project=project.sodar_uuid barcodeset=item.barcode2.barcode_set.sodar_uuid %}">
-        {{ item.barcode.barcode_set.name }}
-      </a>
-    {% endif %}
+  <td style="max-width: 150px;">
+    <div class="sodar-overflow-container sodar-overflow-hover">
+      {% if not item.barcode2 %}
+        -
+      {% else %}
+        <a href="{% url "barcodes:barcodeset-detail" project=project.sodar_uuid barcodeset=item.barcode2.barcode_set.sodar_uuid %}">
+          {{ item.barcode.barcode_set.name }}
+        </a>
+      {% endif %}
+    </td>
   </td>
-  <td class="text-nowrap">
-    {% if barcode2_errors or reverse_errors.1 %}
-      <span class="text-danger" data-toggle="tooltip" title="{{ barcode2_errors|chain:reverse_errors.1|join:", " }}">
-    {% elif item.suppress_barcode2_not_observed_error %}
-      <span class="text-muted" data-toggle="tooltip" title="Suppressed index error for barcode #2">
-    {% endif %}
+  <td style="max-width: 150px;">
+    <div class="sodar-overflow-container sodar-overflow-hover">
+      {% if barcode2_errors or reverse_errors.1 %}
+        <span class="text-danger" data-toggle="tooltip" title="{{ barcode2_errors|chain:reverse_errors.1|join:", " }}">
+      {% elif item.suppress_barcode2_not_observed_error %}
+        <span class="text-muted" data-toggle="tooltip" title="Suppressed index error for barcode #2">
+      {% endif %}
 
-    {% if not item.barcode2 %}
-      {% if item.barcode_seq2 %}
-        <span data-toggle="tooltip" title="manually entered barcode">
-          {{ item.get_barcode_seq2 }}
-          <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
+      {% if not item.barcode2 %}
+        {% if item.barcode_seq2 %}
+          <span data-toggle="tooltip" title="manually entered barcode">
+            {{ item.get_barcode_seq2 }}
+            <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
+          </span>
+        {% endif %}
+      {% else %}
+        {{ item.get_barcode_seq2 }}
+        <span class="{% if not barcode2_errors %}text-muted{% endif %}">({{ item.barcode2.name }})</span>
+      {% endif %}
+
+      {% if barcode2_errors or reverse_errors.1 %}
+          <i class="fa fa-exclamation-triangle pl-1"
+            title="Suppress Barcode #2 Error"
+            data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=2 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
+          ></i>
+        </span>
+      {% elif item.suppress_barcode2_not_observed_error %}
+          <i class="fa fa-exclamation-circle pl-1"
+             title="Suppress Barcode #2 Error"
+             data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=2 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
+          ></i>
         </span>
       {% endif %}
-    {% else %}
-      {{ item.get_barcode_seq2 }}
-      <span class="{% if not barcode2_errors %}text-muted{% endif %}">({{ item.barcode2.name }})</span>
-    {% endif %}
-
-    {% if barcode2_errors or reverse_errors.1 %}
-        <i class="fa fa-exclamation-triangle pl-1"
-          title="Suppress Barcode #2 Error"
-          data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=2 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
-        ></i>
-      </span>
-    {% elif item.suppress_barcode2_not_observed_error %}
-        <i class="fa fa-exclamation-circle pl-1"
-           title="Suppress Barcode #2 Error"
-           data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=2 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
-        ></i>
-      </span>
-    {% endif %}
+    </div>
   </td>
 
-  <td>
+  <td class="text-nowrap">
     {% if lane_errors %}
       <span class="text-danger" data-toggle="tooltip" title="{{ lane_errors|join:", " }}">
     {% endif %}

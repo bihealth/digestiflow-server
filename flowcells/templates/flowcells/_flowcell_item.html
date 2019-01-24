@@ -149,22 +149,24 @@
     </a>
   </td>
   <td class="text-right">{{ flowcell.run_number }}</td>
-  <td>
-    <a href="{% url 'flowcells:flowcell-detail' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}"
-       title="Show flow cell {{ flowcell.vendor_id }} details">
-      {{ flowcell.vendor_id }}
-      {% if flowcell.manual_label %}
-        <small class="text-muted text-small">{{ flowcell.manual_label }}</small>
-      {% elif flowcell.label %}
-        <small class="text-muted text-small">{{ flowcell.label }}</small>
-      {% endif %}
-    </a>
+  <td class="text-nowrap" style="max-width: 400px;">
+    <div class="sodar-overflow-container sodar-overflow-hover">
+      <a href="{% url 'flowcells:flowcell-detail' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}"
+         title="Show flow cell {{ flowcell.vendor_id }} details">
+        {{ flowcell.vendor_id }}
+        {% if flowcell.manual_label %}
+          <small class="text-muted text-small">{{ flowcell.manual_label }}</small>
+        {% elif flowcell.label %}
+          <small class="text-muted text-small">{{ flowcell.label }}</small>
+        {% endif %}
+      </a>
+    </div>
   </td>
   <td>
     {{ flowcell.planned_reads }}
   </td>
   <td>
-    {{ flowcell.operator }} /
+    {{ flowcell.operator|default:"-" }} /
     {{ flowcell.demux_operator|default:"-" }}
   </td>
   <td class="text-right">{{ flowcell.libraries.count }}</td>
