@@ -161,6 +161,9 @@ USE_L10N = True
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 
+# Maximal upload size:
+DATA_UPLOAD_MAX_MEMORY_SIZE = 32 * 1024 * 1024
+
 # TEMPLATE CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#templates
