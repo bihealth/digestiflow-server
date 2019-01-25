@@ -1,20 +1,66 @@
-.. DigestiFlow Web documentation master file, created by
-   sphinx-quickstart on Fri Jan 25 15:21:00 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+===========================
+DigestiFlow Web User Manual
+===========================
 
-Welcome to DigestiFlow Web's documentation!
-===========================================
+DigestiFlow is a suite of programs for managing Illumina flow cells, curating sample sheets, and demultiplexing.
+**DigestiFlow Web** is the web-based database system offering a web-based user UI and REST API.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :maxdepth: 2
+    :caption: Contents:
 
+.. note::
 
+    The DigestiFlow Web documentation is currently under construction and in **alpha** state.
+    Don't hesitate to open issues in our `GitHub bug tracker <https://github.com/bihealth/digestiflow-web/issues/>`_ in case of any question or problem.
 
-Indices and tables
-==================
+.. toctree::
+    :maxdepth: 1
+    :caption: Projects & Navigation
+    :name: project-navigation
+    :hidden:
+    :titlesonly:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    projects_permissions
+    projects_search
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Sequencers & Barcodes
+    :name: sequencers-barcodes
+    :hidden:
+    :titlesonly:
+
+    seq_idx_sequencers
+    seq_idx_barcodes
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Flow Cells & Libraries
+    :name: flowcells-libraries
+    :hidden:
+    :titlesonly:
+
+    flowcells_overview
+    flowcells_details
+    flowcells_editor
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Miscellaneous
+    :name: miscellaneous
+    :hidden:
+    :titlesonly:
+
+    misc_admin_alerts
+    misc_api_tokens
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Project Info
+    :name: project-info
+    :hidden:
+    :titlesonly:
+
+    contributors
+    history

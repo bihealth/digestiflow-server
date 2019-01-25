@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = "DigestiFlow Web"
-copyright = "2018-2019, Berlin Institute of Health"
+copyright = "2018-2019, BIH Core Unit Bioinformatics"
 author = "Manuel Holtgrewe"
 
 # The short X.Y version
