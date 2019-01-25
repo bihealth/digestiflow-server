@@ -1,4 +1,6 @@
 /src/
+docs_manual/_build/
+XXX_test_*
 
 ### Documentation ###
 /docs*/build/
