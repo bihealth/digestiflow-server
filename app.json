@@ -1,0 +1,31 @@
+{
+  "name": "Digestiflow Web",
+  "description": "Management and curation of Illumina Flowcells",
+  "repository": "https://github.com/bihealth/digestiflow-web",
+  "keywords": ["bioinformatics", "sequencing", "demultiplexing"],
+  "env": {
+    "DJANGO_SETTINGS_MODULE": {
+      "description": "The Django environment to use",
+      "value": "config.settings.production"
+    },
+    "DJANGO_SECRET_KEY": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
+    },
+    "DJANGO_ALLOWED_HOSTS": {
+      "description": "Allowed hosts",
+      "value": "*"
+    },
+    "DIGESTIFLOW_INITIAL_ROOT_PASSWORD": {
+      "description": "Initial root password",
+      "generator": "secret"
+    }
+  },
+  "scripts": {
+    "postdeploy": "bash .heroku/post-deploy.sh"
+  },
+  "addons": [
+    "heroku-redis",
+    "heroku-postgresql"
+  ]
+}

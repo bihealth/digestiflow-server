@@ -1,0 +1,10 @@
+#!/bin/bash
+
+>&2 echo "BEGIN: Post-compile script -----------------------------------------"
+
+>&2 echo "BEGIN: Building manual..."
+cd docs_manual
+sphinx-build -M html . _build
+>&2 echo "DONE: Building manual."
+
+>&2 echo "END: Post-compile script -------------------------------------------"
