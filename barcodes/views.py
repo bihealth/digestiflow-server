@@ -73,7 +73,7 @@ class BarcodeSetCreateView(
     @transaction.atomic
     def form_valid(self, form):
         # Properly set the reference to the current project.
-        form.instance.project = self._get_project(self.request, self.kwargs)
+        form.instance.project = self.get_project(self.request, self.kwargs)
         # Save form, get ``self.object``, ready for creating barcode set entries.
         self.object = form.save()
         for entry in json.loads(form.cleaned_data["entries_json"]):
@@ -86,7 +86,7 @@ class BarcodeSetCreateView(
         timeline = get_backend_api("timeline_backend")
         if timeline:
             tl_event = timeline.add_event(
-                project=self._get_project(self.request, self.kwargs),
+                project=self.get_project(self.request, self.kwargs),
                 app_name="barcodes",
                 user=self.request.user,
                 event_name="barcodeset_create",
@@ -138,7 +138,7 @@ class BarcodeSetUpdateView(
         timeline = get_backend_api("timeline_backend")
         if timeline:
             tl_event = timeline.add_event(
-                project=self._get_project(self.request, self.kwargs),
+                project=self.get_project(self.request, self.kwargs),
                 app_name="barcodes",
                 user=self.request.user,
                 event_name="barcodeset_update",
@@ -213,7 +213,7 @@ class BarcodeSetDeleteView(
         timeline = get_backend_api("timeline_backend")
         if timeline:
             tl_event = timeline.add_event(
-                project=self._get_project(self.request, self.kwargs),
+                project=self.get_project(self.request, self.kwargs),
                 app_name="barcodes",
                 user=self.request.user,
                 event_name="barcodeset_delete",
@@ -232,5 +232,5 @@ class BarcodeSetDeleteView(
     def get_success_url(self):
         return reverse(
             "barcodes:barcodeset-list",
-            kwargs={"project": self._get_project(self.request, self.kwargs).sodar_uuid},
+            kwargs={"project": self.get_project(self.request, self.kwargs).sodar_uuid},
         )

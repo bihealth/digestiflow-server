@@ -193,7 +193,7 @@ class FlowCellRecreateLibrariesMixin:
         flowcell.libraries.all().delete()
 
         project_barcodes = BarcodeSetEntry.objects.filter(
-            barcode_set__project=self._get_project(self.request, self.kwargs)
+            barcode_set__project=self.get_project(self.request, self.kwargs)
         )
         for info in json.loads(form.cleaned_data["libraries_json"]):
             if info["barcode"]:
@@ -237,7 +237,7 @@ class FlowCellCreateView(
     def form_valid(self, form):
         """Automatically set the project property."""
         # Create the sequencing machine.
-        form.instance.project = self._get_project(self.request, self.kwargs)
+        form.instance.project = self.get_project(self.request, self.kwargs)
         result = super().form_valid(form)
         try:
             self._update_libraries(self.object, form)
@@ -250,7 +250,7 @@ class FlowCellCreateView(
         timeline = get_backend_api("timeline_backend")
         if timeline:
             tl_event = timeline.add_event(
-                project=self._get_project(self.request, self.kwargs),
+                project=self.get_project(self.request, self.kwargs),
                 app_name="flowcells",
                 user=self.request.user,
                 event_name="flowcell_create",
@@ -301,7 +301,7 @@ class FlowCellUpdateView(
         timeline = get_backend_api("timeline_backend")
         if timeline:
             tl_event = timeline.add_event(
-                project=self._get_project(self.request, self.kwargs),
+                project=self.get_project(self.request, self.kwargs),
                 app_name="flowcells",
                 user=self.request.user,
                 event_name="flowcell_update",
@@ -581,7 +581,7 @@ class FlowCellDeleteView(
         timeline = get_backend_api("timeline_backend")
         if timeline:
             tl_event = timeline.add_event(
-                project=self._get_project(self.request, self.kwargs),
+                project=self.get_project(self.request, self.kwargs),
                 app_name="flowcells",
                 user=self.request.user,
                 event_name="flowcell_delete",
@@ -595,7 +595,7 @@ class FlowCellDeleteView(
     def get_success_url(self):
         return reverse(
             "flowcells:flowcell-list",
-            kwargs={"project": self._get_project(self.request, self.kwargs).sodar_uuid},
+            kwargs={"project": self.get_project(self.request, self.kwargs).sodar_uuid},
         )
 
 
@@ -620,7 +620,7 @@ class MessageAttachmentHelpersMixin:
 
         Ensures to remove the file upload folder for this message.
         """
-        project = self._get_project(self.request, self.kwargs)
+        project = self.get_project(self.request, self.kwargs)
         folder = self._get_attachment_folder(message)
         if not self.request.FILES:
             return
@@ -645,7 +645,7 @@ class MessageAttachmentHelpersMixin:
 
     def _get_attachment_folder(self, message):
         """Get the folder containing the attachments of this message."""
-        project = self._get_project(self.request, self.kwargs)
+        project = self.get_project(self.request, self.kwargs)
         container = self._get_message_attachments_folder()
         message.attachment_folder = container.filesfolders_folder_children.get_or_create(
             name=message.sodar_uuid, owner=self.request.user, project=project, folder=container
@@ -657,7 +657,7 @@ class MessageAttachmentHelpersMixin:
 
         On creation, the folder will be owned by the first created user that is a super user.
         """
-        project = self._get_project(self.request, self.kwargs)
+        project = self.get_project(self.request, self.kwargs)
         try:
             return Folder.objects.get(project=project, name="Message Attachments")
         except Folder.DoesNotExist:
@@ -687,7 +687,7 @@ class MessageCreateView(
         # Enable directly going to the messages.
         result["message_mode"] = True
         # Get flow cell to display as the main "single" object.
-        project = self._get_project(self.request, self.kwargs)
+        project = self.get_project(self.request, self.kwargs)
         flow_cell = project.flowcell_set.get(sodar_uuid=self.kwargs["flowcell"])
         result["object"] = flow_cell
         # Setup the model form, push draft message into it, if any.
@@ -703,7 +703,7 @@ class MessageCreateView(
     def form_valid(self, form):
         # Automatically set the instance attributes for user and flow_cell.
         form.instance.author = self.request.user
-        project = self._get_project(self.request, self.kwargs)
+        project = self.get_project(self.request, self.kwargs)
         flow_cell = project.flowcell_set.get(sodar_uuid=self.kwargs["flowcell"])
         form.instance.flow_cell = flow_cell
 
@@ -758,7 +758,7 @@ class MessageUpdateView(
         # Enable directly going to the messages.
         result["message_mode"] = True
         # Get flow cell to display as the main "single" object.
-        project = self._get_project(self.request, self.kwargs)
+        project = self.get_project(self.request, self.kwargs)
         flow_cell = project.flowcell_set.get(sodar_uuid=self.kwargs["flowcell"])
         result["object"] = flow_cell
         # Setup the model form, push draft message into it, if any.

@@ -67,13 +67,13 @@ class SequencingMachineCreateView(
     def form_valid(self, form):
         """Automatically set the project property."""
         # Create the sequencing machine.
-        form.instance.project = self._get_project(self.request, self.kwargs)
+        form.instance.project = self.get_project(self.request, self.kwargs)
         result = super().form_valid(form)
         # Register event with timeline.
         timeline = get_backend_api("timeline_backend")
         if timeline:
             tl_event = timeline.add_event(
-                project=self._get_project(self.request, self.kwargs),
+                project=self.get_project(self.request, self.kwargs),
                 app_name="sequencers",
                 user=self.request.user,
                 event_name="sequencer_create",
@@ -111,7 +111,7 @@ class SequencingMachineUpdateView(
         timeline = get_backend_api("timeline_backend")
         if timeline:
             tl_event = timeline.add_event(
-                project=self._get_project(self.request, self.kwargs),
+                project=self.get_project(self.request, self.kwargs),
                 app_name="sequencers",
                 user=self.request.user,
                 event_name="sequencer_update",
@@ -148,7 +148,7 @@ class SequencingMachineDeleteView(
         timeline = get_backend_api("timeline_backend")
         if timeline:
             tl_event = timeline.add_event(
-                project=self._get_project(self.request, self.kwargs),
+                project=self.get_project(self.request, self.kwargs),
                 app_name="sequencers",
                 user=self.request.user,
                 event_name="sequencer_delete",
@@ -162,5 +162,5 @@ class SequencingMachineDeleteView(
     def get_success_url(self):
         return reverse(
             "sequencers:sequencer-list",
-            kwargs={"project": self._get_project(self.request, self.kwargs).sodar_uuid},
+            kwargs={"project": self.get_project(self.request, self.kwargs).sodar_uuid},
         )

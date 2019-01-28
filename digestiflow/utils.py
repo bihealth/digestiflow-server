@@ -107,10 +107,10 @@ class ProjectPermissionMixin(_ProjectPermissionMixin):
         """Override ``get_query_set()`` to filter down to the currently selected object."""
         qs = super().get_queryset(*args, **kwargs)
         if hasattr(qs.model, "project"):
-            return qs.filter(project=self._get_project(self.request, self.kwargs))
+            return qs.filter(project=self.get_project(self.request, self.kwargs))
         elif hasattr(qs.model, "get_project_filter_key"):
             return qs.filter(
-                **{qs.model.get_project_filter_key(): self._get_project(self.request, self.kwargs)}
+                **{qs.model.get_project_filter_key(): self.get_project(self.request, self.kwargs)}
             )
         else:
             raise AttributeError(
