@@ -326,7 +326,7 @@ class FlowCell(models.Model):
     @property
     def is_paired(self):
         """Return whether flow cell contains paired read data."""
-        return self.planned_reads.count("T") > 1
+        return (self.planned_reads or "").count("T") > 1
 
     def get_planned_reads_tuples(self):
         """Return a tuple of planned read descriptions ``((count, letter))``."""
