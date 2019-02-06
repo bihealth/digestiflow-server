@@ -332,7 +332,7 @@ class FlowCell(models.Model):
         """Return a tuple of planned read descriptions ``((count, letter))``."""
         regex = re.compile("([0-9]+)([a-zA-Z])")
         result = []
-        for count, letter in re.findall(regex, self.planned_reads):
+        for count, letter in re.findall(regex, self.planned_reads or ""):
             result.append((int(count), letter))
         return tuple(result)
 
