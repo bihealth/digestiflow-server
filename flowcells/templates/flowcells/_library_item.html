@@ -22,6 +22,13 @@
     {% endif %}
   </td>
   <td class="text-nowrap">
+    {% if item.demux_reads %}
+      <span class="text-muted" data-toggle="tooltip" title="{{ item.demux_reads }}">
+        <i class="fa fa-dot-circle-o "></i>
+      </span>
+    {% endif %}
+  </td>
+  <td class="text-nowrap">
     <div class="sodar-overflow-container sodar-overflow-hover">
       {% if name_errors %}
         <span class="text-danger" data-toggle="tooltip" title="{{ name_errors|join:", " }}">

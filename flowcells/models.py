@@ -296,7 +296,7 @@ class FlowCell(models.Model):
         max_length=200,
         blank=True,
         null=True,
-        help_text="Specification of the reads to use for demultiplexing (defaults to planned reads_",
+        help_text="Specification of the reads to use for demultiplexing (defaults to planned reads)",
     )
 
     #: Number of mismatches to allow, defaults to ``None`` which triggers to use the default.
@@ -830,6 +830,14 @@ class Library(models.Model):
         default=False,
         blank=True,
         help_text='Suppress "index not observed" error in barcode 2 for this library.',
+    )
+
+    #: Optional override for reads information to the flowcell-level demultiplexing information
+    demux_reads = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        help_text="Specification of the reads to use for demultiplexing (defaults to planned_reads)",
     )
 
     #: Search-enabled manager.

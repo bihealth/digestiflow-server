@@ -7,6 +7,15 @@ function sampleNameValidator (query, report) {
   }
 }
 
+// Validate a demultiplexing string.
+function demuxValidator (query, report) {
+  if (!query) {
+    report(true)
+  } else {
+    report(query.match(/^(\d+[BMTSbmts])*$/) !== null)
+  }
+}
+
 // Validate a barcode or list thereof
 function barcodeValidator (query, report) {
   if (!query) {
@@ -78,6 +87,9 @@ function forEachInRange(sel, callback) {
 
 $(function () {
 
+  // Clipboard handling...
+  var clipboardCache = '';
+
   // Barcode sets by UUID
   var barcodesets = {}
   // Short names of barcode sets
@@ -105,7 +117,8 @@ $(function () {
       'barcode #1',
       'barcode set #2',
       'barcode #2',
-      'lanes'
+      'lanes',
+      'custom demux'
     ],
     colWidths: [
       100,
@@ -114,6 +127,7 @@ $(function () {
       100,
       200,
       100,
+      60,
       100
     ],
     columnSorting: false,
@@ -125,6 +139,18 @@ $(function () {
         'sep1': Handsontable.plugins.ContextMenu.SEPARATOR,
         'copy': {},
         'cut': {},
+        'paste': {
+          name: 'Paste',
+          disabled: function() {
+            return clipboardCache.length === 0;
+          },
+          callback: function() {
+            var plugin = this.getPlugin('copyPaste');
+
+            this.listen();
+            plugin.paste(clipboardCache);
+          }
+        },
         'sep2': Handsontable.plugins.ContextMenu.SEPARATOR,
         'reverse_complement': {
           name: 'Reverse-complement',
@@ -162,6 +188,16 @@ $(function () {
       }
     },
     copyPaste: true,
+    afterCopy: function(changes) {
+      clipboardCache = SheetClip.stringify(changes);
+    },
+    afterCut: function(changes) {
+      clipboardCache = SheetClip.stringify(changes);
+    },
+    afterPaste: function(changes) {
+      // we want to be sure that our cache is up to date, even if someone pastes data from another source than our tables.
+      clipboardCache = SheetClip.stringify(changes);
+    },
     height: 500,
     manualColumnResize: true,
     minSpareRows: 3,
@@ -247,6 +283,8 @@ $(function () {
       const numbers = new MultiRange()
       entry.lane_numbers.forEach((x) => numbers.append(x))
       hotTable.setDataAtCell(row, 6, numbers.toString())
+
+      hotTable.setDataAtCell(row, 7, entry.demux_reads)
     })
 
     // Enable onAfterChange handler again
@@ -257,7 +295,7 @@ $(function () {
   function setLibrariesJsonFromData (origJsonData, tableData) {
     const jsonData = tableData
       .filter((row) => !!row[0])
-      .map(([name, reference, barcodeset, barcodeVal, barcodeset2, barcodeVal2, lanes]) => {
+      .map(([name, reference, barcodeset, barcodeVal, barcodeset2, barcodeVal2, lanes, demuxReads]) => {
         let lanesArr
         try {
           lanesArr = new MultiRange(lanes).toArray()
@@ -300,7 +338,8 @@ $(function () {
           barcode_seq: barcodeSeq,
           barcode2: barcodeUuid2,
           barcode_seq2: barcodeSeq2,
-          lane_numbers: lanesArr
+          lane_numbers: lanesArr,
+          demux_reads: demuxReads
         }
       })
 
@@ -413,6 +452,10 @@ $(function () {
       // lanes
       {
         validator: integerRangeValidator
+      },
+      // custom demux
+      {
+        validator: demuxValidator
       }
     ]
   }

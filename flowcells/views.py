@@ -212,6 +212,7 @@ class FlowCellRecreateLibrariesMixin:
                 barcode2=barcode2,
                 barcode_seq2=info["barcode_seq2"],
                 lane_numbers=info["lane_numbers"],
+                demux_reads=info["demux_reads"],
             )
 
 

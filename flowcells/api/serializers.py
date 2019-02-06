@@ -64,6 +64,7 @@ class LibrarySerializer(serializers.ModelSerializer):
             "barcode2",
             "barcode_seq2",
             "lane_numbers",
+            "demux_reads",
         )
         read_only_fields = ("sodar_uuid", "flow_cell")
 

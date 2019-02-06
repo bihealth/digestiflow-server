@@ -22,6 +22,7 @@ $(function() {
    * Update the Handsontable and model, update UUID.
    */
   function updateHot() {
+
     // Collect UUIDs in data and origData
     var dataUuids = data.filter(elem => elem.name).map(elem => elem.uuid).filter(x => x !== null);
     const origDataUuids = origData.map(elem => elem.uuid);
@@ -126,6 +127,9 @@ $(function() {
     onChangeRunning = false;
   }
 
+  // Clipboard handling...
+  var clipboardCache = '';
+
   /**
    * Initialize Handsontable
    */
@@ -147,6 +151,18 @@ $(function() {
         'sep1': Handsontable.plugins.ContextMenu.SEPARATOR,
         'copy': {},
         'cut': {},
+        'paste': {
+          name: 'Paste',
+          disabled: function() {
+            return clipboardCache.length === 0;
+          },
+          callback: function() {
+            var plugin = this.getPlugin('copyPaste');
+
+            this.listen();
+            plugin.paste(clipboardCache);
+          }
+        },
         'sep2': Handsontable.plugins.ContextMenu.SEPARATOR,
         'reverse_complement': {
           name: 'Reverse-complement',
@@ -167,6 +183,17 @@ $(function() {
           }
         }
       }
+    },
+    copyPaste: true,
+    afterCopy: function(changes) {
+      clipboardCache = SheetClip.stringify(changes);
+    },
+    afterCut: function(changes) {
+      clipboardCache = SheetClip.stringify(changes);
+    },
+    afterPaste: function(changes) {
+      // we want to be sure that our cache is up to date, even if someone pastes data from another source than our tables.
+      clipboardCache = SheetClip.stringify(changes);
     },
     data: data,
     dataSchema: {uuid: null, name: null, sequence: null, status: null},
