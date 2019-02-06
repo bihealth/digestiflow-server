@@ -171,8 +171,8 @@ class FlowCellDetailView(
                         "",
                         "",
                         "",
-                        lib.barcode.name,
-                        lib.barcode.sequence,
+                        lib.barcode.name if lib.barcode else "",
+                        lib.barcode.sequence if lib.barcode else "",
                         "Project",
                         "",
                     ]
