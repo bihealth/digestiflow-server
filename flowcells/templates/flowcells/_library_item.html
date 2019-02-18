@@ -9,7 +9,14 @@
     {% get_sheet_lane_errors item.flow_cell item as lane_errors %}
     {% get_reverse_index_errors item.flow_cell item.sodar_uuid as reverse_errors %}
 
-    {% if name_errors or barcode_errors or barcode2_errors or lane_errors or reverse_errors %}
+    {% if name_errors or barcode_errors or barcode2_errors or lane_errors or reverse_errors.0 or revers_errors.1 %}
+      <!--
+      name_errors: {{ name_errors }}
+      barcode_errors: {{ barcode_errors }}
+      barcode2_errors: {{ barcode2_errors }}
+      lane_errors: {{ lane_errors }}
+      reverse_errors: {{ reverse_errors }}
+      -->
       <i data-toggle="tooltip"
          title="There is a problem with this library"
          class="fa fa-fw fa-times text-danger"></i>
