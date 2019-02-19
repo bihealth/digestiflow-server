@@ -169,7 +169,7 @@
     {{ flowcell.operator|default:"-" }} /
     {{ flowcell.demux_operator|default:"-" }}
   </td>
-  <td class="text-right">{{ flowcell_libraries|length }}</td>
+  <td class="text-right">{{ flowcell.libraries.count }}</td>
   <td class="text-right" style="width:60px;">
     {% if not details_card_mode %}
       {% include "flowcells/_flowcell_item_buttons.html" %}
