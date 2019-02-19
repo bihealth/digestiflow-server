@@ -245,6 +245,7 @@ $(function () {
         data: getDataFromLibrariesJson(originalLibrariesJson),
         cells: hotCells
       })
+      onAfterChangeRunning = false
       setTimeout(function() {
         hotTable.validateCells()
         hotTable.render()
