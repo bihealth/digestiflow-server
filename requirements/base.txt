@@ -82,4 +82,7 @@ mistune==0.8.3
 -e git://github.com/mikkonie/django-plugins.git@1bc07181e6ab68b0f9ed3a00382eb1f6519e1009#egg=django-plugins
 
 # SODAR Core
--e git://github.com/bihealth/sodar_core.git@v0.4.2#egg=django-sodar-core
+-e git://github.com/bihealth/sodar_core.git@v0.4.3#egg=django-sodar-core
+
+celery <4.2  # pyup: <4.2  # blocker: https://github.com/celery/celery/issues/4878
+redis==2.10.6  # https://github.com/antirez/redis

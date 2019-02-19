@@ -1,3 +1,5 @@
+/celerybeat*
+
 /src/
 docs_manual/_build/
 XXX_test_*

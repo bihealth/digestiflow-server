@@ -78,6 +78,16 @@ class FlowCellDetailView(
     slug_url_kwarg = "flowcell"
     slug_field = "sodar_uuid"
 
+    def render_to_response(self, *args, **kwargs):
+        context = self.get_context_data()
+        if context["object"].is_error_cache_update_pending():
+            messages.info(
+                self.request,
+                "Error information is outdated but will be refreshed shortly. Try reloading from time to time "
+                "until this message disappears.",
+            )
+        return super().render_to_response(*args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         result = super().get_context_data(*args, **kwargs)
         flowcell = result["object"]

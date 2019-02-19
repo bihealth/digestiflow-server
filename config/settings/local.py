@@ -54,7 +54,7 @@ if os.environ.get("USE_DOCKER") == "yes":
     INTERNAL_IPS += [ip[:-1] + "1"]
 
 DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": lambda r: False,
+    # "SHOW_TOOLBAR_CALLBACK": lambda r: False,
     "DISABLE_PANELS": ["debug_toolbar.panels.redirects.RedirectsPanel"],
     "SHOW_TEMPLATE_CONTEXT": True,
 }

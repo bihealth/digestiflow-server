@@ -32,6 +32,8 @@ urlpatterns = [
     url(r"^user/", include("userprofile.urls")),
     # Admin Alerts URLs
     url(r"^alerts/", include("adminalerts.urls")),
+    # Background jobs URLs
+    url(r"^bgjobs/", include("bgjobs.urls")),
     ## Local Apps
     url(r"^sequencers/", include("sequencers.urls")),
     url(r"^barcodes/", include("barcodes.urls")),

@@ -146,26 +146,35 @@ class FlowCellTest(
             (3, 1, "ACGTACGTAG"),
             (4, 1, "ACGTACGTAG"),
         ]
+        self.assertEquals(self.flow_cell.get_index_errors(), {})
+        self.flow_cell.update_error_caches().save()
+        self.flow_cell = FlowCell.objects.get(pk=self.flow_cell.pk)
         self.assertEqual(list(sorted(self.flow_cell.get_index_errors().keys())), expected)
 
     def testGetIndexErrorsEmptySheet(self):
         """Test if sheet is empty"""
         flow_cell = self.make_flow_cell()
-        self.assertEqual(flow_cell.get_index_errors(), {})
-        # Also check the branch with caching
+        self.assertEquals(flow_cell.get_index_errors(), {})
+        flow_cell.update_error_caches().save()
+        flow_cell = FlowCell.objects.get(pk=flow_cell.pk)
         self.assertEqual(flow_cell.get_index_errors(), {})
 
     def testGetReverseIndexErrors(self):
         """Test ``get_reverse_index_errors()``"""
         result = self.flow_cell.get_reverse_index_errors()
-        self.assertTrue(len(result), 1)
+        self.assertEquals(result, {})
+        self.flow_cell.update_error_caches().save()
+        self.flow_cell = FlowCell.objects.get(pk=self.flow_cell.pk)
+        result = self.flow_cell.get_reverse_index_errors()
+        self.assertEquals(len(result), 1)
         self.assertIn(str(self.library.sodar_uuid), result)
 
     def testGetReverseIndexErrorsEmptySheet(self):
         """Test if sheet is empty"""
         flow_cell = self.make_flow_cell()
         self.assertEqual(flow_cell.get_reverse_index_errors(), {})
-        # Also check the branch with caching
+        flow_cell.update_error_caches().save()
+        flow_cell = FlowCell.objects.get(pk=flow_cell.pk)
         self.assertEqual(flow_cell.get_reverse_index_errors(), {})
 
     def testGetSampleSheetErrors(self):
@@ -176,6 +185,10 @@ class FlowCellTest(
             barcode2=self.barcode_set_entry,
             lane_numbers=[1, 2, 3, 4],
         )
+        result = self.flow_cell.get_sample_sheet_errors()
+        self.assertEquals(result, {})
+        self.flow_cell.update_error_caches().save()
+        self.flow_cell = FlowCell.objects.get(pk=self.flow_cell.pk)
         result = self.flow_cell.get_sample_sheet_errors()
         self.assertIn("name", result[str(self.library.sodar_uuid)])
         self.assertIn("barcode", result[str(self.library.sodar_uuid)])
@@ -188,7 +201,8 @@ class FlowCellTest(
         """Test if sheet is empty"""
         flow_cell = self.make_flow_cell()
         self.assertEqual(flow_cell.get_sample_sheet_errors(), {})
-        # Also check the branch with caching
+        flow_cell.update_error_caches().save()
+        flow_cell = FlowCell.objects.get(pk=flow_cell.pk)
         self.assertEqual(flow_cell.get_sample_sheet_errors(), {})
 
     def testIsUserWatching(self):

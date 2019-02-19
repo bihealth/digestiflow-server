@@ -139,6 +139,10 @@ RTA_VERSION_CHOICES = (
 )
 
 
+#: Current version of error cache computation code.
+FLOWCELL_ERROR_CACHE_VERSION = 1
+
+
 class FlowCellManager(models.Manager):
     """Manager for custom table-level SequencingMachine queries"""
 
@@ -320,6 +324,22 @@ class FlowCell(models.Model):
         help_text="The lanes for which indexes without matching entry in the sample sheet should be ignored",
     )
 
+    #: Version of the ``cache_*_error`` fields.
+    error_caches_version = models.IntegerField(null=True, blank=True, default=None)
+
+    #: Cache for index errors ``dict``.  The value maps tuples ``[name, index_read_no_seq]`` to lists
+    #: of error messages.  Built on saving the ``FlowCell`` record, must be updated in a background job
+    #: when the error building changes.
+    cache_index_errors = JSONField(null=True, blank=True, default=None)
+
+    #: Cache for reverse index errors, i.e., mapping from string with library UUID to pair of lists.  The lists contain
+    #: the error messages for barcode #1 and barcode #2 for the given library.
+    cache_reverse_index_errors = JSONField(null=True, blank=True, default=None)
+
+    #: Cache for sample sheet errors.  A ``dict`` that maps the library UUID to a dict mapping ``"barcode"``
+    #: and ``"barcode2"`` to the list of error messages for the library and the given barcode.
+    cache_sample_sheet_errors = JSONField(null=True, blank=True, default=None)
+
     #: Search-enabled manager.
     objects = FlowCellManager()
 
@@ -350,6 +370,11 @@ class FlowCell(models.Model):
             "flowcells:flowcell-detail",
             kwargs={"project": self.project.sodar_uuid, "flowcell": self.sodar_uuid},
         )
+
+    def save(self, *args, **kwargs):
+        """Override ``save()`` to update error messages."""
+        self.update_error_caches()
+        return super().save(*args, **kwargs)
 
     def get_full_name(self):
         """Return full flow cell name"""
@@ -395,19 +420,50 @@ class FlowCell(models.Model):
                 )
         return self._known_contaminations
 
+    def is_error_cache_update_pending(self):
+        """Return whether the error caches still need an update."""
+        return any(
+            (
+                self.cache_index_errors is None,
+                self.cache_reverse_index_errors is None,
+                self.cache_sample_sheet_errors is None,
+                self.error_caches_version != FLOWCELL_ERROR_CACHE_VERSION,
+            )
+        )
+
+    def update_error_caches(self):
+        """Update ``cache_*`` properties and return ``self``.
+
+        Meant to be called ``obj.update_error_cached().save()``.
+        """
+        self.cache_index_errors = self._build_index_errors()
+        self.cache_reverse_index_errors = self._build_reverse_index_errors()
+        self.cache_sample_sheet_errors = self._build_sample_sheet_errors()
+        self.error_caches_version = FLOWCELL_ERROR_CACHE_VERSION
+        return self
+
     def get_index_errors(self):
+        """Return the index errors from the cached value.
+
+        If the cache is empty, an empty ``dict`` is returned.  Use ``is_error_cache_update_pending()`` for
+        checking first.
+        """
+        if hasattr(self, "_index_errors"):
+            return self._index_errors
+        else:
+            self._index_errors = {tuple(k): v for k, v in (self.cache_index_errors or [])}
+            return self._index_errors
+
+    def _build_index_errors(self):
         """Analyze index histograms for problems and inconsistencies with sample sheet.
 
         Finds index histogram sequences that are not present in the sample sheet.
 
-        Return map from lane number, index read, and sequence to list of errors.
+        Return map (list of pairs) from lane number, index read, and sequence to list of errors.
         """
-        if hasattr(self, "_index_errors"):
-            return self._index_errors
         # Short-circuit if sample sheet is empty.
         if not self.libraries.all():
-            self._index_errors = {}
-            return self._index_errors
+            return []
         # Pre-fetch libraries.
         libraries = {}
         for library in self.libraries.prefetch_related("barcode", "barcode2"):
@@ -454,24 +510,32 @@ class FlowCell(models.Model):
                         ]
                 if errors and (count / sample_size >= THRESH_MIN_INDEX_FRAC):
                     result[(hist.lane, hist.index_read_no, seq)] = errors
-        self._index_errors = result
-        return result
+        return list(result.items())
 
     def get_reverse_index_errors(self):
+        """Return index errors from the cached value.
+
+        If the cache is empty, an empty ``dict`` is returned.  Use ``is_error_cache_update_pending()`` for
+        checking first.
+        """
+        if hasattr(self, "_reverse_index_errors"):
+            return self._reverse_index_errors
+        else:
+            self._reverse_index_errors = {k: v for k, v in (self.cache_reverse_index_errors or [])}
+            return self._reverse_index_errors
+
+    def _build_reverse_index_errors(self):
         """Analyze sample sheet for inconsistencies with index histograms.
 
         That is, instead of looking up indices from histograms in sample sheet (as done in ``get_index_errors()``),
         look at sample sheet and look whether sample sheet sequences can be found in the adapter histograms.
 
-        Returns an error message mapping from library UUID to pair of list of error messages (for first and second
-        index).
+        Returns an error message mapping (list of pairs) from library UUID to pair of list of error messages (for first
+        and second index).
         """
         # Short-circuit if there are no index histograms.
         if not self.index_histograms.all():
-            return {}
-        # TODO: can we prefetch more?
-        if hasattr(self, "_reverse_index_errors "):
-            return self._reverse_index_errors
+            return []
         # Pre-fetch the lane histograms
         lane_histos = {}
         for histo in self.index_histograms.all():
@@ -528,16 +592,24 @@ class FlowCell(models.Model):
                 ]
             if msgs or msgs2:
                 result[str(library.sodar_uuid)] = (msgs, msgs2)
-        return result
+        return list(result.items())
 
     def get_sample_sheet_errors(self):
+        """Return sample sheet errors from the cached value.
+
+        The value is built on the fly if no cache exists yet.
+        """
+        if hasattr(self, "_sample_sheet_errors"):
+            return self._sample_sheet_errors
+        else:
+            self._sample_sheet_errors = {k: v for k, v in (self.cache_sample_sheet_errors or [])}
+            return self._sample_sheet_errors
+
+    def _build_sample_sheet_errors(self):
         """Analyze the sample sheet for problems and inconsistencies.
 
-        Returns map from library UUID to dict with field names to list of error messages.
+        Returns map (list of pairs) from library UUID to dict with field names to list of error messages.
         """
-        # TODO: can we prefetch more?
-        if hasattr(self, "_sheet_errors"):
-            return self._sheet_errors
         # Resulting error map, empty if no errors
         result = {}
         # Library from UUID
@@ -622,8 +694,7 @@ class FlowCell(models.Model):
                         pretty_range(lanes),
                     )
                 )
-        self._sheet_errors = result
-        return result
+        return list(result.items())
 
     def is_user_watching(self, user):
         """Return whether the given user is watching."""
