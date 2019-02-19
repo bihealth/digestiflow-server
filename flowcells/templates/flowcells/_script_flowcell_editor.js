@@ -253,42 +253,43 @@ $(function () {
 
   // Get table data from libraries JSON data
   function getDataFromLibrariesJson (jsonData) {
-    // Disable onAfterChange handler
-    onAfterChangeRunning = true
+    const result = new Array();
 
-    jsonData.forEach((entry, row) => {
-      hotTable.setDataAtCell(row, 0, entry.name)
-      hotTable.setDataAtCell(row, 1, entry.reference)
+    jsonData.forEach((entry, _) => {
+      const row = new Array()
+      row.push(entry.name)
+      row.push(entry.reference)
 
       if (entry.barcode_seq) {
-        hotTable.setDataAtCell(row, 2, 'type barcode -->')
-        hotTable.setDataAtCell(row, 3, entry.barcode_seq)
+        row.push('type barcode -->')
+        row.push(entry.barcode_seq)
       } else if (entry.barcode) {
         const barcode = barcodes[entry.barcode]
         const barcodeset = barcodesets[barcode.barcode_set]
-        hotTable.setDataAtCell(row, 2, `${barcodeset.name} (${barcodeset.short_name})`)
-        hotTable.setDataAtCell(row, 3, `${barcode.name} (${barcode.sequence})`)
+        row.push(`${barcodeset.name} (${barcodeset.short_name})`)
+        row.push(`${barcode.name} (${barcode.sequence})`)
       }
 
       if (entry.barcode_seq2) {
-        hotTable.setDataAtCell(row, 4, 'type barcode -->')
-        hotTable.setDataAtCell(row, 5, entry.barcode_seq2)
+        row.push('type barcode -->')
+        row.push(entry.barcode_seq2)
       } else if (entry.barcode2) {
         const barcode = barcodes[entry.barcode]
         const barcodeset = barcodesets[barcode.barcode_set]
-        hotTable.setDataAtCell(row, 2, `${barcodeset.name} (${barcodeset.short_name})`)
-        hotTable.setDataAtCell(row, 3, `${barcode.name} (${barcode.sequence})`)
+        row.push(`${barcodeset.name} (${barcodeset.short_name})`)
+        row.push(`${barcode.name} (${barcode.sequence})`)
       }
 
       const numbers = new MultiRange()
       entry.lane_numbers.forEach((x) => numbers.append(x))
-      hotTable.setDataAtCell(row, 6, numbers.toString())
+      row.push(numbers.toString())
 
-      hotTable.setDataAtCell(row, 7, entry.demux_reads)
+      row.push(entry.demux_reads)
+
+      result.push(row)
     })
 
-    // Enable onAfterChange handler again
-    onAfterChangeRunning = false
+    return result
   }
 
   // Update libraries JSON from Handsontable data
