@@ -268,16 +268,22 @@ $(function () {
         const barcodeset = barcodesets[barcode.barcode_set]
         row.push(`${barcodeset.name} (${barcodeset.short_name})`)
         row.push(`${barcode.name} (${barcode.sequence})`)
+      } else {
+        row.push("")
+        row.push("")
       }
 
       if (entry.barcode_seq2) {
         row.push('type barcode -->')
         row.push(entry.barcode_seq2)
       } else if (entry.barcode2) {
-        const barcode = barcodes[entry.barcode]
-        const barcodeset = barcodesets[barcode.barcode_set]
-        row.push(`${barcodeset.name} (${barcodeset.short_name})`)
-        row.push(`${barcode.name} (${barcode.sequence})`)
+        const barcode2 = barcodes[entry.barcode2]
+        const barcodeset2 = barcodesets[barcode2.barcode_set]
+        row.push(`${barcodeset.name} (${barcodeset2.short_name})`)
+        row.push(`${barcode2.name} (${barcode2.sequence})`)
+      } else {
+        row.push("")
+        row.push("")
       }
 
       const numbers = new MultiRange()
@@ -285,6 +291,8 @@ $(function () {
       row.push(numbers.toString())
 
       row.push(entry.demux_reads)
+
+      console.log(row)
 
       result.push(row)
     })
