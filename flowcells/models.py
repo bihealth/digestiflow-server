@@ -414,10 +414,7 @@ class FlowCell(models.Model):
         for hist in self.index_histograms.all():
             for length in set(len(seq) for seq in hist.histogram.keys()):
                 self._known_contaminations.update(
-                    {
-                        entry.sequence[:length]: entry
-                        for entry in all_contaminations
-                    }
+                    {entry.sequence[:length]: entry for entry in all_contaminations}
                 )
         return self._known_contaminations
 

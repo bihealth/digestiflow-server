@@ -57,6 +57,9 @@
   <dt class="col-12 col-md-3 col-xl-2">Current Reads</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.current_reads }}</dd>
 
+  <dt class="col-12 col-md-3 col-xl-2">Manual Demux Reads</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.demux_reads|default:"-" }}</dd>
+
   <dt class="col-12 col-md-3 col-xl-2">Barcode Mismatches</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.barcode_mismatches|default:"-" }}</dd>
 

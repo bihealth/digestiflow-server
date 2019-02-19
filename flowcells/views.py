@@ -108,7 +108,9 @@ class FlowCellDetailView(
         if not hasattr(self, "_flowcell_libraries"):
             self._flowcell_libraries = {}
         if flowcell.sodar_uuid not in self._flowcell_libraries:
-            self._flowcell_libraries[flowcell.sodar_uuid] = list(flowcell.libraries.order_by("name"))
+            self._flowcell_libraries[flowcell.sodar_uuid] = list(
+                flowcell.libraries.order_by("name")
+            )
         return self._flowcell_libraries[flowcell.sodar_uuid]
 
     def _build_v1_csv(self, flowcell):
