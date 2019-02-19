@@ -13,12 +13,12 @@
       <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
          data-toggle="tooltip"
          title="There were errors with the sample sheet!"></i>
-    {% elif flowcell.get_index_errors and flowcell.libraries.all %}
+    {% elif flowcell.get_index_errors and flowcell_libraries %}
       {# index errors (BCL -> sheet) and sample sheet NOT empty, other case see below #}
       <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
          data-toggle="tooltip"
          title="There were errors with indexes!"></i>
-    {% elif flowcell.get_index_errors and not flowcell.libraries.all %}
+    {% elif flowcell.get_index_errors and not flowcell_libraries %}
       {# index errors (BCL -> sheet) and sample sheet IS empty, other case see above #}
       <i class="fa fc-fw fa-exclamation-circle text-warning" aria-hidden="true"
          data-toggle="tooltip"
@@ -169,7 +169,7 @@
     {{ flowcell.operator|default:"-" }} /
     {{ flowcell.demux_operator|default:"-" }}
   </td>
-  <td class="text-right">{{ flowcell.libraries.count }}</td>
+  <td class="text-right">{{ flowcell_libraries|length }}</td>
   <td class="text-right" style="width:60px;">
     {% if not details_card_mode %}
       {% include "flowcells/_flowcell_item_buttons.html" %}

@@ -410,12 +410,13 @@ class FlowCell(models.Model):
         if hasattr(self, "_known_contaminations"):
             return self._known_contaminations
         self._known_contaminations = {}
+        all_contaminations = list(KnownIndexContamination.objects.all())
         for hist in self.index_histograms.all():
             for length in set(len(seq) for seq in hist.histogram.keys()):
                 self._known_contaminations.update(
                     {
                         entry.sequence[:length]: entry
-                        for entry in KnownIndexContamination.objects.all()
+                        for entry in all_contaminations
                     }
                 )
         return self._known_contaminations

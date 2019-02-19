@@ -38,6 +38,7 @@ from .models import (
     flow_cell_created,
     flow_cell_updated,
 )
+from .tasks import flowcell_update_error_caches
 
 
 # TODO: need to provide query set by project?!
@@ -86,6 +87,7 @@ class FlowCellDetailView(
                 "Error information is outdated but will be refreshed shortly. Try reloading from time to time "
                 "until this message disappears.",
             )
+            flowcell_update_error_caches.delay(context["object"].pk)
         return super().render_to_response(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
@@ -99,7 +101,15 @@ class FlowCellDetailView(
         result["message_form"] = MessageForm(instance=instance)
         result["csv_v1"] = self._build_v1_csv(flowcell)
         result["csv_v2"] = self._build_v2_csv(flowcell)
+        result["flowcell_libraries"] = self._get_libraries(flowcell)
         return result
+
+    def _get_libraries(self, flowcell):
+        if not hasattr(self, "_flowcell_libraries"):
+            self._flowcell_libraries = {}
+        if flowcell.sodar_uuid not in self._flowcell_libraries:
+            self._flowcell_libraries[flowcell.sodar_uuid] = list(flowcell.libraries.order_by("name"))
+        return self._flowcell_libraries[flowcell.sodar_uuid]
 
     def _build_v1_csv(self, flowcell):
         rows = [
@@ -117,7 +127,7 @@ class FlowCellDetailView(
             ]
         ]
         recipe = "PE_Indexing" if flowcell.is_paired else "SE_indexing"
-        for lib in flowcell.libraries.order_by("name"):
+        for lib in self._get_libraries(flowcell):
             if lib.get_barcode_seq2():
                 barcode = "{}-{}".format(lib.get_barcode_seq(), lib.get_barcode_seq2())
             else:
@@ -172,7 +182,7 @@ class FlowCellDetailView(
                 "Description",
             ],
         ]
-        for lib in flowcell.libraries.order_by("name"):
+        for lib in self._get_libraries(flowcell):
             for lane_no in sorted(lib.lane_numbers):
                 rows.append(
                     [

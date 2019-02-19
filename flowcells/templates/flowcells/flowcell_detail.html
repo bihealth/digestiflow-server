@@ -34,7 +34,7 @@
           Sample Sheet
           {% if object.get_sample_sheet_errors or object.get_reverse_index_errors %}
             <i class="fa fa-fw fa-exclamation-triangle text-danger pl-1" data-toggle="tooltip" title="There were inconsistencies betwen the sample sheet and the observed indices"></i>
-          {% elif not object.libraries.all %}
+          {% elif not flowcell_libraries %}
             <i class="fa fa-question-circle text-muted" data-toggle="tooltip" title="No sample sheet information added so far"></i>
           {% endif %}
         </a>
