@@ -39,5 +39,6 @@ script:
   - coverage run --rcfile=setup.cfg manage.py test -v 2 --settings=config.settings.test
   - coverage xml
   - python-codacy-coverage -r coverage.xml
+  - black --version
   - black -l 100 --check --exclude "/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|src)/" .
   - flake8 .

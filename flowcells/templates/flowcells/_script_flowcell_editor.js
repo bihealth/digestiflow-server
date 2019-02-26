@@ -135,6 +135,7 @@ $(function () {
   // Settings for the Handsontable
   var hotSettings = {
     afterChange: onAfterChange,
+    afterRemoveRow: onAfterRemoveRow,
     allowInsertRow: true,
     allowRemoveRow: true,
     allowInsertColumn: false,
@@ -371,6 +372,7 @@ $(function () {
       })
 
     targetJsonField.value = JSON.stringify(jsonData)
+    console.log(targetJsonField.value)
   }
 
   // Performs lookup for the given cell.
@@ -413,6 +415,11 @@ $(function () {
 
     // Remove "lock" again
     onAfterChangeRunning = false
+  }
+
+  // Called when a row is removed.
+  function onAfterRemoveRow (index, amount, physicalRow, source) {
+    setLibrariesJsonFromData(originalLibrariesJson, hotTable.getData())
   }
 
   // Dynamic cell configuration.

@@ -7,7 +7,9 @@ https://docs.djangoproject.com/en/dev/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/dev/ref/settings/
 """
+
 import environ
+from projectroles.constants import get_sodar_constants
 
 SITE_PACKAGE = "digestiflow"
 
@@ -411,6 +413,9 @@ ENABLED_BACKEND_PLUGINS = env.list(
 # General API settings
 SODAR_API_DEFAULT_VERSION = "0.1"
 SODAR_API_MEDIA_TYPE = "application/vnd.bihealth.sodar+json"
+
+SODAR_CONSTANTS = get_sodar_constants(default=True)
+SODAR_CONSTANTS["DISPLAY_NAMES"]["PROJECT"] = {"default": "site", "plural": "sites"}
 
 # Filesfolders app settings
 FILESFOLDERS_MAX_UPLOAD_SIZE = env.int("FILESFOLDERS_MAX_UPLOAD_SIZE", 10485760)

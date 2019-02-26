@@ -216,6 +216,7 @@ class FlowCellRecreateLibrariesMixin:
         project_barcodes = BarcodeSetEntry.objects.filter(
             barcode_set__project=self.get_project(self.request, self.kwargs)
         )
+        print(json.loads(form.cleaned_data["libraries_json"]))
         for rank, info in enumerate(json.loads(form.cleaned_data["libraries_json"])):
             if info["barcode"]:
                 barcode = project_barcodes.get(sodar_uuid=info["barcode"])
