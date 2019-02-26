@@ -108,9 +108,7 @@ class FlowCellDetailView(
         if not hasattr(self, "_flowcell_libraries"):
             self._flowcell_libraries = {}
         if flowcell.sodar_uuid not in self._flowcell_libraries:
-            self._flowcell_libraries[flowcell.sodar_uuid] = list(
-                flowcell.libraries.order_by("name")
-            )
+            self._flowcell_libraries[flowcell.sodar_uuid] = list(flowcell.libraries.all())
         return self._flowcell_libraries[flowcell.sodar_uuid]
 
     def _build_v1_csv(self, flowcell):
@@ -217,7 +215,7 @@ class FlowCellRecreateLibrariesMixin:
         project_barcodes = BarcodeSetEntry.objects.filter(
             barcode_set__project=self.get_project(self.request, self.kwargs)
         )
-        for info in json.loads(form.cleaned_data["libraries_json"]):
+        for rank, info in enumerate(json.loads(form.cleaned_data["libraries_json"])):
             if info["barcode"]:
                 barcode = project_barcodes.get(sodar_uuid=info["barcode"])
             else:
@@ -227,6 +225,7 @@ class FlowCellRecreateLibrariesMixin:
             else:
                 barcode2 = None
             flowcell.libraries.create(
+                rank=rank,
                 name=info["name"],
                 reference=info["reference"],
                 barcode=barcode,

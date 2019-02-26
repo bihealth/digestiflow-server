@@ -859,6 +859,9 @@ class Library(models.Model):
         default=uuid_object.uuid4, unique=True, help_text="Object SODAR UUID"
     )
 
+    #: Sample sheet line for custom ordering.
+    rank = models.PositiveIntegerField(blank=True, null=True)
+
     #: The flow cell that this library has been sequenced on
     flow_cell = models.ForeignKey(FlowCell, related_name="libraries", on_delete=models.CASCADE)
 
@@ -913,7 +916,7 @@ class Library(models.Model):
     objects = LibraryManager()
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["flow_cell", "rank", "name"]
 
     @property
     def sodar_uuid_str(self):
