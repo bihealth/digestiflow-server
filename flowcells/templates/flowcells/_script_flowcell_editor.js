@@ -377,7 +377,7 @@ $(function () {
         // TODO could be sped up with lookup table instead of lookup
         // Selected a barcode set, only allow selecting barcodes from set
         barcodesetByShortName[shortName].entries.forEach((entry) => {
-          if (entry.name === newValue) {
+          if (entry.name === newValue || entry.aliases.indexOf(newValue) > -1) {
             hotTable.setDataAtCell(row, col, `${entry.name} (${entry.sequence})`)
           }
         })

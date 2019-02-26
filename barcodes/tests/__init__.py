@@ -22,8 +22,8 @@ class SetupBarcodeSetMixin:
             "description": "This is another example barcode set",
             "entries_json": json.dumps(
                 [
-                    {"name": "First entry", "sequence": "AAAAAAAA"},
-                    {"name": "one", "sequence": "CCCCCCCC"},
+                    {"name": "First entry", "aliases": "", "sequence": "AAAAAAAA"},
+                    {"name": "one", "aliases": "", "sequence": "CCCCCCCC"},
                 ]
             ),
             "set_type": BARCODE_SET_GENERIC,

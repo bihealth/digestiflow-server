@@ -18,7 +18,7 @@ class BarcodeSetEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BarcodeSetEntry
-        fields = ("sodar_uuid", "barcode_set", "name", "sequence")
+        fields = ("sodar_uuid", "aliases", "barcode_set", "name", "sequence")
         read_only_fields = ("sodar_uuid", "barcode_set")
 
 
