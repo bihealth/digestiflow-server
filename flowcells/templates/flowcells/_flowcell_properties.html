@@ -68,18 +68,18 @@
     {% get_lanes_with_missing_sheets object as lanes_with_missing_sheets %}
     {% if lanes_with_missing_sheets %}
       <span class="text-warning">
-        <i class="fa fa-exclamation-circle pr-1" title="Missing sheet info {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|join:", " }}"
+        <i class="fa fa-exclamation-circle pr-1" title="Missing sheet info {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|pretty_range }}"
            data-toggle="tooltip"
            data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=lanes_with_missing_sheets|join:"," %}?return_to=properties"></i>
-        Sample sheet missing for {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|join:", " }}.
+        Sample sheet missing for {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|pretty_range }}.
       </span>
     {% elif flowcell.lanes_suppress_no_sample_sheet_warning %}
       {% get_lanes_with_missing_sheets object True as lanes_with_missing_sheets %}
       <span class="text-muted">
-        <i class="fa fa-exclamation-circle pr-1" title="Missing sheet info {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|join:", " }}"
+        <i class="fa fa-exclamation-circle pr-1" title="Missing sheet info {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|pretty_range }}"
            data-toggle="tooltip"
            data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=lanes_with_missing_sheets|join:"," %}?return_to=properties"></i>
-        Suppressed warning{{ lanes_with_missing_sheets|pluralize:"s" }} on lanes with missing sample sheets.
+        Suppressed warning {{ lanes_with_missing_sheets|pluralize:"s" }} on lanes with missing sample sheets.
       </span>
     {% else %}
       The sheet is complete

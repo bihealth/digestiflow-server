@@ -87,6 +87,33 @@ function forEachInRange(sel, callback) {
 
 $(function () {
 
+  // Setup header information.
+  const headers = [
+    {name: "name", label: "name", column: 0, width: 100},
+    {name: "reference", label: "organism", column: 1, width: 100},
+    {name: "barcodeSet1", label: "i7 kit", column: 2, width: 200},
+    {name: "barcode1", label: "i7 sequence", column: 3, width: 100},
+    {name: "barcodeSet2", label: "i5 kit", column: 4, width: 200},
+    {name: "barcode2", label: "i5 sequence", column: 5, width: 100},
+    {name: "lanes", label: "lane(s)", column: 6, width: 60},
+    {name: "customDemux", label: "[custom cycles]", column: 7, width: 100},
+  ];
+  // Map from header column name to column
+  const headerNameToCol = new Map()
+  for (let e of headers) {
+    headerNameToCol.set(e.name, e.column)
+  }
+
+  // Shortcuts to column indices
+  const nameCol = headerNameToCol.get("name")
+  const organismCol = headerNameToCol.get("reference")
+  const barcodeSet1Col = headerNameToCol.get("barcodeSet1")
+  const barcode1Col = headerNameToCol.get("barcode1")
+  const barcodeSet2Col = headerNameToCol.get("barcodeSet2")
+  const barcode2Col = headerNameToCol.get("barcode2")
+  const lanesCol = headerNameToCol.get("lanes")
+  const customDemuxCol = headerNameToCol.get("customDemux")
+
   // Clipboard handling...
   var clipboardCache = '';
 
@@ -110,26 +137,8 @@ $(function () {
     allowRemoveRow: true,
     allowInsertColumn: false,
     allowRemoveColumn: false,
-    colHeaders: [
-      'name',
-      'reference',
-      'barcode set #1',
-      'barcode #1',
-      'barcode set #2',
-      'barcode #2',
-      'lanes',
-      'custom demux'
-    ],
-    colWidths: [
-      100,
-      100,
-      200,
-      100,
-      200,
-      100,
-      60,
-      100
-    ],
+    colHeaders: headers.map(e => e.label),
+    colWidths: headers.map(e => e.width),
     columnSorting: false,
     contextMenu: {
       items: {
@@ -156,7 +165,7 @@ $(function () {
           name: 'Reverse-complement',
           callback: function() {
             function callback (row, col) {
-              if (col == 3 || col == 5) {
+              if (col == barcode1Col || col == barcode2Col) {
                 this.setDataAtCell(row, col, revComp(this.getDataAtCell(row, col)));
               }
             }
@@ -167,8 +176,10 @@ $(function () {
           name: 'Re-do name lookup',
           callback: function() {
             function callback (row, col) {
-              if (col == 3 || col == 5) {
-                performNameLookup(row, col, this.getDataAtCell(row, col))
+              if (col == barcode1Col) {
+                performNameLookup(row, col, barcodeSet1Col, this.getDataAtCell(row, col))
+              } else if (col == barcode2Col) {
+                performNameLookup(row, col, barcodeSet2Col, this.getDataAtCell(row, col))
               }
             }
             forEachInRange(this.getSelectedRange(), callback.bind(this))
@@ -178,7 +189,7 @@ $(function () {
           name: 'Fix sample names',
           callback: function() {
             function callback (row, col) {
-              if (col == 0) {
+              if (col == nameCol) {
                 this.setDataAtCell(row, col, this.getDataAtCell(row, col).replace(/[^a-zA-Z0-9_-]/g, '_'))
               }
             }
@@ -249,7 +260,7 @@ $(function () {
       setTimeout(function() {
         hotTable.validateCells()
         hotTable.render()
-      }, 200)
+      }, 500)
     })
 
   // Get table data from libraries JSON data
@@ -257,43 +268,35 @@ $(function () {
     const result = new Array();
 
     jsonData.forEach((entry, _) => {
-      const row = new Array()
-      row.push(entry.name)
-      row.push(entry.reference)
+      const row = ['', '', '', '', '', '', '', '', '']
+      row[headerNameToCol.get("name")] = entry.name
+      row[headerNameToCol.get("reference")] = entry.reference
 
       if (entry.barcode_seq) {
-        row.push('type barcode -->')
-        row.push(entry.barcode_seq)
+        row[headerNameToCol.get("barcodeSet1")] = 'type barcode -->'
+        row[headerNameToCol.get("barcode1")] = entry.barcode_seq
       } else if (entry.barcode) {
         const barcode = barcodes[entry.barcode]
         const barcodeset = barcodesets[barcode.barcode_set]
-        row.push(`${barcodeset.name} (${barcodeset.short_name})`)
-        row.push(`${barcode.name} (${barcode.sequence})`)
-      } else {
-        row.push("")
-        row.push("")
+        row[headerNameToCol.get("barcodeSet1")] = `${barcodeset.name} (${barcodeset.short_name})`
+        row[headerNameToCol.get("barcode1")] = `${barcode.name} (${barcode.sequence})`
       }
 
       if (entry.barcode_seq2) {
-        row.push('type barcode -->')
-        row.push(entry.barcode_seq2)
+        row[headerNameToCol.get("barcodeSet2")] = 'type barcode -->'
+        row[headerNameToCol.get("barcode2")] = entry.barcode_seq2
       } else if (entry.barcode2) {
         const barcode2 = barcodes[entry.barcode2]
         const barcodeset2 = barcodesets[barcode2.barcode_set]
-        row.push(`${barcodeset.name} (${barcodeset2.short_name})`)
-        row.push(`${barcode2.name} (${barcode2.sequence})`)
-      } else {
-        row.push("")
-        row.push("")
+        row[headerNameToCol.get("barcodeSet2")] = `${barcodeset.name} (${barcodeset2.short_name})`
+        row[headerNameToCol.get("barcode2")] = `${barcode2.name} (${barcode2.sequence})`
       }
 
       const numbers = new MultiRange()
       entry.lane_numbers.forEach((x) => numbers.append(x))
-      row.push(numbers.toString())
+      row[headerNameToCol.get("lanes")] = numbers.toString()
 
-      row.push(entry.demux_reads)
-
-      console.log(row)
+      row[headerNameToCol.get("customDemux")] = entry.demux_reads
 
       result.push(row)
     })
@@ -305,7 +308,16 @@ $(function () {
   function setLibrariesJsonFromData (origJsonData, tableData) {
     const jsonData = tableData
       .filter((row) => !!row[0])
-      .map(([name, reference, barcodeset, barcodeVal, barcodeset2, barcodeVal2, lanes, demuxReads]) => {
+      .map(row => {
+        const name = row[nameCol]
+        const reference = row[organismCol]
+        const barcodeSet1 = row[barcodeSet1Col]
+        const barcode1 = row[barcode1Col]
+        const barcodeSet2 = row[barcodeSet2Col]
+        const barcode2 = row[barcode2Col]
+        const lanes = row[lanesCol]
+        const demuxReads = row[customDemuxCol]
+
         let lanesArr
         try {
           lanesArr = new MultiRange(lanes).toArray()
@@ -315,12 +327,12 @@ $(function () {
 
         let barcodeUuid = null
         let barcodeSeq = null
-        if (barcodeset === 'type barcode -->') {
-          barcodeSeq = barcodeVal
-        } else if (barcodeset) {
-          const barcodeSet = barcodesetByShortName[getShortName(barcodeset)]
+        if (barcodeSet1 === 'type barcode -->') {
+          barcodeSeq = barcode1
+        } else if (barcodeSet1) {
+          const barcodeSet = barcodesetByShortName[getShortName(barcodeSet1)]
           const barcode = barcodeSet.entries.find((entry) => {
-            return barcodeVal === `${entry.name} (${entry.sequence})`
+            return barcode1 === `${entry.name} (${entry.sequence})`
           })
           if (barcode) {
             barcodeUuid = barcode.sodar_uuid
@@ -329,14 +341,14 @@ $(function () {
 
         let barcodeUuid2 = null
         let barcodeSeq2 = null
-        if (barcodeset2 === 'type barcode -->') {
-          barcodeSeq2 = barcodeVal2
-        } else if (barcodeset2) {
-          const barcodeSet2 = barcodesetByShortName[getShortName(barcodeset2)]
-          const barcode2 = barcodeSet2.entries.find((entry) => {
-            return barcodeVal2 === `${entry.name} (${entry.sequence})`
+        if (barcodeSet2 === 'type barcode -->') {
+          barcodeSeq2 = barcode2
+        } else if (barcodeSet2) {
+          const barcodeSet = barcodesetByShortName[getShortName(barcodeSet2)]
+          const barcode = barcodeSet.entries.find((entry) => {
+            return barcode2 === `${entry.name} (${entry.sequence})`
           })
-          if (barcode2) {
+          if (barcode) {
             barcodeUuid2 = barcode2.sodar_uuid
           }
         }
@@ -357,8 +369,8 @@ $(function () {
   }
 
   // Performs lookup for the given cell.
-  function performNameLookup(row, col, newValue) {
-    const barcodesetVal = hotTable.getDataAtCell(row, col - 1)
+  function performNameLookup(row, col, setCol, newValue) {
+    const barcodesetVal = hotTable.getDataAtCell(row, setCol)
     if (barcodesetVal) {
       const shortName = getShortName(barcodesetVal)
       if (barcodesetByShortName[shortName]) {
@@ -384,8 +396,10 @@ $(function () {
     // In the case of selecting barcodes from a barcode set, replace values that are equal to the name of the
     // barcode with its "$name ($sequence)" label that the validator requires.
     changes.forEach(([row, col, oldValue, newValue]) => {
-      if (col === 3 || col === 5) {
-        performNameLookup(row, col, newValue);
+      if (col == barcode1Col) {
+        performNameLookup(row, col, barcodeSet1Col, newValue)
+      } else if (col == barcode2Col) {
+        performNameLookup(row, col, barcodeSet2Col, newValue)
       }
     })
 
@@ -400,8 +414,15 @@ $(function () {
   function hotCells (row, col, prop) {
     const cellProperties = {}
 
-    if (col === 3 || col === 5) {
-      const barcodesetVal = hotTable.getDataAtCell(row, col - 1)
+    if (col === barcode1Col || col === barcode2Col) {
+      let barcodeSetCol = null
+      if (col == barcode1Col) {
+        barcodeSetCol = barcodeSet1Col
+      } else {
+        barcodeSetCol = barcodeSet2Col
+      }
+
+      const barcodesetVal = hotTable.getDataAtCell(row, barcodeSetCol)
       if (!barcodesetVal) {
         // Selected "", don't allow editing of barcode
         cellProperties.readOnly = true
@@ -413,7 +434,8 @@ $(function () {
           // Selected a barcode set, only allow selecting barcodes from set
           cellProperties.readOnly = false
           cellProperties.type = 'dropdown'
-          cellProperties.source = barcodesetByShortName[shortName].entries.map(entry => `${entry.name} (${entry.sequence})`)
+          cellProperties.source = barcodesetByShortName[shortName].entries.map(
+            entry => `${entry.name} (${entry.sequence})`)
           cellProperties.className = ''
           cellProperties.validator = 'dropdown'
         } else {
@@ -435,39 +457,35 @@ $(function () {
       const item = barcodesetByShortName[shortName]
       return `${item.name} (${item.short_name})`
     }))
-    return [
-      // name
-      {
-        validator: sampleNameValidator
-      },
-      // reference
-      {
-        type: 'autocomplete',
-        source: references.map(ref => ref.label)
-      },
-      // barcode set 1
-      {
-        type: 'dropdown',
-        source: labels
-      },
-      // barcode 1
-      {},
-      // barcode set 2
-      {
-        type: 'dropdown',
-        source: labels
-      },
-      // barcode 2
-      {},
-      // lanes
-      {
-        validator: integerRangeValidator
-      },
-      // custom demux
-      {
-        validator: demuxValidator
+    const result = []
+    for (var i = 0; i <= 7; ++i) {
+      switch (headers[i].name) {
+        case "name":
+          result.push({validator: sampleNameValidator})
+          break;
+        case "reference":
+          result.push({type: 'autocomplete', source: references.map(ref => ref.label)})
+          break;
+        case "barcodeSet1":
+        case "barcodeSet2":
+          result.push({type: 'dropdown', source: labels})
+          break;
+        case "lanes":
+          result.push({validator: integerRangeValidator})
+          break;
+        case "customDemux":
+          result.push({validator: demuxValidator})
+          break;
+        case "barcode1":
+        case "barcode2":
+          result.push({})
+          break;
+        default:
+          console.error("Invalid header name", headers[i].name)
+          result.push({})
       }
-    ]
+    }
+    return result
   }
 
 })

@@ -589,7 +589,7 @@ class FlowCell(models.Model):
                     )
                 ]
             if msgs or msgs2:
-                result[str(library.sodar_uuid)] = (msgs, msgs2)
+                result[library.sodar_uuid_str] = (msgs, msgs2)
         return list(result.items())
 
     def get_sample_sheet_errors(self):
@@ -619,10 +619,10 @@ class FlowCell(models.Model):
 
         # Gather information about libraries, directly validate names and lane numbers
         for library in self.libraries.prefetch_related("barcode", "barcode2").all():
-            by_uuid[str(library.sodar_uuid)] = library
+            by_uuid[library.sodar_uuid_str] = library
             # Directly check for invalid characters
             if not re.match("^[a-zA-Z0-9_-]+$", library.name):
-                result.setdefault(library.sodar_uuid, {}).setdefault("name", []).append(
+                result.setdefault(library.sodar_uuid_str, {}).setdefault("name", []).append(
                     "Library names may only contain alphanumeric characters, hyphens, and underscores"
                 )
             # Directly check for invalid lanes
@@ -630,7 +630,7 @@ class FlowCell(models.Model):
                 sorted(no for no in library.lane_numbers if no < 1 or no > self.num_lanes)
             )
             if bad_lanes:
-                result.setdefault(library.sodar_uuid, {}).setdefault(
+                result.setdefault(library.sodar_uuid_str, {}).setdefault(
                     "lane",
                     [
                         "Flow cell does not have lane{} #{}".format(
@@ -642,10 +642,10 @@ class FlowCell(models.Model):
             for lane in library.lane_numbers:
                 by_name.setdefault((lane, library.name), []).append(library)
                 by_barcode.setdefault((lane, library.get_barcode_seq()), {})[
-                    library.sodar_uuid
+                    library.sodar_uuid_str
                 ] = library
                 by_barcode2.setdefault((lane, library.get_barcode_seq2()), {})[
-                    library.sodar_uuid
+                    library.sodar_uuid_str
                 ] = library
 
         # Check uniqueness of sample name with lane.
@@ -653,7 +653,7 @@ class FlowCell(models.Model):
         for (lane, _name), libraries in by_name.items():
             if len(libraries) != 1:
                 for library in libraries:
-                    bad_lanes.setdefault(str(library.sodar_uuid), []).append(lane)
+                    bad_lanes.setdefault(library.sodar_uuid_str, []).append(lane)
         for sodar_uuid, lanes in bad_lanes.items():
             library = by_uuid[sodar_uuid]
             result.setdefault(sodar_uuid, {}).setdefault("name", []).append(
@@ -669,10 +669,10 @@ class FlowCell(models.Model):
             for library in libraries.values():
                 other_libraries = by_barcode2[(lane, library.get_barcode_seq2())]
                 clashes = (set(libraries.keys()) & set(other_libraries.keys())) - {
-                    library.sodar_uuid
+                    library.sodar_uuid_str
                 }
                 if clashes:
-                    bad_lanes.setdefault(str(library.sodar_uuid), []).append(lane)
+                    bad_lanes.setdefault(library.sodar_uuid_str, []).append(lane)
         for sodar_uuid, lanes in bad_lanes.items():
             library = by_uuid[sodar_uuid]
             keys = []
@@ -914,6 +914,10 @@ class Library(models.Model):
 
     class Meta:
         ordering = ["name"]
+
+    @property
+    def sodar_uuid_str(self):
+        return str(self.sodar_uuid)
 
     def get_barcode_seq(self):
         """Return barcode sequence #1 either from barcode or bacode_seq"""

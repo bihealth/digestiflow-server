@@ -152,7 +152,7 @@ def get_libraries_with_suppressed_reverse_index_errors(flowcell):
 @register.simple_tag
 def get_lanes_with_missing_sheets(flowcell, ignore_suppressions=False):
     result = []
-    for lane in range(1, flowcell.num_lanes):
+    for lane in range(1, flowcell.num_lanes + 1):
         if not flowcell.has_sheet_for_lane(lane) and (
             ignore_suppressions or lane not in flowcell.lanes_suppress_no_sample_sheet_warning
         ):
