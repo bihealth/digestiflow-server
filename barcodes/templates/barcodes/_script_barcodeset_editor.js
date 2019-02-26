@@ -135,13 +135,14 @@ $(function() {
    */
   const container = document.getElementById('barcodeSetEntryGrid');
   hot = new Handsontable(container, {
-    colHeaders: ['name', 'sequence', 'status'],
+    colHeaders: ['name', '[aliases]', 'sequence', 'status'],
     columns: [
       {data: 'name'},
+      {data: 'aliases'},
       {data: 'sequence'},
       {data: 'status', editor: false}
     ],
-    colWidths: [150, 200, 100],
+    colWidths: [100, 100, 100, 100],
     columnSorting: false,
     contextMenu: {
       items: {

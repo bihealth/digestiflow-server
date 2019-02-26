@@ -78,7 +78,10 @@ class BarcodeSetCreateView(
         self.object = form.save()
         for entry in json.loads(form.cleaned_data["entries_json"]):
             BarcodeSetEntry.objects.create(
-                barcode_set=self.object, name=entry["name"], sequence=entry["sequence"]
+                barcode_set=self.object,
+                name=entry["name"],
+                aliases=[x.strip() for x in entry["name"].split(",")],
+                sequence=entry["sequence"],
             )
         # Call into super class.
         result = super().form_valid(form)
@@ -164,6 +167,8 @@ class BarcodeSetUpdateView(
         # Existing entries and to-be-updated values by UUID.
         existing = {str(entry.sodar_uuid): entry for entry in barcode_set.entries.all()}
         updated = json.loads(form.cleaned_data["entries_json"])
+        for rank, entry in enumerate(updated):
+            entry["rank"] = rank
         updated_by_uuid = {entry.get("uuid"): entry for entry in updated if entry.get("uuid")}
         # Delete and update existing.
         for entry in existing.values():
@@ -173,14 +178,20 @@ class BarcodeSetUpdateView(
             else:
                 # Update existing record.
                 the_updated = updated_by_uuid[str(entry.sodar_uuid)]
+                entry.rank = the_updated["rank"]
                 entry.name = the_updated["name"]
+                entry.aliases = [x.strip() for x in the_updated["aliases"].split(",")]
                 entry.sequence = the_updated["sequence"]
                 entry.save()
         # Add new records.
         for entry in updated:
             if not entry.get("uuid") or entry.get("uuid") not in existing:
                 BarcodeSetEntry.objects.create(
-                    name=entry["name"], sequence=entry["sequence"], barcode_set=barcode_set
+                    rank=entry["rank"],
+                    name=entry["name"],
+                    aliases=[x.strip() for x in entry["aliases"].split(",")],
+                    sequence=entry["sequence"],
+                    barcode_set=barcode_set,
                 )
 
 

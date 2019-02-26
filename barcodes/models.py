@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
+from django.contrib.postgres.fields import ArrayField
 from projectroles.models import Project
 
 
@@ -147,8 +148,15 @@ class BarcodeSetEntry(models.Model):
     #: The barcode set that this barcode belongs to
     barcode_set = models.ForeignKey(BarcodeSet, related_name="entries", on_delete=models.CASCADE)
 
+    #: Sample sheet line for custom ordering.
+    rank = models.PositiveIntegerField(blank=True, null=True)
+
     #: The identifier of the adapter, e.g., 'AR001'.  This has to be unique in the context of the ``BarcodeSet``
     name = models.CharField(max_length=100, db_index=True, unique=False)
+
+    #: Alternative names for the adapter (e.g., ['01', '1']), uniqueness also applies here in the context of the
+    #: ``BarcodeSet``.
+    aliases = ArrayField(models.CharField(max_length=100, db_index=True, unique=False), default=[])
 
     #: DNA sequence of the barcode.  In the case of dual indexing, use the sequence as for workflow A.
     sequence = models.CharField(max_length=200)
@@ -157,7 +165,7 @@ class BarcodeSetEntry(models.Model):
     objects = BarcodeSetEntryManager()
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["barcode_set", "rank", "name"]
 
     def save(self, *args, **kwargs):
         """Version of save() that ensure uniqueness of the name within the ``BarcodeSet``."""
@@ -166,6 +174,7 @@ class BarcodeSetEntry(models.Model):
 
     def _validate_unique(self):
         """Validates that the name and sequence are unique within the ``BarcodeSet``."""
+        # TODO: validate alias uniueness
         for key in ("name", "sequence"):
             qs = BarcodeSetEntry.objects.filter(**{key: getattr(self, key)})
             if self.pk is not None:

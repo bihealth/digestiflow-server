@@ -18,10 +18,11 @@ class BarcodeSetForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Fill hidden field with JSON value based on the instance's objects.s
-        initial_value = [
-            model_to_dict(entry, exclude=("pk",), rename={"sodar_uuid": "uuid"})
-            for entry in self.instance.entries.all()
-        ]
+        initial_value = []
+        for entry in self.instance.entries.all():
+            val = model_to_dict(entry, exclude=("pk",), rename={"sodar_uuid": "uuid"})
+            val["aliases"] = ",".join(val["aliases"])
+            initial_value.append(val)
         self.fields["entries_json"] = forms.CharField(
             widget=forms.HiddenInput(), initial=json.dumps(initial_value)
         )

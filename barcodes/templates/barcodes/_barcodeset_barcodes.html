@@ -3,6 +3,7 @@
     <tr>
       <th style="width: 10px">#</th>
       <th style="width: 8em;">Name</th>
+      <th style="width: 8em;">Aliases</th>
       <th style="width: auto;">Sequence</th>
     </tr>
   </thead>
@@ -12,6 +13,7 @@
         <tr>
           <td class="text-muted">{{ forloop.counter }}</td>
           <td>{{ entry.name }}</td>
+          <td>{{ entry.aliases|join:", " }}</td>
           <td>{{ entry.sequence }}</td>
         </tr>
       {% endfor %}
