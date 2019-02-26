@@ -90,13 +90,14 @@ $(function () {
   // Setup header information.
   const headers = [
     {name: "name", label: "name", column: 0, width: 100},
-    {name: "reference", label: "organism", column: 1, width: 100},
-    {name: "barcodeSet1", label: "i7 kit", column: 2, width: 200},
-    {name: "barcode1", label: "i7 sequence", column: 3, width: 100},
-    {name: "barcodeSet2", label: "i5 kit", column: 4, width: 200},
-    {name: "barcode2", label: "i5 sequence", column: 5, width: 100},
-    {name: "lanes", label: "lane(s)", column: 6, width: 60},
-    {name: "customDemux", label: "[custom cycles]", column: 7, width: 100},
+    {name: "projectId", label: "project ID", column: 1, width: 100},
+    {name: "reference", label: "organism", column: 2, width: 100},
+    {name: "barcodeSet1", label: "i7 kit", column: 3, width: 200},
+    {name: "barcode1", label: "i7 sequence", column: 4, width: 100},
+    {name: "barcodeSet2", label: "i5 kit", column: 5, width: 200},
+    {name: "barcode2", label: "i5 sequence", column: 6, width: 100},
+    {name: "lanes", label: "lane(s)", column: 7, width: 60},
+    {name: "customDemux", label: "[custom cycles]", column: 8, width: 100},
   ];
   // Map from header column name to column
   const headerNameToCol = new Map()
@@ -106,6 +107,7 @@ $(function () {
 
   // Shortcuts to column indices
   const nameCol = headerNameToCol.get("name")
+  const projectIdCol = headerNameToCol.get("projectId")
   const organismCol = headerNameToCol.get("reference")
   const barcodeSet1Col = headerNameToCol.get("barcodeSet1")
   const barcode1Col = headerNameToCol.get("barcode1")
@@ -268,8 +270,9 @@ $(function () {
     const result = new Array();
 
     jsonData.forEach((entry, _) => {
-      const row = ['', '', '', '', '', '', '', '', '']
+      const row = ['', '', '', '', '', '', '', '', '', '']
       row[headerNameToCol.get("name")] = entry.name
+      row[headerNameToCol.get("projectId")] = entry.project_id
       row[headerNameToCol.get("reference")] = entry.reference
 
       if (entry.barcode_seq) {
@@ -286,10 +289,10 @@ $(function () {
         row[headerNameToCol.get("barcodeSet2")] = 'type barcode -->'
         row[headerNameToCol.get("barcode2")] = entry.barcode_seq2
       } else if (entry.barcode2) {
-        const barcode2 = barcodes[entry.barcode2]
-        const barcodeset2 = barcodesets[barcode2.barcode_set]
-        row[headerNameToCol.get("barcodeSet2")] = `${barcodeset.name} (${barcodeset2.short_name})`
-        row[headerNameToCol.get("barcode2")] = `${barcode2.name} (${barcode2.sequence})`
+        const barcode = barcodes[entry.barcode2]
+        const barcodeset = barcodesets[barcode.barcode_set]
+        row[headerNameToCol.get("barcodeSet2")] = `${barcodeset.name} (${barcodeset.short_name})`
+        row[headerNameToCol.get("barcode2")] = `${barcode.name} (${barcode.sequence})`
       }
 
       const numbers = new MultiRange()
@@ -310,6 +313,7 @@ $(function () {
       .filter((row) => !!row[0])
       .map(row => {
         const name = row[nameCol]
+        const projectId = row[projectIdCol]
         const reference = row[organismCol]
         const barcodeSet1 = row[barcodeSet1Col]
         const barcode1 = row[barcode1Col]
@@ -349,12 +353,13 @@ $(function () {
             return barcode2 === `${entry.name} (${entry.sequence})`
           })
           if (barcode) {
-            barcodeUuid2 = barcode2.sodar_uuid
+            barcodeUuid2 = barcode.sodar_uuid
           }
         }
 
         return {
           name: name,
+          project_id: projectId,
           reference: reference,
           barcode: barcodeUuid,
           barcode_seq: barcodeSeq,
@@ -458,7 +463,7 @@ $(function () {
       return `${item.name} (${item.short_name})`
     }))
     const result = []
-    for (var i = 0; i <= 7; ++i) {
+    for (var i = 0; i < headers.length; ++i) {
       switch (headers[i].name) {
         case "name":
           result.push({validator: sampleNameValidator})
@@ -478,6 +483,7 @@ $(function () {
           break;
         case "barcode1":
         case "barcode2":
+        case "projectId":
           result.push({})
           break;
         default:

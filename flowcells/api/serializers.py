@@ -58,6 +58,7 @@ class LibrarySerializer(serializers.ModelSerializer):
             "sodar_uuid",
             "flow_cell",
             "name",
+            "project_id",
             "reference",
             "barcode",
             "barcode_seq",

@@ -203,6 +203,7 @@ class FlowCellDetailView(
 class FlowCellRecreateLibrariesMixin:
     """Mixin with functionality to recreate the libraries"""
 
+    @transaction.atomic()
     def _update_libraries(self, flowcell, form):
         """Update libraries of ``flowcell`` record from JSON field.
 
@@ -227,6 +228,7 @@ class FlowCellRecreateLibrariesMixin:
             flowcell.libraries.create(
                 rank=rank,
                 name=info["name"],
+                project_id=info["project_id"],
                 reference=info["reference"],
                 barcode=barcode,
                 barcode_seq=info["barcode_seq"],

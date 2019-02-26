@@ -16,11 +16,12 @@
       <th style="width: 0px;"><i class="fa fa-fw fa-info-circle"></i></th>
       <th style="width: 0px;" data-toggle="tooltip" title="custom demultiplexing instructions"><i class="fa fa-fw fa-pencil"></i></th>
       <th style="width: 8em;">Name</th>
-      <th style="width: 5em;">Reference</th>
-      <th>Barcode Set #1</th>
-      <th>Barcode #1</th>
-      <th>Barcode Set #2</th>
-      <th>Barcode #2</th>
+      <th style="width: 8em;">Project ID</th>
+      <th style="width: 5em;">Organism</th>
+      <th>i7 Kit</th>
+      <th>i7 Seq</th>
+      <th>i5 Kit</th>
+      <th>i5 Seq</th>
       <th>Lanes</th>
     </tr>
   </thead>
@@ -31,7 +32,7 @@
       {% endfor %}
     {% else %}
       <tr>
-        <td colspan="9" class="text-center text-muted">
+        <td colspan="11" class="text-center text-muted">
           <i>No libraries (yet).</i>
         </td>
       </tr>

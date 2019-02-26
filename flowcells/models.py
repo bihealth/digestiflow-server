@@ -868,6 +868,9 @@ class Library(models.Model):
     #: The name of the library
     name = models.CharField(max_length=100)
 
+    #: A Project identifier
+    project_id = models.CharField(max_length=200, blank=True, null=True)
+
     #: The organism to assume for this library, used for QC
     reference = models.CharField(
         null=True, blank=True, max_length=100, default="hg19", choices=REFERENCE_CHOICES
