@@ -110,15 +110,26 @@ class SequencingMachine(models.Model):
 
     #: Vendor ID of the machine, reflected in file names and read names later on.
     vendor_id = models.CharField(
-        db_index=True, max_length=100, help_text="Vendor ID of the machine"
+        db_index=True,
+        max_length=100,
+        help_text=(
+            "The vendor (Illumina) assigned ID of your sequencer. "
+            "E.g., the ID might be something like NB501234 for a NextSeq, or "
+            "ST-K12345 for a HiSeq."
+        )
     )
 
     #: Human-readable label of the machine
-    label = models.CharField(max_length=100, help_text="Short name of the machine")
+    label = models.CharField(
+        max_length=100,
+        help_text="Assign a short name, e.g. \"HiSeq #1\"."
+    )
 
     #: Optional, short description of the machine
     description = models.TextField(
-        blank=True, null=True, help_text="Short description of the machine."
+        blank=True,
+        null=True,
+        help_text="Brief description of the machine, e.g., \"HiSeq 4000 bought in 2015\"."
     )
 
     #: The machine model to use
@@ -127,7 +138,10 @@ class SequencingMachine(models.Model):
     )
 
     #: Number of slots in the machine
-    slot_count = models.IntegerField(default=1)
+    slot_count = models.IntegerField(
+        default=1,
+        help_text="Maximal number of flow cells in one run, e.g. 1 for NextSeq, 2 for HiSeq 4000"
+    )
 
     #: Workflow used for dual indexing
     dual_index_workflow = models.CharField(

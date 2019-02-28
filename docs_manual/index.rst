@@ -22,6 +22,8 @@ DigestiFlow is a suite of programs for managing Illumina flow cells, curating sa
     :titlesonly:
 
     first_steps_installation
+    first_steps_overview
+    first_steps_sites
     first_steps_sequencers
     first_steps_barcodes
     first_steps_flowcell_import
