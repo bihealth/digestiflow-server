@@ -1,3 +1,7 @@
+.. image:: https://readthedocs.org/projects/digestiflow-web/badge/?version=master
+    :target: https://digestiflow-web.readthedocs.io/en/master/?badge=master
+    :alt: Documentation Status
+
 .. image:: https://img.shields.io/travis/bihealth/digestiflow-web.svg
     :target: https://travis-ci.org/bihealth/digestiflow-web
 
