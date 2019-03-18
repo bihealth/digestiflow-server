@@ -180,7 +180,7 @@ class BarcodeSetUpdateView(
                 the_updated = updated_by_uuid[str(entry.sodar_uuid)]
                 entry.rank = the_updated["rank"]
                 entry.name = the_updated["name"]
-                entry.aliases = [x.strip() for x in the_updated["aliases"].split(",")]
+                entry.aliases = [x.strip() for x in the_updated.get("aliases", "").split(",")]
                 entry.sequence = the_updated["sequence"]
                 entry.save()
         # Add new records.
@@ -189,7 +189,7 @@ class BarcodeSetUpdateView(
                 BarcodeSetEntry.objects.create(
                     rank=entry["rank"],
                     name=entry["name"],
-                    aliases=[x.strip() for x in entry["aliases"].split(",")],
+                    aliases=[x.strip() for x in entry.get("aliases", "").split(",")],
                     sequence=entry["sequence"],
                     barcode_set=barcode_set,
                 )
