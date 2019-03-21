@@ -777,6 +777,9 @@ class MessageUpdateView(
     slug_url_kwarg = "message"
     slug_field = "sodar_uuid"
 
+    def get_queryset(self):
+        return Message.objects.filter(flow_cell__project=self.get_project())
+
     def get_context_data(self, *args, **kwargs):
         result = super().get_context_data(*args, **kwargs)
         # Enable directly going to the messages.

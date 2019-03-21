@@ -1100,6 +1100,13 @@ class Message(models.Model):
             self.attachment_folder = self._create_attachment_folder()
         super().save(*args, **kwargs)
 
+    def get_project(self):
+        """Return the project of the message's flow cell.
+
+        This is required for authorization.
+        """
+        return self.flow_cell.project
+
     @transaction.atomic
     def _create_attachment_folder(self):
         """Get the folder containing the attachments of this message."""
