@@ -1,8 +1,8 @@
 .. _projects_search:
 
-================
-Site-Wide Search
-================
+====================
+Instance-Wide Search
+====================
 
 You can search for any object in the Digestiflow database by using the little search box on the top of the page (given that your search term is longer than three characters).
 
