@@ -14,6 +14,9 @@ Thus, you can store it in properly secured locations such as files that Digestif
     Also, you can create an arbitrary number of tokens.
     Thus, in case a token is compromised, it can be exchanged easily (the same is true if you lose your token).
 
+.. note::
+    For Digestiflow Cli and Demux, it also makes sense to create dedicated "machine" users in the Digestiflow Web database as described in the section :ref:`django_admin`.
+
 ------------------
 Listing API Tokens
 ------------------
