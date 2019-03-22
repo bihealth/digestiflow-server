@@ -12,17 +12,18 @@ Sequencer List
 
 On the sequencer list page, you can see table with all sequencers.
 For each sequencer, the creation date, vendor ID, label, number of runs, and short description is show.
-Clicking on a sequencer's vendor ID leads to the detail page of each sequencer.
+Clicking on a sequencer's vendor ID leads to the detail page of the sequencer.
 The little gray button next to each entry gives access to updating and deleting sequencers.
 A confirmation dialogue will be displayed before actually deleting the record from the database.
 Note that deleting a sequencer is a permanent action that cannot be undone.
-Use the blue "Sequencer Operations" to access functionality for creating new sequencers.
+Use the blue "Sequencer Operations" button on the top right to access functionality for creating new sequencers.
 
 -----------------
 Sequencer Details
 -----------------
 
-On the sequncer details page, you see two tabs: "Properties" that displays the sequencer properties and "Flow Cells/Runs" that shows a list of all runs of this particular sequencer.
+On the sequencer details page, you see two tabs.
+"Properties" displays the sequencer properties and "Flow Cells/Runs" that shows a list of all runs of this particular sequencer.
 Use the blue "Sequencer Operations" to access functionality for deleting and updating the sequencer.
 
 The "Properties" tab shows the following information for each flow cell:

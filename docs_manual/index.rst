@@ -60,6 +60,7 @@ DigestiFlow is a suite of programs for managing Illumina flow cells, curating sa
     flowcells_overview
     flowcells_details
     flowcells_editor
+    flowcells_messages
 
 .. toctree::
     :maxdepth: 1
@@ -70,6 +71,7 @@ DigestiFlow is a suite of programs for managing Illumina flow cells, curating sa
 
     misc_admin_alerts
     misc_api_tokens
+    misc_api_access
 
 .. toctree::
     :maxdepth: 1
