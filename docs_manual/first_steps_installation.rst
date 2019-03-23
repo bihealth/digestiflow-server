@@ -43,9 +43,9 @@ In the following, we will describe how to:
 
 1. Setup a PostgreSQL user for the web app.
 2. Install the web app and setup a virtualenv environment for it.
-3. Configure the web app an create super user account.
+3. Configure the web app.
 4. Initialize the database and create a super user account.
-5. Follow a short tutorial on how tutorial on how to
+5. Follow a short tutorial on how tutorial
     - create example flow cell base call data,
     - register sequencing machines with Digestiflow,
     - register adapter sequence sets,

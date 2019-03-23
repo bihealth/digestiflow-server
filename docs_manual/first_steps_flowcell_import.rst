@@ -118,12 +118,28 @@ Next, create a ``.digestiflowrc.toml`` file in your home directory for configura
 ::
 
     cat >~/.digestiflowrc.toml <<EOF
-    TODO TODO TODO
+    # Use 4 threads by by default.
+    threads = 4
+
+    [web]
+    # URL to your Digestiflow instance. "$url/api" must be the API entry URL.
+    url = "https://flowcells.example.org"
+    # The secret token to use for the the REST API, as created through the Web UI.
+    token = "secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecr"
+
+    [ingest]
+    # Create adapter histograms by default.
+    analyze_adapters = true
     EOF
 
-Enter the token you received through the API into the file.
-Don't worry if you lose a token, you can always create a new one and delete old ones.
-Adjust the API URL to point to the location where you are now running your Digestiflow Web instance.
+Then, update the following configuration settings:
+
+``web:url``
+    Adjust the API URL to point to the location where you are now running your Digestiflow Web instance.
+
+``web:token``:
+    Enter the token you received through the API into the file.
+    Don't worry if you lose a token, you can always create a new one and delete old ones.
 
 Using Digestflow CLI
 ====================
@@ -135,7 +151,7 @@ You can copy the site UUID by going to the project overview and copy-and-paste t
 
 ::
 
-    # digestiflow-cli ... TODO TODO TODO
+    # digestiflow-cli ingest $path/*
 
 The Digestiflow Web Git repository contains a helper script for creating fake flow cell data.
 You can call it as follows to create two directories with very few reads having NovaSeq and HiSeq properties:
@@ -148,8 +164,9 @@ You can call it as follows to create two directories with very few reads having 
 Now, we can actually use digestiflow-cli to import these directories.
 After the following call, you should see two new flow cells in your Digestiflow Web instance.
 
-Either way, you can now fill the sample sheets from the two ``.xls`` files in the example directory of Digestiflow Web Git.
-
 ::
 
-    TODO TODO TODO
+    # digestiflow-cli ingest $path/<path flow cell 1> TODO
+    # digestiflow-cli ingest $path/<path flow cell 2> TODO
+
+Either way, you can now fill the sample sheets from the two ``.xls`` files in the example directory of Digestiflow Web Git.

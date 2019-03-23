@@ -47,7 +47,7 @@ complete
 failed
     The sequencing device finished and indicates that it detected an error.
 confirmed complete
-    A human operator has inspected the sequencing output (e.g., the Illumina RTA and SVA results) for quality control (QC).
+    A human operator has inspected the sequencing output (e.g., the Illumina RTA and SAV results) for quality control (QC).
     They then deemed the results of passing QC.
 confirmed complete with warnings
     A human operator has inspected the output and found some issues.
