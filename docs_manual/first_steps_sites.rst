@@ -6,7 +6,7 @@ Tutorial: Setup Sites
 
 Digestiflow can support more than one sequencing lab per installation by managing a set of **sites**.
 After logging into Digestiflow with the super user that you created in the installation step, you first have to setup a first site by clicking on "Create Site" in the left green action bar.
-If your window is not wide enough, that link might be hiding in a dark-gray "≡" symbol.
+If your window is not wide enough, that link might be hiding in a dark-gray symbol with three stripes.
 It might be a good idea to zoom out a bit in your browser window so you see the green action bar on the left-hand side.
 
 Fill out the "Create Site" form's Title and Description field, you can leave the remaining ones at their default settings.

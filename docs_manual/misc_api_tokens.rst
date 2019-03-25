@@ -22,11 +22,24 @@ Listing API Tokens
 ------------------
 
 Using the "API Tokens" in your "user menu", you will be directed to the "Tokens" list.
+
+.. figure:: _static/img/User_Menu_Tokens.png
+    :align: center
+    :width: 75%
+
+    The Link to the API token management in the user menu.
+
 Here, you can see the list of currently active tokens.
 For each token, the table lists the creation time, expiry date, and a token "key" for identifying your token.
 On the right hand side of each token entry there is a little gray button that allows for the deletion of a token.
-
 Use the blue button "API Tokens" on the top right to access the token creation functions.
+
+.. figure:: _static/img/Tokens_List.png
+    :align: center
+    :width: 75%
+
+    The list of tokens for a user.
+    Create tokens through "Token Operations" / "Create", access the deletion function through the little gray icon on the left next to each entry.
 
 -------------------
 Creating API Tokens

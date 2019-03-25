@@ -28,13 +28,17 @@ The following assume you already have a first site, sequencer, barcode set, and 
    Copy the full URL and insert ``/api`` between the host name and ``/flowcells`` (*).
    From here, you can explore the API for managing flow cells.
 
-3. Create an API token and copy it somewhere safe.
+3. Create an API token (see :ref:`misc_api_tokens`) and copy it somewhere safe.
    You can now use the following ``curl`` command.
    ``$URL`` is the result of (*) in the example 2 and ``$TOKEN`` is the token.
 
+   In the following example, the list of flow cells is empty in the given project.
+
    ::
-        # XXX
-        $ curl -H "Token: bearer $TOKEN" "$URL"
+
+        $ URL=http://127.0.0.1:8000/api/flowcells/${project_uuid}/
+        $ curl -X GET $URL -H "Authorization: Token $TOKEN"
+        []
 
 --------------
 Authentication
@@ -64,6 +68,15 @@ Generally, the basic API URLs have the following format (where ``site`` and ``ob
    HTTP GET obtains the details of the object while POST allows for full updates, PUT allows for partial updates, DELETE allows deletion.
 
 The easiest way to learn about the API is to navigate to the URL of type 1 (*) with your browser and explore it from here.
+
+.. figure:: _static/img/API_FlowCell_List_Create.png
+    :width: 75%
+    :align: center
+
+    The API detects if it is being accessed by a web browser.
+    In this case, it renders a web page displaying the objects in pretty-printed JSON format.
+    Also, it displays a form for manipulating the objects.
+    In this case, an empty list of flow cells is being displayed to the user together with a form to create a new flow cell.
 
 -----------------------
 Available API Endpoints

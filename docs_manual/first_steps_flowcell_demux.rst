@@ -53,7 +53,7 @@ This indicates that the demultiplexing is running.
 Once complete a green sand clock will be displayed and on error a red one will be shown.
 You can confirm success or failure by clicking the flow cell and selecting the appropriate option.
 
-.. info::
+.. note::
 
     The authors consider it best practice to use this feature after inspecting quality control results and/or logs to validate that the demultiplexing succeeded.
     In case of confirming failure and "giving up", the authors recommend to leave a note in the flow cell's messages section explaining the failure and abandoning demultiplexing.
