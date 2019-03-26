@@ -12,6 +12,12 @@ Click the blue button "Sequencer Operations" button on the top right and then "C
 It is important to configure the machine model and the "Dual index workflow" appropriately such that demultiplexing works correctly with dual indexing.
 Fill the form and click the "Create" button on the bottom right to create it.
 
+If you want to follow the tutorial and add a flowcell with simulated data, you can now add a sequencer of model Hiseq 2000 called "CSSIM".
+
+.. figure:: _static/img/Create_Sequencer.png
+    :align: center
+    :width: 75%
+
 In the list of sequencers, you can click the sequencer ID to see the sequencer details.
 The "Flow Cells/Runs" tab shows the number of runs from this device.
 Clicking on the tab will show a table with the flow cells/runs for this sequencer.

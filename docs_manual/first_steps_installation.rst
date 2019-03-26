@@ -101,7 +101,7 @@ All of Digestiflow Web can be configured as environment variables as is common f
 This has the advantage that you do not have to touch Digestiflow Web's source code and all configuration can be done outside it (e.g., in a ``systemd`` environment file as shown in the Ansible files shipping with the source code).
 
 The following shows a set of the available environment variables, the required ones are marked with ``#**``.
-Put the following into a file ``.env`` in your ``digestiflow-web`` checkout and ajust it to your liking and requirements.
+Put the following into a file ``.env`` in your ``digestiflow-web`` checkout and adjust it to your liking and requirements.
 
 ::
 
@@ -162,5 +162,7 @@ Do this and log in as the super use you just created.
 
 ::
 
+    # python manage.py migrate
+    # python manage.py collectstatic
     # python manage.py runserver
     [now direct your browser to the displayed URL and login]

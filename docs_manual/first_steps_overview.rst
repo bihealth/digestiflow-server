@@ -18,7 +18,7 @@ It does also not help you with processing these files.
 
 The authors consider such processe **external** to Digestiflow.
 However, Digestiflow offers a REST API that can be used to connect external software components to the Digestiflow system.
-For example, you could use the API to automatically fill the sample sheets based on the output of a barcode reader, or start ioinformatics processing such as read mapping.
+For example, you could use the API to automatically fill the sample sheets based on the output of a barcode reader, or start bioinformatics processing such as read mapping.
 It will be your task to integrate Digestiflow into your external processes.
 Setting such clear boundaries allows Digestiflow to stay in a sweet spot of relative ease of use but also flexibility and allowing for integration with external services.
 

@@ -154,19 +154,39 @@ You can copy the site UUID by going to the project overview and copy-and-paste t
     # digestiflow-cli ingest $path/*
 
 The Digestiflow Web Git repository contains a helper script for creating fake flow cell data.
-You can call it as follows to create two directories with very few reads having NovaSeq and HiSeq properties:
+You can call it as follows to create a directory with very few reads simulating HiSeq properties:
 
 ::
 
-    # ... TODO TODO TODO
-    # ... TODO TODO TODO
+    # bash fake-bcl-folder.sh -c 1000 hiseq 130820_CSSIM_0042_B_Test_FAKE_DATA
 
-Now, we can actually use digestiflow-cli to import these directories.
-After the following call, you should see two new flow cells in your Digestiflow Web instance.
+Now, we can actually use digestiflow-cli to import this flow cell.
+Make sure to use the correct project UUID when importing a flow cell directory.
 
-::
+.. code:: bash
 
-    # digestiflow-cli ingest $path/<path flow cell 1> TODO
-    # digestiflow-cli ingest $path/<path flow cell 2> TODO
+    # digestiflow-cli ingest --project-uuid xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx 130820_CSSIM_0042_B_Test_FAKE_DATA/
+    Mar 26 09:37:12.961 INFO Running: digestiflow-cli-client ingest
+    Mar 26 09:37:12.961 INFO Options: Settings { debug: false, verbose: false, quiet: false, threads: 0, seed: 42, log_token: false, web: Web { url: "http://127.0.0.1:8000" }, ingest: IngestArgs { project_uuid: "d4b303c4-0bca-46fe-b157-9c57ff86a628", path: ["130820_CSSIM_0042_B_Test_FAKE_DATA/"], register: true, update: true, analyze_adapters: false, force_analyze_adapters: false, post_adapters: true, operator: "", sample_tiles: 1, sample_reads_per_tile: 1000000, skip_if_status_final: true, min_index_fraction: 0.001 } }
+    Mar 26 09:37:12.979 INFO Starting to process folder "130820_CSSIM_0042_B_Test_FAKE_DATA/"...
+    Mar 26 09:37:12.979 INFO Guessed folder layout to be MiSeq
+    Mar 26 09:37:12.979 INFO Parsing XML files...
+    Mar 26 09:37:13.091 INFO Registering flow cell...
+    Mar 26 09:37:13.233 INFO Done registering flow cell.
+    Mar 26 09:37:13.233 INFO You asked me to not analyze adapters.
+    Mar 26 09:37:13.233 INFO Done processing folder "130820_CSSIM_0042_B_Test_FAKE_DATA/".
+    Mar 26 09:37:13.234 INFO All done. Have a nice day.
+
+Now, you should see a new flow cell in your Digestiflow Web instance.
+
+.. figure:: _static/img/Import_Flowcell.png
+    :align: center
+    :width: 75%
+
+Clicking on the flow cell "Test" takes you to an overview of the flow cell's properties overview.
+
+.. figure:: _static/img/Fake_Flowcell.png
+    :align: center
+    :width: 75%
 
 Either way, you can now fill the sample sheets from the two ``.xls`` files in the example directory of Digestiflow Web Git.
