@@ -11,8 +11,24 @@ DigestiFlow is a suite of programs for managing Illumina flow cells, curating sa
 
 .. note::
 
-    The DigestiFlow Web documentation is currently under construction and in **alpha** state.
+    The DigestiFlow Web documentation is currently under construction and in **beta** state.
     Don't hesitate to open issues in our `GitHub bug tracker <https://github.com/bihealth/digestiflow-web/issues/>`_ in case of any question or problem.
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Installation & Getting Started
+    :name: installation-getting-started
+    :hidden:
+    :titlesonly:
+
+    first_steps_installation
+    first_steps_overview
+    first_steps_sites
+    first_steps_sequencers
+    first_steps_barcodes
+    first_steps_flowcell_import
+    first_steps_flowcell_fill
+    first_steps_flowcell_demux
 
 .. toctree::
     :maxdepth: 1
@@ -44,6 +60,7 @@ DigestiFlow is a suite of programs for managing Illumina flow cells, curating sa
     flowcells_overview
     flowcells_details
     flowcells_editor
+    flowcells_messages
 
 .. toctree::
     :maxdepth: 1
@@ -54,6 +71,7 @@ DigestiFlow is a suite of programs for managing Illumina flow cells, curating sa
 
     misc_admin_alerts
     misc_api_tokens
+    misc_api_access
 
 .. toctree::
     :maxdepth: 1

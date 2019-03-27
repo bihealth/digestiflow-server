@@ -4,7 +4,7 @@
   <dt class="col-12 col-md-3 col-xl-2">UUID</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.sodar_uuid }}</dd>
 
-  <dt class="col-12 col-md-3 col-xl-2">Project</dt>
+  <dt class="col-12 col-md-3 col-xl-2">Site</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.project.title }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Created</dt>
@@ -31,7 +31,7 @@
   <dd class="col-12 col-md-9 col-xl-10">{{ object.num_lanes|default:"-" }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Operator</dt>
-  <dd class="col-12 col-md-9 col-xl-10">{{ object.operator }}</dd>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.operator|default:"-" }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Demux Operator</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.demux_operator.name|default:"-" }}</dd>

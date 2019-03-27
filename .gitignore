@@ -1,3 +1,11 @@
+.*#
+
+tutorial/*_*_*/
+tutorial/demux-out/
+.snakemake
+
+.vscode
+
 /celerybeat*
 
 /src/
