@@ -14,7 +14,7 @@ The description of its functionality has two steps.
 First, we will explain the different components and how you can interact with them.
 This will allow you to enter a sample sheet library by library in the form.
 In most cases, the data is available in wet lab spreadsheet sample sheets.
-Digestiflow Web supports you in performing this task effectively and efficiently.
+Digestiflow Server supports you in performing this task effectively and efficiently.
 The second step describes a workflow that the authors have successfully implemented in their daily work.
 
 -----------------

@@ -1,9 +1,9 @@
-===========================
-DigestiFlow Web User Manual
-===========================
+=======================
+Digestiflow User Manual
+=======================
 
 DigestiFlow is a suite of programs for managing Illumina flow cells, curating sample sheets, and demultiplexing.
-**DigestiFlow Web** is the web-based database system offering a web-based user UI and REST API.
+**Digestiflow Server** is the database system offering a web-based user UI and REST API.
 
 .. toctree::
     :maxdepth: 2
@@ -11,8 +11,8 @@ DigestiFlow is a suite of programs for managing Illumina flow cells, curating sa
 
 .. note::
 
-    The DigestiFlow Web documentation is currently under construction and in **beta** state.
-    Don't hesitate to open issues in our `GitHub bug tracker <https://github.com/bihealth/digestiflow-web/issues/>`_ in case of any question or problem.
+    The Digestiflow Server documentation is currently under construction and in **beta** state.
+    Don't hesitate to open issues in our `GitHub bug tracker <https://github.com/bihealth/digestiflow-server/issues/>`_ in case of any question or problem.
 
 .. toctree::
     :maxdepth: 1

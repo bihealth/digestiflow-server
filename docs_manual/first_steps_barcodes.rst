@@ -28,7 +28,7 @@ Fill in the basic properties of the barcode set in the "Properties" page.
 Then, select the "Barcodes" tab.
 In case of display errors of the table, just click in the first cell of the leftmost column.
 You can now enter (or better: copy and paste) your barcodes from a spreadsheet or your kit vendor's manual.
-You can find an example for the Agilent SureSelect V6 adapters in the file ``Barcodes_Agilent_SureSelect_V6.xlsx`` in `here <https://github.com/bihealth/digestiflow-web/tree/master/tutorial>`_.
+You can find an example for the Agilent SureSelect V6 adapters in the file ``Barcodes_Agilent_SureSelect_V6.xlsx`` in `here <https://github.com/bihealth/digestiflow-server/tree/master/tutorial>`_.
 
 .. figure:: _static/img/BarcodeSet_Create_Barcodes.png
     :width: 75%
@@ -65,4 +65,4 @@ Again, the breadcrumb on the top allows you to quickly navigate to the barcode s
 Both will show the barcode set that you just created.
 
 Before proceeding to the creation of flow cells, add a new barcode set for test data.
-You can find the barcode set properties and sequences in the file ``Barcodes_Test.xlsx`` `here <https://github.com/bihealth/digestiflow-web/tree/master/tutorial>`_.
+You can find the barcode set properties and sequences in the file ``Barcodes_Test.xlsx`` `here <https://github.com/bihealth/digestiflow-server/tree/master/tutorial>`_.

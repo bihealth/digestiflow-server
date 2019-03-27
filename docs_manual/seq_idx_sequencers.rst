@@ -55,12 +55,12 @@ Description
 
 Machine Model
     The model of the sequencing machine.
-    This value is only used for display of the sequencer in Digestiflow Web.
+    This value is only used for display of the sequencer in Digestiflow Server.
 
 Slot Count
     The number of slots for flow cells.
     This is equal to the number of flow cells in your sequencer, e.g., ``1`` for NextSeq 500 and ``2`` for HiSeq 4000.
-    This value is used for sanity checks when entering data manually into Digestiflow Web.
+    This value is used for sanity checks when entering data manually into Digestiflow Server.
 
 Dual Indexing Workflow
     The "Illumina dual indexing workflow" to use.

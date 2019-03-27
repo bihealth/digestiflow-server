@@ -12,7 +12,7 @@ We will thus assume this use case for this tutorial.
 The Sample Spreadsheet
 ----------------------
 
-Download the file ``130820_CSSIM_0123_B_TESTEST_Test_Label.xlsx`` from `here <https://github.com/bihealth/digestiflow-web/tree/master/tutorial>`_ and open it.
+Download the file ``130820_CSSIM_0123_B_TESTEST_Test_Label.xlsx`` from `here <https://github.com/bihealth/digestiflow-server/tree/master/tutorial>`_ and open it.
 This file contains an excerpt of the information that the authors would expect to get from the wet lab.
 Open the file with your favourite spreadsheet program and have a quick look.
 The file is simple enough, containing the sample name, the i7 and i5 index names as well as the lane numbers on which the sample were loaded.

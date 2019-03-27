@@ -4,7 +4,7 @@
 API Access
 ==========
 
-Digestiflow Web provides an API for managing all objects within a site: Sequencers, barcode sets, barcodes, flow cells, libraries, and messages with attachments.
+Digestiflow Server provides an API for managing all objects within a site: Sequencers, barcode sets, barcodes, flow cells, libraries, and messages with attachments.
 Generally, the API is available with the prefix ``/api``.
 
 The Digestiflow REST API is implemented using Django REST Framework which also allows for the easy exploration of the API in your browser.

@@ -1,29 +1,29 @@
-.. image:: https://readthedocs.org/projects/digestiflow-web/badge/?version=master
-    :target: https://digestiflow-web.readthedocs.io/en/master/?badge=master
+.. image:: https://readthedocs.org/projects/digestiflow-server/badge/?version=master
+    :target: https://digestiflow-server.readthedocs.io/en/master/?badge=master
     :alt: Documentation Status
 
-.. image:: https://img.shields.io/travis/bihealth/digestiflow-web.svg
-    :target: https://travis-ci.org/bihealth/digestiflow-web
+.. image:: https://img.shields.io/travis/bihealth/digestiflow-server.svg
+    :target: https://travis-ci.org/bihealth/digestiflow-server
 
 .. image:: https://img.shields.io/badge/License-MIT-green.svg
     :target: https://opensource.org/licenses/MIT
 
 .. image:: https://api.codacy.com/project/badge/Grade/7e9c21b3ba844a1588a7d7fa6e4f82d4
-    :target: https://www.codacy.com/app/bihealth/digestiflow-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bihealth/digestiflow-web&amp;utm_campaign=Badge_Grade
+    :target: https://www.codacy.com/app/bihealth/digestiflow-server?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bihealth/digestiflow-server&amp;utm_campaign=Badge_Grade
 
 .. image:: https://api.codacy.com/project/badge/Coverage/7e9c21b3ba844a1588a7d7fa6e4f82d4
-    :target: https://www.codacy.com/app/bihealth/digestiflow-web?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bihealth/digestiflow-web&amp;utm_campaign=Badge_Coverage
+    :target: https://www.codacy.com/app/bihealth/digestiflow-server?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bihealth/digestiflow-server&amp;utm_campaign=Badge_Coverage
 
 .. image:: https://www.herokucdn.com/deploy/button.svg
     :height: 20px
     :alt: Deploy to Heroku
-    :target: https://heroku.com/deploy?template=https://github.com/bihealth/digestiflow-web/tree/master
+    :target: https://heroku.com/deploy?template=https://github.com/bihealth/digestiflow-server/tree/master
 
 ===============
-Digestiflow Web
+Digestiflow Server
 ===============
 
-This project contains the code for the Digestiflow Web component of the Digestiflow Suite.
+This project contains the code for the Digestiflow Server component of the Digestiflow Suite.
 The sibling projects are:
 
 - `Digestiflow CLI <https://github.com/bihealth/digestiflow-cli>`_: command line client
@@ -33,7 +33,7 @@ The sibling projects are:
 Digestiflow Suite
 -----------------
 
-**Digestiflow Web** is the central component.
+**Digestiflow Server** is the central component.
 It provides a a database system for managing Illumina flow cells and libraries with a web-based UI and a REST API.
 Its features include managing sample sheets, quality reports, a minimal "lab notebook" for note-taking and messaging, and sending out notifications on status changes.
 
@@ -41,8 +41,8 @@ Its features include managing sample sheets, quality reports, a minimal "lab not
 Usually, this is run in a regular (e.g., cron) job to monitor the directories where your sequencers store their output to automatically register new flow cells.
 
 **Digestiflow Demux** allows you to demultiplex your flow cell data (semi)-automatically.
-Using the sample sheets entered in to Digestiflow Web, performs demultiplexing.
-This can also be run in a regular job to demultiplex flow cells as soon as sample sheets are provided in Digestiflow Web and marked as "ready for demultiplexing" there.
+Using the sample sheets entered in to Digestiflow Server, performs demultiplexing.
+This can also be run in a regular job to demultiplex flow cells as soon as sample sheets are provided in Digestiflow Server and marked as "ready for demultiplexing" there.
 
 ------------
 Installation
@@ -51,13 +51,13 @@ Installation
 Deploy to Heroku
 ================
 
-The easiest way to try out Digestiflow Web is to click `Deploy to Heroku <https://heroku.com/deploy?template=https://github.com/bihealth/digestiflow-web/tree/master>`_ (or the button above) and follow the step-by-step process.
+The easiest way to try out Digestiflow Server is to click `Deploy to Heroku <https://heroku.com/deploy?template=https://github.com/bihealth/digestiflow-server/tree/master>`_ (or the button above) and follow the step-by-step process.
 
 1. Create an account and sign in if necessary.
 2. Set the application name, e.g., to ``my-digestiflow-demo``.
 3. Click **Deploy app** and... wait a bit.
     - It seems that, sadly, you will have to enter credit card for account verification.
-      Note that you can try out Digestiflow Web with free/hobby plan only.
+      Note that you can try out Digestiflow Server with free/hobby plan only.
       Also, this is a bit unintuitive, deployment will fail.
       You have to enter your credit card information and then continue...
 4. After deployment has succeeded, go to ``Manage App``, then ``Settings`` in the Heroku Dashboard.
@@ -68,12 +68,12 @@ The easiest way to try out Digestiflow Web is to click `Deploy to Heroku <https:
 
 From here, you can read the built-in manual at https://my-digestiflow-demo.herokuapp.com/manual/ (or clicking "Manual" in the right of the top navigation bar).
 
-Self-Hosting Digestiflow Web
+Self-Hosting Digestiflow Server
 ============================
 
 Digestiflow CLI and Digestiflow Demux can be installed using Conda and the Bioconda channel.
 See the individual projects' documentation.
 
-Digestiflow Web ...
+Digestiflow Server ...
 
 TODO: write me!

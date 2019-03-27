@@ -30,11 +30,11 @@ Performing the Demultiplexing
 
 After having properly configured the ``.digestiflowrc.toml`` file earlier in the tutorial, Digestiflow Demux is already properly configured.
 All you have to do is to pass the proper project ID and the path to the flow cell directories to look at.
-Digestiflow Demux will then perform the demultiplexing, quality control, and post the results to the flow cell's messages in Digestiflow Web.
+Digestiflow Demux will then perform the demultiplexing, quality control, and post the results to the flow cell's messages in Digestiflow Server.
 Make sure that you have activated your conda installation and the ``digestiflow-demux`` environment as described above.
 
 There is one more step before calling ``digestiflow-demux`` though.
-You have to set the "demultiplexing" status to "ready" in Digestiflow Web.
+You have to set the "demultiplexing" status to "ready" in Digestiflow Server.
 Navigate to the flow cell list.
 Then, click on the state icon in the "demultiplexing" column and select "ready".
 The row will change to display a light blue sand clock icon to indicate that the demultiplexing process is ready to start.

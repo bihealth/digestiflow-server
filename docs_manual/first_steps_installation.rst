@@ -4,14 +4,14 @@
 Installation
 ============
 
-This section describes the installation of Digestiflow, in particular Digestiflow Web.
-Digestiflow Web provides the database for the flow cells and barcodes as well as the REST API.
+This section describes the installation of Digestiflow, in particular Digestiflow Server.
+Digestiflow Server provides the database for the flow cells and barcodes as well as the REST API.
 As a server component, it is the most complex component of Digestiflow Suite to setup.
 You will be able to install the client components Digestiflow CLI and Digestiflow Demux as standalone (Bio-)conda packages which will be considerably easier.
 
-Overall, Digestiflow Web is a `Twelve-Factor App <https://12factor.net/>`_ which means that it is fairly easy to deploy (as modern web applications go) but you will have to fulfill a few prerequisites.
+Overall, Digestiflow Server is a `Twelve-Factor App <https://12factor.net/>`_ which means that it is fairly easy to deploy (as modern web applications go) but you will have to fulfill a few prerequisites.
 Further, we will outline the specific installation and configuration steps below.
-In the Digestiflow Web repository, you will also find a directory ``ansible`` which contains some Ansible playbooks that you can base your own Ansible playbooks for the installation on.
+In the Digestiflow Server repository, you will also find a directory ``ansible`` which contains some Ansible playbooks that you can base your own Ansible playbooks for the installation on.
 However, this is just a "formulization" of what you find below and it should be easy convert this into your existing server management infrastructure (Ansible, Puppet, Salt, ...)
 
 -------------
@@ -26,7 +26,7 @@ Linux/Unixoid Operating System
 Linux/Unix Experience
     Intermediate knowledge about managing a Linux/Unix system will be required.
 Python 3, >=3.5
-    Digestiflow Web is a Django-based web server and requires Python 3.
+    Digestiflow Server is a Django-based web server and requires Python 3.
 Python Virtualenv
     You should be able to run the ``virtualenv`` command.
     Consult your operating system's or Python distribution's manual on how to do this.
@@ -51,7 +51,7 @@ In the following, we will describe how to:
     - register adapter sequence sets,
     - import the example flow cell into Digestiflow using ``digestiflow-cli``,
     - fill out the sample sheet for this flow cell, and
-    - run demultiplexing using ``digestiflow-demux`` using the meta data in Digestiflow Web previously added by ``digestiflow-cli``.
+    - run demultiplexing using ``digestiflow-demux`` using the meta data in Digestiflow Server previously added by ``digestiflow-cli``.
 
 Afterwards, you should explore the rest of the documentation to see the full feature set of Digestiflow.
 
@@ -65,9 +65,9 @@ Consult your operating system's manual on how to do this.
 There are plenty resources on the internet how to do this, e.g., `How to Install PostgreSQL Relational Datbases on CentOS 7 <https://www.linode.com/docs/databases/postgresql/how-to-install-postgresql-relational-databases-on-centos-7/>`_.
 If you are lucky enough, a version of 9.6 or above will be directly available from your Unix distribution.
 
-Once you have installed PostgreSQL, create a database ``digestiflow_web`` owned by a user ``digestiflow_web`` (you can pick any other names but this is what the rest of the tutorial assumes.
+Once you have installed PostgreSQL, create a database ``digestiflow_server`` owned by a user ``digestiflow_server`` (you can pick any other names but this is what the rest of the tutorial assumes.
 
-After this step, you should be able to connect to the ``digestiflow_web`` database with your ``digestiflow_web`` user.
+After this step, you should be able to connect to the ``digestiflow_server`` database with your ``digestiflow_server`` user.
 That user should be able to create database entries such as tables in this database.
 
 ---------------
@@ -79,16 +79,16 @@ The following will get the latest stable version from branch ``master``:
 
 ::
 
-    ~ # git clone https://github.com/bihealth/digestiflow-web.git
+    ~ # git clone https://github.com/bihealth/digestiflow-server.git
 
 Next, create a virtual environment with the requirements for running it in production mode.
 
 ::
 
-    ~ # cd digestiflow-web
-    digestiflow-web # virtualenv -p python3 .venv
-    digestiflow-web # source .venv/bin/activate
-    (.venv) digestiflow-web # pip install -r requirements/production.txt
+    ~ # cd digestiflow-server
+    digestiflow-server # virtualenv -p python3 .venv
+    digestiflow-server # source .venv/bin/activate
+    (.venv) digestiflow-server # pip install -r requirements/production.txt
     [...]
 
 Once this is complete, you are ready to configure the web app.
@@ -97,11 +97,11 @@ Once this is complete, you are ready to configure the web app.
 Configure Web App
 -----------------
 
-All of Digestiflow Web can be configured as environment variables as is common for a `Twelve-Factor App <https://12factor.net/>`_.
-This has the advantage that you do not have to touch Digestiflow Web's source code and all configuration can be done outside it (e.g., in a ``systemd`` environment file as shown in the Ansible files shipping with the source code).
+All of Digestiflow Server can be configured as environment variables as is common for a `Twelve-Factor App <https://12factor.net/>`_.
+This has the advantage that you do not have to touch Digestiflow Server's source code and all configuration can be done outside it (e.g., in a ``systemd`` environment file as shown in the Ansible files shipping with the source code).
 
 The following shows a set of the available environment variables, the required ones are marked with ``#**``.
-Put the following into a file ``.env`` in your ``digestiflow-web`` checkout and adjust it to your liking and requirements.
+Put the following into a file ``.env`` in your ``digestiflow-server`` checkout and adjust it to your liking and requirements.
 
 ::
 
@@ -109,7 +109,7 @@ Put the following into a file ``.env`` in your ``digestiflow-web`` checkout and 
     DJANGO_DEBUG=0
 
     #** PostgreSQL configure user:password@host/database_name for PostgreSQL connection
-    DATABASE_URL="postgres://digestiflow_web:digestiflow_web@127.0.0.1/digestiflow_web"
+    DATABASE_URL="postgres://digestiflow_server:digestiflow_server@127.0.0.1/digestiflow_server"
 
     #** Use production settings
     DJANGO_SETTINGS_MODULE=config.settings.production

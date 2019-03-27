@@ -22,7 +22,7 @@ Name
     This would describe a flow cell with Illumina ID ``BCDEFGHIXX`` run on March 3, 2016, on the machine with the vendor ID ``ST-K12345`` in its 815th run in slot ``A`` having a manual label of ``LABEL``.
     Note that for NextSeq, the slot ``A`` is often unseparated with the flow cell ID.
 Manual Label
-    An optional manual override of the label to use in Digestiflow Web.
+    An optional manual override of the label to use in Digestiflow Server.
 Description
     An optional short description of the flow cell, e.g., that it is a repetition of earlier drop-outs.
 Num Lanes
@@ -135,7 +135,7 @@ Next, create a ``.digestiflowrc.toml`` file in your home directory for configura
 Then, update the following configuration settings:
 
 ``web:url``
-    Adjust the API URL to point to the location where you are now running your Digestiflow Web instance.
+    Adjust the API URL to point to the location where you are now running your Digestiflow Server instance.
 
 ``web:token``:
     Enter the token you received through the API into the file.
@@ -153,7 +153,7 @@ You can copy the site UUID by going to the project overview and copy-and-paste t
 
     # digestiflow-cli ingest $path/*
 
-The Digestiflow Web Git repository contains a helper script for creating fake flow cell data.
+The Digestiflow Server Git repository contains a helper script for creating fake flow cell data.
 You can call it as follows to create a directory with very few reads simulating HiSeq 2000 properties.
 Alternatively, you can extract the archive ``130820_CSSIM_0123_B_TESTEST_Test_Label.tar.gz`` with pregenerated data.
 
@@ -181,7 +181,7 @@ Make sure to use the correct project UUID when importing a flow cell directory.
     Mar 26 09:37:13.233 INFO Done processing folder "130820_CSSIM_0042_B_Test_FAKE_DATA/".
     Mar 26 09:37:13.234 INFO All done. Have a nice day.
 
-Now, you should see a new flow cell in your Digestiflow Web instance after clicking the "Flow Cells" icon on the left.
+Now, you should see a new flow cell in your Digestiflow Server instance after clicking the "Flow Cells" icon on the left.
 Note how the little yellow icon on the left indicates an issue with the flow cell (the sample sheets are missing).
 The little hourglass below the little beaker indicates that the sequencing has been found to be still running by Digestiflow CLI.
 The little asterisks below the chip and truck indicate that demultiplexing and delivery have not been started yet.

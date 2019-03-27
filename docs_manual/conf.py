@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "DigestiFlow Web"
+project = "Digestiflow Server"
 copyright = "2018-2019, BIH Core Unit Bioinformatics"
 author = "Manuel Holtgrewe"
 
@@ -100,7 +100,7 @@ html_static_path = ["_static"]
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "digestiflow-web-doc"
+htmlhelp_basename = "digestiflow-server-doc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -127,7 +127,7 @@ latex_documents = [
     (
         master_doc,
         "DigestiFlowWeb.tex",
-        "DigestiFlow Web Documentation",
+        "Digestiflow Server Documentation",
         "Manuel Holtgrewe",
         "manual",
     )
@@ -138,7 +138,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "digestiflowweb", "DigestiFlow Web Documentation", [author], 1)]
+man_pages = [(master_doc, "digestiflowweb", "Digestiflow Server Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -150,7 +150,7 @@ texinfo_documents = [
     (
         master_doc,
         "DigestiFlowWeb",
-        "DigestiFlow Web Documentation",
+        "Digestiflow Server Documentation",
         author,
         "DigestiFlowWeb",
         "One line description of project.",

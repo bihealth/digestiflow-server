@@ -59,7 +59,7 @@ Managing site memberships should be self-explanatory.
 Sending Invites
 ---------------
 
-The main limitation that is faced when using LDAP authentication is the fact that users have to log in first in order to create a user record in the Digestiflow Web database.
+The main limitation that is faced when using LDAP authentication is the fact that users have to log in first in order to create a user record in the Digestiflow Server database.
 The onboarding process of users can be simplified by the invite feature.
 Here, you send an invitation email to a users with a link for logging into a given Digestiflow site.
 When sending the invite you also define a role for the user.

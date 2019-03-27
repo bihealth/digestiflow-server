@@ -35,7 +35,7 @@ Step 1: Sequencing
 ------------------
 
 Generally, we find that *state machines* are a useful way to describe finite processes.
-The Digestiflow Web component keeps track of your flow cell sequencing runs, the libraries thereon, and their states.
+The Digestiflow Server component keeps track of your flow cell sequencing runs, the libraries thereon, and their states.
 The states for sequencing are:
 
 initial
@@ -58,17 +58,17 @@ confirmed failure
 
 The *start states* are initial and running.
 The initial state is triggered by a user manually registering the flow cell before the system has gained knowledge over a sequencing run.
-This is done by entering it in the Digestiflow Web UI.
+This is done by entering it in the Digestiflow Server UI.
 
 The running state is usually triggered by the Digestiflow CLI component.
 This software can be setup as a watcher process and periodically scans the storage volume that the sequencing machine writes to.
-As soon as it sees a new flow cell directory, it will register it with the Digestiflow Web API with the information that it can extract automatically.
-In the case that the flow cell already exists, it will still update the flow cell information from the flow cell directory through the Digestiflow Web API, e.g., keeping track of the current cycle, or updating missing or incorrectly filled fields.
+As soon as it sees a new flow cell directory, it will register it with the Digestiflow Server API with the information that it can extract automatically.
+In the case that the flow cell already exists, it will still update the flow cell information from the flow cell directory through the Digestiflow Server API, e.g., keeping track of the current cycle, or updating missing or incorrectly filled fields.
 
 Digestiflow CLI then also keeps track of the further sequencing state as indicated by the status files in the flow cell directory.
 By doing this, it is able to detect success (a marker file is created) and certain failures.
 However, for certain critical technical failures such as issues with the storage volume or power failure in the sequencing lab cannot be easily detected.
-Further, Digestiflow CLI will analyze the index adapters once their sequencing is complete and register statistics with Digestiflow Web UI.
+Further, Digestiflow CLI will analyze the index adapters once their sequencing is complete and register statistics with Digestiflow Server UI.
 This way, mismatches of the adapter base calls with the sample sheet can be detected already during sequencing.
 
 Finally, Digestiflow CLI will update the state to complete or failed from which a human operator has to manually switch the sequencing to one of the final "confirmed" states.

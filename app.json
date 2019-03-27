@@ -1,7 +1,7 @@
 {
-  "name": "Digestiflow Web",
+  "name": "Digestiflow Server",
   "description": "Management and curation of Illumina Flowcells",
-  "repository": "https://github.com/bihealth/digestiflow-web",
+  "repository": "https://github.com/bihealth/digestiflow-server",
   "keywords": ["bioinformatics", "sequencing", "demultiplexing"],
   "env": {
     "DJANGO_SETTINGS_MODULE": {

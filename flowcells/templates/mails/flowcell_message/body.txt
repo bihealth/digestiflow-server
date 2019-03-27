@@ -8,4 +8,4 @@ You are receiving this email because you are watching this flow cell.
 
 Cheers,
 
-Digestiflow Web UI
+Digestiflow Server UI
