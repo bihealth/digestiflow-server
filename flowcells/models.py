@@ -303,6 +303,23 @@ class FlowCell(models.Model):
         help_text="Specification of the reads to use for demultiplexing (defaults to planned reads)",
     )
 
+    #: Whether or not to create FASTQ for index reads.
+    create_fastq_for_index_reads = models.BooleanField(
+        default=False, verbose_name="Create FAST files for index reads"
+    )
+
+    #: Minimum trimmed read length.
+    minimum_trimmed_read_length = models.IntegerField(
+        blank=True,
+        null=True,
+        help_text="Optional, remove reads shorter than this length after adapter trimming",
+    )
+
+    #: Masking of short adapter reads.
+    mask_short_adapter_reads = models.IntegerField(
+        blank=True, null=True, help_text="Optional, Minimal length for adapter reads"
+    )
+
     #: Number of mismatches to allow, defaults to ``None`` which triggers to use the default.
     barcode_mismatches = models.PositiveSmallIntegerField(
         null=True, blank=True, help_text="Number of mismatches to allow"
