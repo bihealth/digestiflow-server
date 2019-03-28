@@ -70,10 +70,10 @@ cat <<-"EOF"
     <Instrument>CSSIM</Instrument>
     <Date>8/20/2013 3:29:17 PM</Date>
     <Reads>
-      <Read FirstCycle="1" LastCycle="91" IsIndexedRead="N" />
-      <Read FirstCycle="92" LastCycle="99" IsIndexedRead="Y" />
-      <Read FirstCycle="100" LastCycle="107" IsIndexedRead="Y" />
-      <Read FirstCycle="108" LastCycle="200" IsIndexedRead="N" />
+      <Read Number="1" NumCycles="92" IsIndexedRead="N" />
+      <Read Number="2" NumCycles="8" IsIndexedRead="Y" />
+      <Read Number="3" NumCycles="8" IsIndexedRead="Y" />
+      <Read Number="4" NumCycles="92" IsIndexedRead="N" />
     </Reads>
     <FlowcellLayout LaneCount="1" SurfaceCount="2" SwathCount="3" TileCount="6" SectionPerLane="3" LanePerSection="2" />
   </Run>
