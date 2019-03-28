@@ -29,7 +29,7 @@ After creating the sequencer you are redirected to the detail view of the sequen
     The detailed view of the sequencer.
 
 The "Properties" tag shows the details of the sequencer.
-For example, the sequencer reecord that we just created has two "slots" and allows to sequence using two flow cells at the same itme.
+For example, the sequencer reecord that we just created has two "slots" and allows to sequence using two flow cells at the same time.
 The "Flow Cells/Runs" tab displays all runs - at the moment no runs, a count of 0.
 The blue button on the top right gives access to updating or deleting the flow cell record, or exporting it to JSON.
 

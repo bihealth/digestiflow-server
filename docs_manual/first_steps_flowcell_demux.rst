@@ -75,11 +75,17 @@ You can confirm success or failure by clicking the flow cell and selecting the a
 Note that in case of problems, the demultiplexing status will be updapted to "failed" by Digestiflow Demux.
 You will have to manually set it back to "ready" such that the flow cell is considered again for demultiplexing.
 
-.. figure:: _static/img/FlowCell_List_MarkReady.png
+.. figure:: _static/img/FlowCell_List_Done.png
     :width: 75%
     :align: center
 
     The flow cell status after demultiplexing was complete.
+
+.. figure:: _static/img/FlowCell_Messages_Demux_Done.png
+    :width: 75%
+    :align: center
+
+    The flow cell message with log and qc attachments after demultiplexing was complete.
 
 .. note::
 
