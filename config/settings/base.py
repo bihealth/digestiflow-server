@@ -54,6 +54,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    "raven.contrib.django.raven_compat",
     "crispy_forms",  # Form layouts
     "rules.apps.AutodiscoverRulesConfig",  # Django rules engine
     "djangoplugins",  # Django plugins
@@ -387,6 +388,22 @@ def set_logging(debug):
 
 LOGGING = set_logging(DEBUG)
 
+
+# Sentry Client
+# ------------------------------------------------------------------------------
+
+if env.bool("ENABLE_SENTRY", False):
+    import os
+    import raven
+
+    RAVEN_CONFIG = {
+        "dsn": "%s?verify_ssl=0" % env.str("SENTRY_DSN"),
+        # If you are using git, you can also automatically configure the
+        # release based on the git info.
+        "release": raven.fetch_git_sha(
+            os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        ),
+    }
 
 # General site settings
 # ------------------------------------------------------------------------------
