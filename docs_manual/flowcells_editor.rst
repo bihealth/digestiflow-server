@@ -77,7 +77,7 @@ We assume that the source spreadsheet has a reasonable structure, e.g., it conta
    This will re-start the resolution of barcodes from the barcode names.
    Note that lookup only works based on name not sequence.
 5. If you have dual indexing then use the same approach as in step 3 for selecting the barcode.
-6. Simiarly, use the approach from step 3 for selecting/entering the second barcode.
+6. Similarly, use the approach from step 3 for selecting/entering the second barcode.
 7. Copy and paste the lane numbers for the library.
 8. Optionally assign custom cycle configuration for the library if different from the cycle configuration of the flow cell.
 
