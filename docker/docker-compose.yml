@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  # PostgreSQL database server
+  db:
+    image: 'postgres:9.6'
+    environment:
+    - POSTGRES_USER=digestiflow
+    - POSTGRES_PASSWORD=digestiflow
+    - POSTGRES_DB=digestiflow
+    networks:
+    - db_network
+    volumes:
+    - db_volume:/var/lib/postgresql/data
+
+  # Nginx load balancer with self-signed SSL certificate
+  nginx:
+    image: nginx:latest
+    container_name: nginx01
+    ports:
+    - "8443"
+    - "8100"
+    volumes:
+    - ./config/nginx:/etc/nginx/conf.d
+    - ./config/ssl:/etc/ssl
+    depends_on:
+    - web
+    networks:
+    - nginx_network
+
+  # digestiflow-server instance
+  web:
+    build: .
+    environment:
+      PROJECTROLES_ADMIN_OWNER: root
+      VARFISH_SUPERUSER_PW: root
+    env_file:
+    - config/web/web_env
+    command: >
+      bash -c "cd /app &&
+      python /app/manage.py migrate &&
+      echo -e \"from django.contrib.auth import get_user_model; User = get_user_model(); \nif not User.objects.all().filter(username='root'):\n    User.objects.create_superuser('root', 'admin@example.com', 'root')\" | python /app/manage.py shell &&
+      python /app/manage.py collectstatic --no-input &&
+      gunicorn config.wsgi -b 0.0.0.0:8000"
+    ports:
+    - "8000"
+    depends_on:
+    - db
+    networks:
+    - nginx_network
+    - db_network
+
+networks:
+  nginx_network:
+    driver: bridge
+  db_network:
+    driver: bridge
+
+volumes:
+  db_volume:

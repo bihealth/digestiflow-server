@@ -1,0 +1,11 @@
+# Python-related environment variables
+PYTHONDONTWRITEBYTECODE=1
+PYTHONUNBUFFERED=1
+
+# Digestiflow/Django configuration
+DJANGO_SETTINGS_MODULE=config.settings.production
+DJANGO_ALLOWED_HOSTS=*
+DJANGO_SECRET_KEY=not-so-secret
+DATABASE_URL=postgresql://digestiflow:digestiflow@db/digestiflow
+ENABLED_BACKEND_PLUGINS="timeline_backend"
+PROJECTROLES_ADMIN_OWNER="root"
