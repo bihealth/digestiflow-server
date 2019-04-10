@@ -12,3 +12,7 @@ RUN apt-get install -y git
 # and create the sueruser account.
 RUN git clone https://github.com/bihealth/digestiflow-server.git /app
 RUN pip install -r /app/requirements/production.txt
+
+COPY ./wait-for-it.sh /usr/bin/wait-for-it.sh
+
+EXPOSE 8000
