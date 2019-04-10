@@ -12,7 +12,7 @@ You will be able to install the client components Digestiflow CLI and Digestiflo
 Overall, Digestiflow Server is a `Twelve-Factor App <https://12factor.net/>`_ which means that it is fairly easy to deploy (as modern web applications go) but you will have to fulfill a few prerequisites.
 Further, we will outline the specific installation and configuration steps below.
 In the Digestiflow Server repository, you will also find a directory ``ansible`` which contains some Ansible playbooks that you can base your own Ansible playbooks for the installation on.
-However, this is just a "formulization" of what you find below and it should be easy convert this into your existing server management infrastructure (Ansible, Puppet, Salt, ...)
+It should be easy convert this into your existing server management infrastructure (Ansible, Puppet, Salt, ...)
 
 -------------
 Prerequisites
@@ -41,8 +41,9 @@ Overview
 
 In the following, we will describe how to either
 
-a. install a Docker image that gives you a test instance to work with, or
-b. perform a manual installation on a Linux server:
+a. install via `Docker Compose <https://docs.docker.com/compose/>`_ **for testing Digestiflow**, or
+b. perform a manual installation on a Linux server
+
     1. setup a PostgreSQL user for the web app,
     2. install the web app and setup a virtualenv environment for it,
     3. configure the web app, and
@@ -50,29 +51,74 @@ b. perform a manual installation on a Linux server:
 
 Afterwards, you should follow through the tutorial and then explore the rest of the documentation to see the full feature set of Digestiflow.
 
---------------------
-Install Docker Image
---------------------
+---------------------------
+Install with Docker Compose
+---------------------------
 
-If you have not done so yet, follow the `Docker installation instructions <https://docs.docker.com/install/>_` for installing Docker itself.
+If you have not done so yet, follow the `Docker CE installation instructions <https://docs.docker.com/install/>_` for installing Docker itself.
 
-You can then pull our Docker image as follow:
+Install Docker (Compose)
+========================
 
-.. code-block:: shell
-
-    # XXX TEST ME XXX
-    $ docker pull bihealth/digestiflow-server:latest
-
-You can use the following command line for starting Digestiflow Server in the Docker image.
-Note that the ``--mount`` flags give access to directories in the given directory to the Docker container.
-Adding them allows you to keep the changes to the database on your disk outside of the container and later continue.
-If you omit them then all data will be lost when the container is stopped.
+E.g., on CentOS
 
 .. code-block:: shell
 
-    $ mkdir -p pgsql_data
-    $ docker run bihealth/digestiflow-server:latest --mount $PWD/pgsql_data:/var/lib/pgsql/9.6
-    [Press Ctrl+C] to stop
+  $ sudo yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
+  $ sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+  $ sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  $ sudo yum install docker-ce docker-ce-cli containerd.io
+  $ sudo systemctl enable docker
+  $ sudo systemctl start docker
+  $ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  $ sudo chmod +x /usr/local/bin/docker-compose
+
+or on Ubuntu:
+
+.. code-block:: shell
+
+    $ sudo apt-get remove docker docker-engine docker.io containerd runc
+    $ sudo apt-get update
+    $ sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+    $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    $ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    $ sudo apt-get update
+    $ sudo apt-get install docker-ce docker-ce-cli containerd.io
+    $ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    $ sudo chmod +x /usr/local/bin/docker-compose
+
+Digestiflow Server with Docker Compose
+======================================
+
+First, checkout the source code
+
+.. code-block:: shell
+
+    $ git clone https://github.com/bihealth/digestiflow-server.git
+
+Next, simply call `sudo docker-compose up` in the `docker` sub folder of your setup
+
+.. code-block:: shell
+
+    $ cd digestiflow-server/docker
+    $ sudo docker-compose up
+    Creating network "docker_db_network" with driver "bridge"
+    Creating network "docker_nginx_network" with driver "bridge"
+    Creating volume "docker_db_volume" with default driver
+    Pulling db (postgres:9.6)...
+    9.6: Pulling from library/postgres
+    27833a3ba0a5: Pull complete
+    [...]
+    web_1    | [2019-04-10 21:04:58 +0000] [1] [INFO] Starting gunicorn 19.9.0
+    web_1    | [2019-04-10 21:04:58 +0000] [1] [INFO] Listening at: http://0.0.0.0:8000 (1)
+    web_1    | [2019-04-10 21:04:58 +0000] [1] [INFO] Using worker: sync
+    web_1    | [2019-04-10 21:04:58 +0000] [79] [INFO] Booting worker with pid: 79
+
+You can now log into Digestiflow Server through the following URL (ignore the security warning for the self-signed SSL certificate):
+
+- https://localhost:8443/
+
+You can login with user name `root` and password `root`.
 
 -------------------
 Manual Installation
@@ -110,12 +156,12 @@ You should pick a better password!
 
 You have now setup a database ``digestiflow_server`` owned by the user ``digestiflow_server``.
 
-.. info::
+.. info:
 
     Note that you might have to configure PostgreSQL to allow password hash based authentication.
     For this, add the following line to the ``pbg_hba.conf`` file (see `PostgreSQL documentation <https://www.postgresql.org/docs/current/auth-pg-hba-conf.html>`_).
 
-    ::
+    .. code-block::
 
         host  postgres  all  127.0.0.1/32  md5
 
