@@ -11,10 +11,21 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
+
+# Get the project root dir, which is the parent dir of this
+cwd = os.getcwd()
+project_root = os.path.dirname(cwd)
+
+# Insert the project root dir as the first element in the PYTHONPATH.
+# This lets us ensure that the source package is imported, and that its
+# version is used.
+sys.path.insert(0, project_root)
+
+import digestiflow
 
 
 # -- Project information -----------------------------------------------------
@@ -24,9 +35,9 @@ copyright = "2018-2019, BIH Core Unit Bioinformatics"
 author = "Manuel Holtgrewe"
 
 # The short X.Y version
-version = "0.1"
+version = ".".join(digestiflow.__version__.split(".")[:2])
 # The full version, including alpha/beta/rc tags
-release = "0.1.0"
+release = digestiflow.__version__
 
 
 # -- General configuration ---------------------------------------------------
