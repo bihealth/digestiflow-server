@@ -39,63 +39,110 @@ Redis
 Overview
 --------
 
-In the following, we will describe how to:
+In the following, we will describe how to either
 
-1. Setup a PostgreSQL user for the web app.
-2. Install the web app and setup a virtualenv environment for it.
-3. Configure the web app.
-4. Initialize the database and create a super user account.
-5. Follow a short tutorial on how tutorial
-    - create example flow cell base call data,
-    - register sequencing machines with Digestiflow,
-    - register adapter sequence sets,
-    - import the example flow cell into Digestiflow using ``digestiflow-cli``,
-    - fill out the sample sheet for this flow cell, and
-    - run demultiplexing using ``digestiflow-demux`` using the meta data in Digestiflow Server previously added by ``digestiflow-cli``.
+a. install a Docker image that gives you a test instance to work with, or
+b. perform a manual installation on a Linux server:
+    1. setup a PostgreSQL user for the web app,
+    2. install the web app and setup a virtualenv environment for it,
+    3. configure the web app, and
+    4. initialize the database and create a super user account.
 
-Afterwards, you should explore the rest of the documentation to see the full feature set of Digestiflow.
+Afterwards, you should follow through the tutorial and then explore the rest of the documentation to see the full feature set of Digestiflow.
 
-----------------
+--------------------
+Install Docker Image
+--------------------
+
+If you have not done so yet, follow the `Docker installation instructions <https://docs.docker.com/install/>_` for installing Docker itself.
+
+You can then pull our Docker image as follow:
+
+.. code-block:: shell
+
+    # XXX TEST ME XXX
+    $ docker pull bihealth/digestiflow-server:latest
+
+You can use the following command line for starting Digestiflow Server in the Docker image.
+Note that the ``--mount`` flags give access to directories in the given directory to the Docker container.
+Adding them allows you to keep the changes to the database on your disk outside of the container and later continue.
+If you omit them then all data will be lost when the container is stopped.
+
+.. code-block:: shell
+
+    $ mkdir -p pgsql_data
+    $ docker run bihealth/digestiflow-server:latest --mount $PWD/pgsql_data:/var/lib/pgsql/9.6
+    [Press Ctrl+C] to stop
+
+-------------------
+Manual Installation
+-------------------
+
+The following assumes a CentOS 7.4 system but you should be able to adjust it to any modern Linux distribution.
+
+First, install the required packages.
+
+.. code-block:: shell
+
+    ### install EPEL repository
+    $ yum install -y epel-release
+    ### install IUS repository and packages
+    $ yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+    $ yum install -y python36u python36u-pip python36u-devel python36-upsycopg2
+    ### install Postgres repository and packages
+    $ yum install -y https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
+    $ yum install -y postgresql96-server postgresql96-devel postgresql96-contrib
+
 PostgreSQL Setup
-----------------
+================
 
-If you have not done so already, install the PostgreSQL server.
-A version above 9.5 will be required for sufficient support for JSON.
-Consult your operating system's manual on how to do this.
-There are plenty resources on the internet how to do this, e.g., `How to Install PostgreSQL Relational Datbases on CentOS 7 <https://www.linode.com/docs/databases/postgresql/how-to-install-postgresql-relational-databases-on-centos-7/>`_.
-If you are lucky enough, a version of 9.6 or above will be directly available from your Unix distribution.
+Creating a user and database through the ``createuser`` and ``createdb`` commands is easiest.
+You have to do this as the ``postgres`` user.
+We're using ``digestiflow_server`` both for the user name and password.
+You should pick a better password!
 
-Once you have installed PostgreSQL, create a database ``digestiflow_server`` owned by a user ``digestiflow_server`` (you can pick any other names but this is what the rest of the tutorial assumes.
+.. code-block:: shell
 
-After this step, you should be able to connect to the ``digestiflow_server`` database with your ``digestiflow_server`` user.
-That user should be able to create database entries such as tables in this database.
+    $ sudo -u postgres createuser -E digestiflow_server
+    Enter password for new role: digestiflow_server
+    Enter it again: digestiflow_server
+    $ createdb -l UTF-8 -O digestiflow_server
 
----------------
+You have now setup a database ``digestiflow_server`` owned by the user ``digestiflow_server``.
+
+.. info::
+
+    Note that you might have to configure PostgreSQL to allow password hash based authentication.
+    For this, add the following line to the ``pbg_hba.conf`` file (see `PostgreSQL documentation <https://www.postgresql.org/docs/current/auth-pg-hba-conf.html>`_).
+
+    ::
+
+        host  postgres  all  127.0.0.1/32  md5
+
 Install Web App
----------------
+===============
 
 Installation of the web app is very simple, you just clone it source code via git.
 The following will get the latest stable version from branch ``master``:
 
 ::
 
-    ~ # git clone https://github.com/bihealth/digestiflow-server.git
+    # git clone https://github.com/bihealth/digestiflow-server.git
 
-Next, create a virtual environment with the requirements for running it in production mode.
+Next, create a virtual environment with the dependencies for running it in production mode.
 
 ::
 
-    ~ # cd digestiflow-server
-    digestiflow-server # virtualenv -p python3 .venv
-    digestiflow-server # source .venv/bin/activate
-    (.venv) digestiflow-server # pip install -r requirements/production.txt
+    # virtualenv -p python3 digestiflow-server-venv
+    # source digestiflow-server-venv/bin/activate
+    (digestiflow-server-venv) # cd digestiflow-server-venv
+    (digestiflow-server-venv) # pip install -r requirements/production.txt
     [...]
 
 Once this is complete, you are ready to configure the web app.
 
------------------
 Configure Web App
------------------
+=================
 
 All of Digestiflow Server can be configured as environment variables as is common for a `Twelve-Factor App <https://12factor.net/>`_.
 This has the advantage that you do not have to touch Digestiflow Server's source code and all configuration can be done outside it (e.g., in a ``systemd`` environment file as shown in the Ansible files shipping with the source code).
