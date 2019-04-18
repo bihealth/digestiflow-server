@@ -125,6 +125,9 @@ RTA_VERSION_V1 = 1
 #: RTA version key for v2
 RTA_VERSION_V2 = 2
 
+#: RTA version key for v2
+RTA_VERSION_V3 = 3
+
 #: RTA version key for 'other'
 RTA_VERSION_OTHER = 0
 
@@ -134,6 +137,8 @@ RTA_VERSION_CHOICES = (
     (RTA_VERSION_V1, "RTA v1"),
     #: RTA v2.x, bcl2fast2 required
     (RTA_VERSION_V2, "RTA v2"),
+    #: RTA v3.x, bcl2fast2 required
+    (RTA_VERSION_V3, "RTA v3"),
     #: other, for future-proofness
     (RTA_VERSION_OTHER, "other"),
 )
