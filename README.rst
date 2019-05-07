@@ -48,32 +48,6 @@ This can also be run in a regular job to demultiplex flow cells as soon as sampl
 Installation
 ------------
 
-Deploy to Heroku
-================
+Please refer to the `Installation <https://digestiflow-server.readthedocs.io/en/latest/first_steps_installation.html>`_ section of the `Documentation <https://digestiflow-server.readthedocs.io/en/>`_ on how to install Digestiflow Server.
 
-The easiest way to try out Digestiflow Server is to click `Deploy to Heroku <https://heroku.com/deploy?template=https://github.com/bihealth/digestiflow-server/tree/master>`_ (or the button above) and follow the step-by-step process.
-
-1. Create an account and sign in if necessary.
-2. Set the application name, e.g., to ``my-digestiflow-demo``.
-3. Click **Deploy app** and... wait a bit.
-    - It seems that, sadly, you will have to enter credit card for account verification.
-      Note that you can try out Digestiflow Server with free/hobby plan only.
-      Also, this is a bit unintuitive, deployment will fail.
-      You have to enter your credit card information and then continue...
-4. After deployment has succeeded, go to ``Manage App``, then ``Settings`` in the Heroku Dashboard.
-   There, click ``Reveal Config Vars`` and copy the value after ``DIGESTIFLOW_INITIAL_ROOT_PASSWORD`` into your clipboard.
-5. Go to https://my-digestiflow-demo.herokuapp.com/login/ and login as `root` with the root password copied above.
-6. Finally click the little user icon on the top left and then `Admin`.
-   Here you can change the root user's password, create new users etc.
-
-From here, you can read the built-in manual at https://my-digestiflow-demo.herokuapp.com/manual/ (or clicking "Manual" in the right of the top navigation bar).
-
-Self-Hosting Digestiflow Server
-============================
-
-Digestiflow CLI and Digestiflow Demux can be installed using Conda and the Bioconda channel.
-See the individual projects' documentation.
-
-Digestiflow Server ...
-
-TODO: write me!
+The recommended way is to `Install with Docker Compose <file:///vol/local/projects/Project_Flowcell/digestiflow-server/docs_manual/_build/html/first_steps_installation.html#install-with-docker-compose>`_.

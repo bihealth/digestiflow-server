@@ -41,13 +41,15 @@ Overview
 
 In the following, we will describe how to either
 
-a. install via `Docker Compose <https://docs.docker.com/compose/>`_ **for testing Digestiflow**, or
+a. install via `Docker Compose <https://docs.docker.com/compose/>`_ **for testing Digestiflow (recommended)**, or
 b. perform a manual installation on a Linux server
 
     1. setup a PostgreSQL user for the web app,
     2. install the web app and setup a virtualenv environment for it,
     3. configure the web app, and
-    4. initialize the database and create a super user account.
+    4. initialize the database and create a super user account, or
+
+c. deploy to the Heroku platform (for free but a credit card is required for registration.
 
 Afterwards, you should follow through the tutorial and then explore the rest of the documentation to see the full feature set of Digestiflow.
 
@@ -64,14 +66,14 @@ E.g., on CentOS
 
 .. code-block:: shell
 
-  $ sudo yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
-  $ sudo yum install -y yum-utils device-mapper-persistent-data lvm2
-  $ sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-  $ sudo yum install docker-ce docker-ce-cli containerd.io
-  $ sudo systemctl enable docker
-  $ sudo systemctl start docker
-  $ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-  $ sudo chmod +x /usr/local/bin/docker-compose
+    $ sudo yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
+    $ sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+    $ sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    $ sudo yum install docker-ce docker-ce-cli containerd.io
+    $ sudo systemctl enable docker
+    $ sudo systemctl start docker
+    $ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    $ sudo chmod +x /usr/local/bin/docker-compose
 
 or on Ubuntu:
 
@@ -259,3 +261,24 @@ Do this and log in as the super use you just created.
     # python manage.py collectstatic
     # python manage.py runserver
     [now direct your browser to the displayed URL and login]
+
+----------------
+Deploy to Heroku
+----------------
+
+The easiest way to try out Digestiflow Server is to click `Deploy to Heroku <https://heroku.com/deploy?template=https://github.com/bihealth/digestiflow-server/tree/master>`_ (or the button on the Github project README) and follow the step-by-step process.
+
+1. Create an account and sign in if necessary.
+2. Set the application name, e.g., to ``my-digestiflow-demo``.
+3. Click **Deploy app** and... wait a bit.
+    - It seems that, sadly, you will have to enter credit card for account verification.
+      Note that you can try out Digestiflow Server with free/hobby plan only.
+      Also, this is a bit unintuitive, deployment will fail.
+      You have to enter your credit card information and then continue...
+4. After deployment has succeeded, go to ``Manage App``, then ``Settings`` in the Heroku Dashboard.
+   There, click ``Reveal Config Vars`` and copy the value after ``DIGESTIFLOW_INITIAL_ROOT_PASSWORD`` into your clipboard.
+5. Go to https://my-digestiflow-demo.herokuapp.com/login/ and login as `root` with the root password copied above.
+6. Finally click the little user icon on the top left and then `Admin`.
+   Here you can change the root user's password, create new users etc.
+
+From here, you can read the built-in manual at https://my-digestiflow-demo.herokuapp.com/manual/ (or clicking "Manual" in the right of the top navigation bar).
