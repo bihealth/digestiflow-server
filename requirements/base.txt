@@ -83,3 +83,5 @@ mistune==0.8.3
 
 celery <4.2  # pyup: <4.2  # blocker: https://github.com/celery/celery/issues/4878
 redis>=3.2.0  # https://github.com/antirez/redis
+
+python-ldap==3.2.0
