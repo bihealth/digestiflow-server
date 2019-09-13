@@ -58,7 +58,7 @@ class FlowCellListView(
     permission_required = "flowcells.view_flowcell"
 
     model = FlowCell
-    paginate_by = 20
+    paginate_by = 3
 
     def get_queryset(self):
         return (

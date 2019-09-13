@@ -55,13 +55,21 @@
         {% else %}
           <li class="page-item disabled"><a class="page-link" >&laquo;</a></li>
         {% endif %}
+        {% if page_obj.number > 6 %}
+          <li class="page-item disabled"><a class="page-link" >...</a></li>
+        {% endif %}
         {% for i in paginator.page_range %}
-          {% if page_obj.number == i %}
-            <li class="page-item active"><a class="page-link" >{{ i }} <span class="sr-only">(current)</span></a></li>
-          {% else %}
-            <li class="page-item"><a class="page-link"  href="?page={{ i }}">{{ i }}</a></li>
+          {% if i <= page_obj.number|add:5 and i >= page_obj.number|add:-5 %}
+            {% if page_obj.number == i %}
+              <li class="page-item active"><a class="page-link" >{{ i }} <span class="sr-only">(current)</span></a></li>
+            {% else %}
+              <li class="page-item"><a class="page-link"  href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
           {% endif %}
         {% endfor %}
+        {% if page_obj.number < page_obj.paginator.num_pages|add:-5 %}
+          <li class="page-item disabled"><a class="page-link" >...</a></li>
+        {% endif %}
         {% if page_obj.has_next %}
           <li class="page-item"><a class="page-link"  href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
         {% else %}
@@ -70,5 +78,4 @@
       </ul>
     </div>
   {% endif %}
-
 {% endblock %}
