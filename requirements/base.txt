@@ -40,6 +40,9 @@ django-cprofile-middleware==1.0
 # Versioning
 versioneer==0.18
 
+# Sentinel
+raven
+
 # Online documentation via django-docs.
 Sphinx==1.7.9
 django-docs==0.3.0

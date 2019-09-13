@@ -30,9 +30,15 @@ class BarcodeSetListView(
     permission_required = "barcodes.view_barcodeset"
 
     model = BarcodeSet
+    paginate_by = 10
 
     def get_queryset(self):
-        return super().get_queryset().filter(project__sodar_uuid=self.kwargs["project"])
+        return (
+            super()
+            .get_queryset()
+            .filter(project__sodar_uuid=self.kwargs["project"])
+            .prefetch_related("project")
+        )
 
 
 class BarcodeSetDetailView(

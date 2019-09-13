@@ -18,7 +18,7 @@
     <h2 class="sodar-pr-content-title">
       Flow Cells
       <span class="badge badge-secondary">
-        {{ object_list|length }}
+        {{ page_obj.paginator.count }}
       </span>
     </h2>
     {% include "flowcells/_flowcell_list_buttons.html" %}

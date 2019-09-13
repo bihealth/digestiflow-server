@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.files.base import ContentFile
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.shortcuts import reverse, redirect, render
 from django.template.defaultfilters import pluralize
@@ -57,9 +58,17 @@ class FlowCellListView(
     permission_required = "flowcells.view_flowcell"
 
     model = FlowCell
+    paginate_by = 20
 
     def get_queryset(self):
-        return super().get_queryset().filter(project__sodar_uuid=self.kwargs["project"])
+        return (
+            super()
+            .get_queryset()
+            .filter(project__sodar_uuid=self.kwargs["project"])
+            .prefetch_related(
+                "index_histograms", "libraries", "messages", "sequencing_machine", "tags"
+            )
+        )
 
 
 class FlowCellDetailView(

@@ -718,7 +718,16 @@ class FlowCell(models.Model):
 
     def is_user_watching(self, user):
         """Return whether the given user is watching."""
-        return self.tags.filter(user=user, name=FLOWCELL_TAG_WATCHING).exists()
+        try:  # use a little hack to prevent query if prefetched
+            tags = self._prefetched_objects_cache["tags"]
+            # Ok, it's pefetched
+            return bool(
+                [tag for tag in tags if tag.user == user and tag.name == FLOWCELL_TAG_WATCHING]
+            )
+        except (AttributeError, KeyError) as e:
+            print(e)
+            # Not prefetched
+            return self.tags.filter(user=user, name=FLOWCELL_TAG_WATCHING).exists()
 
     def __str__(self):
         return "FlowCell %s" % self.get_full_name()

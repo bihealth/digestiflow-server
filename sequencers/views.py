@@ -25,9 +25,15 @@ class SequencingMachineListView(
     permission_required = "sequencers.view_sequencingmachine"
 
     model = SequencingMachine
+    paginate_by = 10
 
     def get_queryset(self):
-        return super().get_queryset().filter(project__sodar_uuid=self.kwargs["project"])
+        return (
+            super()
+            .get_queryset()
+            .filter(project__sodar_uuid=self.kwargs["project"])
+            .prefetch_related("flowcell_set", "project")
+        )
 
 
 class SequencingMachineDetailView(
