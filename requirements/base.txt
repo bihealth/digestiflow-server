@@ -40,8 +40,8 @@ django-cprofile-middleware==1.0
 # Versioning
 versioneer==0.18
 
-# Sentinel
-raven
+# Raven is the Sentry client
+raven==6.10.0
 
 # Online documentation via django-docs.
 Sphinx==1.7.9
