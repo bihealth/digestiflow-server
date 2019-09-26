@@ -15,6 +15,7 @@ HEAD (unreleased)
 - Properly catching error of duplicate barcode name/sequence in barcode set.
 - Reverse-complement sequence search.
 - Indicating that no histograms can be expected if no barcode reads exist.
+- Bumping dependency on SODAR Core.
 
 ------
 v1.0.0

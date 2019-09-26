@@ -80,6 +80,8 @@ THIRD_PARTY_APPS = [
     # SODAR Taskflow backend app
     # NOTE: Only enable if using sodar_taskflow
     # 'taskflowbackend.apps.TaskflowbackendConfig',
+    "dal",
+    "dal_select2",
 ]
 
 # Project apps
@@ -455,7 +457,7 @@ PROJECTROLES_HIDE_APP_LINKS = ("filesfolders",)
 PROJECTROLES_TARGET_CREATE = env.bool("PROJECTROLES_TARGET_CREATE", True)
 
 # Admin user to replace non-LDAP project owners in remote sync (for TARGET site)
-PROJECTROLES_ADMIN_OWNER = env.str("PROJECTROLES_ADMIN_OWNER", "admin")
+PROJECTROLES_DEFAULT_ADMIN = env.str("PROJECTROLES_DEFAULT_ADMIN", "admin")
 
 # General projectroles settings
 PROJECTROLES_SECRET_LENGTH = 32
