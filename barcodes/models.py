@@ -180,7 +180,9 @@ class BarcodeSetEntry(models.Model):
             if self.pk is not None:
                 qs = qs.exclude(pk=self.pk)
             if qs.filter(barcode_set=self.barcode_set).exists():
-                raise ValidationError("Barcode {} must be unique in barcode set!".format(key))
+                raise ValidationError(
+                    "Barcode {} {} must be unique in barcode set!".format(key, getattr(self, key))
+                )
 
     def get_absolute_url(self):
         """Return absolute URL to barcode set with highlight of barcode."""

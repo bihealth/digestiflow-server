@@ -11,6 +11,7 @@ from django.shortcuts import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from projectroles.plugins import get_backend_api
 from projectroles.views import LoggedInPermissionMixin, ProjectContextMixin
+from django.core.validators import ValidationError
 
 from digestiflow.utils import model_to_dict, ProjectPermissionMixin
 from .forms import BarcodeSetForm
@@ -138,6 +139,11 @@ class BarcodeSetUpdateView(
         self.object = form.save()
         try:
             self._update_entries(self.object, form)
+        except ValidationError as e:
+            messages.error(
+                self.request, "Problem updating barcode set: %s" % ", ".join(map(str, e))
+            )
+            return self.form_invalid(form)
         except ProtectedError as e:  # pragma: no cover
             messages.error(self.request, "Could not update barcode set entries: %s" % e)
             return self.form_invalid(form)
