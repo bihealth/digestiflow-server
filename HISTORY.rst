@@ -10,6 +10,7 @@ HEAD (unreleased)
 
 - Paginating large lists.
 - More prefetching for large list for speedups.
+- Fixing organism/reference editing.
 
 ------
 v1.0.0

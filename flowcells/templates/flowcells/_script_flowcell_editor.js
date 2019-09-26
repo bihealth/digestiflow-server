@@ -315,7 +315,7 @@ $(function () {
       .map(row => {
         const name = row[nameCol]
         const projectId = row[projectIdCol]
-        const reference = row[organismCol]
+        const reference = labelToReference[row[organismCol]]
         const barcodeSet1 = row[barcodeSet1Col]
         const barcode1 = row[barcode1Col]
         const barcodeSet2 = row[barcodeSet2Col]
