@@ -608,83 +608,13 @@ class FlowCell(models.Model):
                     ):
                         error_lanes2.append(lane_number)
             # Build error message for this library, if any lanes are problematic
-            msgs = []
-            msgs2 = []
-            if error_lanes:
-                msgs = [
-                    "barcode #1 {} ({}) for library {} not found in adapters on lane{} {}".format(
-                        library.get_barcode_seq(),
-                        library.barcode.name if library.barcode else "manually entered",
-                        library.name,
-                        "s" if len(error_lanes) > 1 else "",
-                        pretty_range(error_lanes),
-                    )
-                ]
-            if error_lanes2:
-                msgs2 = [
-                    "barcode #2 {} ({}) for library {} not found in adapters on lane{} {}".format(
-                        library.get_barcode_seq2(),
-                        library.barcode2.name if library.barcode2 else "manually entered",
-                        library.name,
-                        "s" if len(error_lanes2) > 1 else "",
-                        pretty_range(error_lanes2),
-                    )
-                ]
-
-            # Build error message for per-library demux cycles if problematic.
-            library_cycles = []
-            if library.demux_reads:
-                try:
-                    len1 = bases_mask.bases_mask_length(self.planned_reads or "")
-                    len2 = bases_mask.bases_mask_length(library.demux_reads)
-                    if len1 != len2:
-                        library_cycles.append(
-                            "Demultiplexing cycles incompatible with flow cell cycles (%d vs. %d)."
-                            % (len1, len2)
-                        )
-                except bases_mask.BaseMaskConfigException:
-                    library_cycles.append("Invalid per-library demultiplexing cycles")
+            library_cycles, msgs, msgs2 = self._build_reverse_index_errors_messages(
+                error_lanes, error_lanes2, library
+            )
 
             # Build error message for the barcode sequences.
             if library.demux_reads:
-                demux_reads = library.demux_reads or self.demux_reads or self.planned_reads
-                try:
-                    barcodes = [
-                        count for op, count in bases_mask.split_bases_mask(demux_reads) if op == "B"
-                    ]
-                except bases_mask.BaseMaskConfigException:
-                    pass  # will have error above already
-                if len(barcodes) == 2:
-                    msg = "Demultiplexing instructions have two barcodes."
-                    if not library.get_barcode_seq():
-                        msgs.append(msg)
-                    elif barcodes[0] > len(library.get_barcode_seq()):
-                        msgs.append(
-                            "Demultiplexing instructions need %d bases but barcode seq #1 has only length %d"
-                            % (barcodes[0], len(library.get_barcode_seq()))
-                        )
-                    if not library.get_barcode_seq2():
-                        msgs2.append(msg)
-                    elif barcodes[1] > len(library.get_barcode_seq2()):
-                        msgs.append(
-                            "Demultiplexing instructions need %d bases but barcode seq #2 has only length %d"
-                            % (barcodes[1], len(library.get_barcode_seq2()))
-                        )
-                elif len(barcodes) == 1:
-                    if not library.get_barcode_seq():
-                        msgs.append(msg)
-                    elif barcodes[0] > len(library.get_barcode_seq()):
-                        msgs.append(
-                            "Demultiplexing instructions need %d bases but barcode seq #1 has only length %d"
-                            % (barcodes[0], len(library.get_barcode_seq()))
-                        )
-                    if library.get_barcode_seq2():
-                        msgs2.append("Demultiplexing instructions have only one barcode.")
-                elif len(barcodes) == 0:
-                    if library.get_barcode_seq():
-                        msgs.append("Demultiplexing instructions don't have barcodes.")
-                    if library.get_barcode_seq2():
-                        msgs2.append("Demultiplexing instructions don't have barcodes.")
+                self._build_reverse_index_errors_barcodes(library, msgs, msgs2)
 
             if any((msgs, msgs2, library_cycles)):
                 result[library.sodar_uuid_str] = {
@@ -693,6 +623,84 @@ class FlowCell(models.Model):
                     "library_cycles": library_cycles,
                 }
         return list(result.items())
+
+    def _build_reverse_index_errors_messages(self, error_lanes, error_lanes2, library):
+        msgs = []
+        msgs2 = []
+        if error_lanes:
+            msgs = [
+                "barcode #1 {} ({}) for library {} not found in adapters on lane{} {}".format(
+                    library.get_barcode_seq(),
+                    library.barcode.name if library.barcode else "manually entered",
+                    library.name,
+                    "s" if len(error_lanes) > 1 else "",
+                    pretty_range(error_lanes),
+                )
+            ]
+        if error_lanes2:
+            msgs2 = [
+                "barcode #2 {} ({}) for library {} not found in adapters on lane{} {}".format(
+                    library.get_barcode_seq2(),
+                    library.barcode2.name if library.barcode2 else "manually entered",
+                    library.name,
+                    "s" if len(error_lanes2) > 1 else "",
+                    pretty_range(error_lanes2),
+                )
+            ]
+        # Build error message for per-library demux cycles if problematic.
+        library_cycles = []
+        if library.demux_reads:
+            try:
+                len1 = bases_mask.bases_mask_length(self.planned_reads or "")
+                len2 = bases_mask.bases_mask_length(library.demux_reads)
+                if len1 != len2:
+                    library_cycles.append(
+                        "Demultiplexing cycles incompatible with flow cell cycles (%d vs. %d)."
+                        % (len1, len2)
+                    )
+            except bases_mask.BaseMaskConfigException:
+                library_cycles.append("Invalid per-library demultiplexing cycles")
+        return library_cycles, msgs, msgs2
+
+    def _build_reverse_index_errors_barcodes(self, library, msgs, msgs2):
+        demux_reads = library.demux_reads or self.demux_reads or self.planned_reads
+        try:
+            barcodes = [
+                count for op, count in bases_mask.split_bases_mask(demux_reads) if op == "B"
+            ]
+        except bases_mask.BaseMaskConfigException:
+            pass  # will have error above already
+        if len(barcodes) == 2:
+            msg = "Demultiplexing instructions have two barcodes."
+            if not library.get_barcode_seq():
+                msgs.append(msg)
+            elif barcodes[0] > len(library.get_barcode_seq()):
+                msgs.append(
+                    "Demultiplexing instructions need %d bases but barcode seq #1 has only length %d"
+                    % (barcodes[0], len(library.get_barcode_seq()))
+                )
+            if not library.get_barcode_seq2():
+                msgs2.append(msg)
+            elif barcodes[1] > len(library.get_barcode_seq2()):
+                msgs.append(
+                    "Demultiplexing instructions need %d bases but barcode seq #2 has only length %d"
+                    % (barcodes[1], len(library.get_barcode_seq2()))
+                )
+        elif len(barcodes) == 1:
+            if not library.get_barcode_seq():
+                msgs.append(msg)
+            elif barcodes[0] > len(library.get_barcode_seq()):
+                msgs.append(
+                    "Demultiplexing instructions need %d bases but barcode seq #1 has only length %d"
+                    % (barcodes[0], len(library.get_barcode_seq()))
+                )
+            if library.get_barcode_seq2():
+                msgs2.append("Demultiplexing instructions have only one barcode.")
+        elif len(barcodes) == 0:
+            if library.get_barcode_seq():
+                msgs.append("Demultiplexing instructions don't have barcodes.")
+            if library.get_barcode_seq2():
+                msgs2.append("Demultiplexing instructions don't have barcodes.")
 
     def get_sample_sheet_errors(self):
         """Return sample sheet errors from the cached value.

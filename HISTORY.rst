@@ -13,6 +13,8 @@ HEAD (unreleased)
 - Fixing organism/reference editing.
 - More refined checking of barcodes and demultiplexing cycles.
 - Properly catching error of duplicate barcode name/sequence in barcode set.
+- Reverse-complement sequence search.
+- Indicating that no histograms can be expected if no barcode reads exist.
 
 ------
 v1.0.0

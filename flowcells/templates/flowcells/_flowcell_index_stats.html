@@ -2,13 +2,17 @@
 {% load flowcells %}
 {% load projectroles_common_tags %}
 
-<p>
-  <em>
-    <i class="fa fa-info-circle"></i>
-    The index histogram statistics are computed from the flow cell's raw base calls.
-    They can be used for sanity-checking your sample sheets.
-  </em>
+{% count_barcode_reads object as num_barcodes %}
+
+{% if num_barcodes > 0 %}
+  <p>
+    <em>
+      <i class="fa fa-info-circle"></i>
+      The index histogram statistics are computed from the flow cell's raw base calls.
+      They can be used for sanity-checking your sample sheets.
+    </em>
 </p>
+{% endif %}
 
 {% if object.index_histograms.all %}
   {% get_known_contaminations object as contaminations %}
@@ -99,9 +103,14 @@
       {% endfor %}
     </tbody>
   </table>
-{% else %}
-  <p class="text-center text-muted">
+{% elif num_barcodes > 0 %}
+  <p class="text-center text-muted mb-0">
     No index statistics (yet).
+  </p>
+{% else %}
+  <p class="text-center text-muted mb-0">
+    No barcode reads for flow cell.
+    We're not expecting any index statistics.
   </p>
 {% endif %}
 

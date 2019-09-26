@@ -1,5 +1,6 @@
 """Models for managing barcode sets and barcodes in DigestiFlow."""
 
+import re
 import uuid as uuid_object
 
 from django.apps import apps
@@ -123,11 +124,10 @@ class BarcodeSetEntryManager(models.Manager):
         :return: Python list of BaseFilesfolderClass objects
         """
         objects = super().get_queryset().order_by("name")
-        objects = objects.filter(
-            Q(name__icontains=search_term)
-            | Q(sequence__icontains=search_term)
-            | Q(sequence__icontains=revcomp(search_term))
-        )
+        query = Q(name__icontains=search_term) | Q(sequence__icontains=search_term)
+        if re.match(r"^[acgtnACGTN]+$", search_term):
+            query = query | Q(sequence__icontains=revcomp(search_term))
+        objects = objects.filter(query)
         return objects
 
 

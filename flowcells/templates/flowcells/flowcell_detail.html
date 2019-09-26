@@ -42,8 +42,11 @@
       <li class="nav-item">
         <a class="nav-link" id="index-stats-tab" data-toggle="tab" href="#index-stats" aria-controls="index-stats" aria-selected="true">
           Index Stats
+          {% count_barcode_reads object as num_barcodes %}
           {% get_lanes_with_missing_sheets object as lanes_with_missing_sheets  %}
-          {% if object.get_index_errors %}
+          {% if num_barcodes == 0 %}
+            <i class="fa fa-info-circle text-success p-1" data-toggle="tooltip" title="No barcode read configured, not expecting histograms"></i>
+          {% elif object.get_index_errors %}
             <i class="fa fa-exclamation-triangle text-danger pl-1" data-toggle="tooltip" title="There were inconsistencies with observed index adapters and the sample sheet"></i>
           {% elif lanes_with_missing_sheets %}
             <i class="fa fa-exclamation-circle text-warning p-1" data-toggle="tooltip" title="No sample sheet information for at least one lane"></i>

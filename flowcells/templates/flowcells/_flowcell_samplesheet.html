@@ -1,6 +1,8 @@
 {% load flowcells %}
 
-{% if not object.index_histograms.all %}
+{% count_barcode_reads object as num_barcodes %}
+
+{% if num_barcodes > 0 and not object.index_histograms.all %}
   <div class="alert alert-info">
     <i class="fa fa-info-circle"></i>
     No index statistics found so far.

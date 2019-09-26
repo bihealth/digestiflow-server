@@ -3,6 +3,7 @@ import itertools
 from django import template
 from django.db.models import Q
 
+from .. import bases_mask
 from ..models import (
     FlowCell,
     REFERENCE_CHOICES,
@@ -13,6 +14,14 @@ from ..models import (
 )
 
 register = template.Library()
+
+
+@register.simple_tag
+def count_barcode_reads(flow_cell):
+    """Count number of barcode reads in the planned reads of ``flow_cell``."""
+    return len(
+        [op for op, count in bases_mask.split_bases_mask(flow_cell.planned_reads) if op == "B"]
+    )
 
 
 @register.simple_tag

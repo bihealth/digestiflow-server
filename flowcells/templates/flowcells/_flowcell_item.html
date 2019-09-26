@@ -129,7 +129,12 @@
          title="no files"
       ></i>
     {% endif %}
-    {% if flowcell.index_histograms.all %}
+    {% count_barcode_reads flowcell as num_barcodes %}
+    {% if num_barcodes == 0 %}
+      <i class="fa fc-fw fa-minus567 text-muted mr-3" aria-hidden="true"  style="opacity: 0.3;"
+         data-toggle="tooltip"
+         title="no barcode reads in sequencing, not expecting histogram"></i>
+    {% elif flowcell.index_histograms.all %}
       <i class="fa fc-fw fa-bar-chart-o mr-3" aria-hidden="true"
          data-toggle="tooltip"
          title="has index histograms"></i>
