@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.files.base import ContentFile
-from django.core.paginator import Paginator
 from django.db import transaction
 from django.shortcuts import reverse, redirect, render
 from django.template.defaultfilters import pluralize

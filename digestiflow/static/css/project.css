@@ -12,6 +12,10 @@
   border-color: #eed3d7;
 }
 
+.alert ul {
+  margin-bottom: 0px;
+}
+
 /* Display django-debug-toolbar.
    See https://github.com/django-debug-toolbar/django-debug-toolbar/issues/742
    and https://github.com/pydanny/cookiecutter-django/issues/317

@@ -4,6 +4,7 @@ import uuid as uuid_object
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField, JSONField
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
@@ -13,6 +14,7 @@ import pagerange
 from projectroles.models import Project, PROJECT_TAG_STARRED
 from filesfolders.models import Folder
 
+from . import bases_mask
 from digestiflow.users.models import User
 from digestiflow.utils import revcomp
 from barcodes.models import BarcodeSetEntry
@@ -145,7 +147,7 @@ RTA_VERSION_CHOICES = (
 
 
 #: Current version of error cache computation code.
-FLOWCELL_ERROR_CACHE_VERSION = 1
+FLOWCELL_ERROR_CACHE_VERSION = 2
 
 
 class FlowCellManager(models.Manager):
@@ -166,6 +168,15 @@ class FlowCellManager(models.Manager):
             | Q(description__icontains=search_term)
         )
         return objects
+
+
+def validate_bases_mask(value):
+    """Django validator for bases mask values."""
+    if value:
+        try:
+            bases_mask.split_bases_mask(value)
+        except bases_mask.BaseMaskConfigException as e:
+            raise ValidationError(str(e)) from e
 
 
 class FlowCell(models.Model):
@@ -292,12 +303,20 @@ class FlowCell(models.Model):
     #: Information about the planned read in Picard notation, that is B for Sample Barcode, M for molecular barcode,
     #: T for Template, and S for skip.
     planned_reads = models.CharField(
-        max_length=200, blank=True, null=True, help_text="Specification of the planned reads"
+        max_length=200,
+        blank=True,
+        null=True,
+        validators=[validate_bases_mask],
+        help_text="Specification of the planned reads",
     )
 
     #: Information about the currently performed reads in Picard notation.
     current_reads = models.CharField(
-        max_length=200, blank=True, null=True, help_text="Specification of the current reads"
+        max_length=200,
+        blank=True,
+        null=True,
+        validators=[validate_bases_mask],
+        help_text="Specification of the current reads",
     )
 
     #: Optional override for reads information to override ``planned_reads`` in demultiplexing (in Picard notation)
@@ -305,6 +324,7 @@ class FlowCell(models.Model):
         max_length=200,
         blank=True,
         null=True,
+        validators=[validate_bases_mask],
         help_text="Specification of the reads to use for demultiplexing (defaults to planned reads)",
     )
 
@@ -610,8 +630,68 @@ class FlowCell(models.Model):
                         pretty_range(error_lanes2),
                     )
                 ]
-            if msgs or msgs2:
-                result[library.sodar_uuid_str] = (msgs, msgs2)
+
+            # Build error message for per-library demux cycles if problematic.
+            library_cycles = []
+            if library.demux_reads:
+                try:
+                    len1 = bases_mask.bases_mask_length(self.planned_reads or "")
+                    len2 = bases_mask.bases_mask_length(library.demux_reads)
+                    if len1 != len2:
+                        library_cycles.append(
+                            "Demultiplexing cycles incompatible with flow cell cycles (%d vs. %d)."
+                            % (len1, len2)
+                        )
+                except bases_mask.BaseMaskConfigException:
+                    library_cycles.append("Invalid per-library demultiplexing cycles")
+
+            # Build error message for the barcode sequences.
+            if library.demux_reads:
+                demux_reads = library.demux_reads or self.demux_reads or self.planned_reads
+                try:
+                    barcodes = [
+                        count for op, count in bases_mask.split_bases_mask(demux_reads) if op == "B"
+                    ]
+                except bases_mask.BaseMaskConfigException:
+                    pass  # will have error above already
+                if len(barcodes) == 2:
+                    msg = "Demultiplexing instructions have two barcodes."
+                    if not library.get_barcode_seq():
+                        msgs.append(msg)
+                    elif barcodes[0] > len(library.get_barcode_seq()):
+                        msgs.append(
+                            "Demultiplexing instructions need %d bases but barcode seq #1 has only length %d"
+                            % (barcodes[0], len(library.get_barcode_seq()))
+                        )
+                    if not library.get_barcode_seq2():
+                        msgs2.append(msg)
+                    elif barcodes[1] > len(library.get_barcode_seq2()):
+                        msgs.append(
+                            "Demultiplexing instructions need %d bases but barcode seq #2 has only length %d"
+                            % (barcodes[1], len(library.get_barcode_seq2()))
+                        )
+                elif len(barcodes) == 1:
+                    if not library.get_barcode_seq():
+                        msgs.append(msg)
+                    elif barcodes[0] > len(library.get_barcode_seq()):
+                        msgs.append(
+                            "Demultiplexing instructions need %d bases but barcode seq #1 has only length %d"
+                            % (barcodes[0], len(library.get_barcode_seq()))
+                        )
+                    if library.get_barcode_seq2():
+                        msgs2.append("Demultiplexing instructions have only one barcode.")
+                elif len(barcodes) == 0:
+                    if library.get_barcode_seq():
+                        msgs.append("Demultiplexing instructions don't have barcodes.")
+                    if library.get_barcode_seq2():
+                        msgs2.append("Demultiplexing instructions don't have barcodes.")
+
+            if any((msgs, msgs2, library_cycles)):
+                result[library.sodar_uuid_str] = {
+                    "barcode": msgs,
+                    "barcode2": msgs2,
+                    "library_cycles": library_cycles,
+                }
         return list(result.items())
 
     def get_sample_sheet_errors(self):

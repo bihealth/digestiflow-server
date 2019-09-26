@@ -113,8 +113,8 @@
     {% get_libraries_with_suppressed_reverse_index_errors object as libraries_with_suppressed_index_errors %}
     {% if flowcell.get_reverse_index_errors %}
       <span class="text-danger">
-        <i class="fa fa-exclamation-circle pr-1" title="Sheet index library not found in BCLs indices" data-toggle="tooltip"></i>
-        At least one library was not found in the BCL index adapters.
+        <i class="fa fa-exclamation-circle pr-1" title="There is an issue with a library on the sample shet." data-toggle="tooltip"></i>
+        There is an issue with a library on the sample shet.
       </span>
     {% elif libraries_with_suppressed_index_errors %}
       <span class="text-muted">

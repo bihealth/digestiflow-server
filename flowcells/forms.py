@@ -5,8 +5,10 @@ import json
 import re
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 
+from . import bases_mask
 from digestiflow.utils import model_to_dict, HorizontalFormHelper
 from sequencers.models import SequencingMachine
 from .models import (
@@ -106,6 +108,20 @@ class FlowCellForm(forms.ModelForm):
         self.cleaned_data["slot"] = name_dict["slot"]
         self.cleaned_data["vendor_id"] = name_dict["vendor_id"]
         self.cleaned_data["label"] = name_dict["label"]
+
+        # Check compatibility between demux reads (if given) and plannned reads.
+        if self.cleaned_data["demux_reads"]:
+            try:
+                len1 = bases_mask.bases_mask_length(self.cleaned_data["planned_reads"])
+                len2 = bases_mask.bases_mask_length(self.cleaned_data["demux_reads"])
+                if len1 != len2:
+                    raise ValidationError(
+                        "Demultiplexing reads is incompatible to planned reads (%d vs. %d)."
+                        % (len1, len2)
+                    )
+            except bases_mask.BaseMaskConfigException:
+                raise ValidationError("Invalid bases mask")
+
         return self.cleaned_data
 
     def save(self, *args, **kwargs):
