@@ -67,7 +67,9 @@ let references = [
 
 // Mapping reference label to key
 let labelToReference = {}
+let referenceToLabel = {}
 references.forEach((entry) => {
+  referenceToLabel[entry.key] = entry.label
   labelToReference[entry.label] = entry.key
 })
 
@@ -274,7 +276,7 @@ $(function () {
       const row = ['', '', '', '', '', '', '', '', '', '']
       row[headerNameToCol.get("name")] = entry.name
       row[headerNameToCol.get("projectId")] = entry.project_id
-      row[headerNameToCol.get("reference")] = entry.reference
+      row[headerNameToCol.get("reference")] = referenceToLabel[entry.reference]
 
       if (entry.barcode_seq) {
         row[headerNameToCol.get("barcodeSet1")] = 'type barcode -->'

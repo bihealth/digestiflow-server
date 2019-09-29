@@ -46,6 +46,14 @@
     </h2>
   </div>
 
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      <strong>Caution:</strong>
+      The flow cell data could not be saved!
+      Please review your input for problems.
+    </div>
+  {% endif %}
+
   <div class="container-fluid sodar-page-container">
     <ul class="nav nav-tabs">
       <li class="nav-item">

@@ -37,6 +37,7 @@ from .models import (
     message_created,
     flow_cell_created,
     flow_cell_updated,
+    REFERENCE_OTHER,
 )
 from .tasks import flowcell_update_error_caches
 
@@ -238,7 +239,7 @@ class FlowCellRecreateLibrariesMixin:
                 rank=rank,
                 name=info["name"],
                 project_id=info["project_id"],
-                reference=info["reference"],
+                reference=info.get("reference", REFERENCE_OTHER),
                 barcode=barcode,
                 barcode_seq=info["barcode_seq"],
                 barcode2=barcode2,
@@ -316,6 +317,13 @@ class FlowCellUpdateView(
     slug_url_kwarg = "flowcell"
     slug_field = "sodar_uuid"
 
+    def get_context_data(self, *args, **kwargs):
+        result = super().get_context_data(*args, **kwargs)
+        form = result["form"]
+        if not form.is_valid():
+            result["form_errors"] = form.errors
+        return result
+
     @transaction.atomic
     def form_valid(self, form):
         # Save form, get ``self.object``, ready for updating libraries.
@@ -324,7 +332,7 @@ class FlowCellUpdateView(
         try:
             self._update_libraries(self.object, form)
         except Exception as e:
-            messages.error(self.request, "Could not update libraries entries: %s" % e)
+            form.add_error(None, "Could not update libraries entries: %s." % e)
             return self.form_invalid(form)
         # Call into super class, store original object before saving.
         result = super().form_valid(form)

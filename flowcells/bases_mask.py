@@ -9,13 +9,14 @@ def split_bases_mask(bases_mask):
     >>> split_bases_mask("100T8B8B100T")
     [('T', 100), ('B', 8), ('B', 8), ('T', 100)]
     """
+    bases_mask = bases_mask or ""
     splitat = []
     for i, c in enumerate(bases_mask):
         if c.isalpha():
             splitat.append(i)
 
     # Check that mask is well-behaved
-    if splitat[0] == 0:
+    if len(splitat) >= 1 and splitat[0] == 0:
         raise BaseMaskConfigException("Mask must start with number of cycles, not type")
     # Check that no letters appear next to each other
     diffs = []
