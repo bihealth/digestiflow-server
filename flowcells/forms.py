@@ -70,13 +70,14 @@ class FlowCellForm(forms.ModelForm):
     libraries_json = forms.CharField(widget=forms.HiddenInput(), initial="{}")
 
     def __init__(self, *args, **kwargs):
+        self.project = kwargs.pop("project")
         super().__init__(*args, **kwargs)
         if self.instance:
             try:
                 self.fields["name"].initial = self.instance.get_full_name()
             except SequencingMachine.DoesNotExist:
                 pass  # swallow
-        # Fill hidden field with JSON value based on the instance's objects.s
+        # Fill hidden field with JSON value based on the instance's objects.
         initial_value = [
             {
                 **model_to_dict(entry, exclude=("pk",), rename={"sodar_uuid": "uuid"}),
@@ -99,7 +100,7 @@ class FlowCellForm(forms.ModelForm):
             name_dict["date"], "%y%m%d"
         ).date()
         self.cleaned_data["sequencing_machine"] = get_object_or_none(
-            SequencingMachine.objects.filter(project=self.instance.project),
+            SequencingMachine.objects.filter(project=self.project),
             vendor_id=name_dict["machine_name"],
         )
         if self.cleaned_data["sequencing_machine"] is None:

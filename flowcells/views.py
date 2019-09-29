@@ -267,6 +267,11 @@ class FlowCellCreateView(
     model = FlowCell
     form_class = FlowCellForm
 
+    def get_form_kwargs(self, *args, **kwargs):
+        result = super().get_form_kwargs(*args, **kwargs)
+        result.setdefault("project", self.get_project())
+        return result
+
     @transaction.atomic
     def form_valid(self, form):
         """Automatically set the project property."""
@@ -316,6 +321,11 @@ class FlowCellUpdateView(
 
     slug_url_kwarg = "flowcell"
     slug_field = "sodar_uuid"
+
+    def get_form_kwargs(self, *args, **kwargs):
+        result = super().get_form_kwargs(*args, **kwargs)
+        result.setdefault("project", self.get_project())
+        return result
 
     def get_context_data(self, *args, **kwargs):
         result = super().get_context_data(*args, **kwargs)

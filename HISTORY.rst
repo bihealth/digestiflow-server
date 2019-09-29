@@ -18,6 +18,7 @@ HEAD (unreleased)
 - Bumping dependency on SODAR Core.
 - Fixing adapter validation in case of chromium barcodes/barcodes lists.
 - Fixing organism input and making error message more clear.
+- Fixing manual creation of flow cells.
 
 ------
 v1.0.0
