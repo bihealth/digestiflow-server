@@ -16,6 +16,7 @@ HEAD (unreleased)
 - Reverse-complement sequence search.
 - Indicating that no histograms can be expected if no barcode reads exist.
 - Bumping dependency on SODAR Core.
+- Fixing adapter validation in case of chromium barcodes/barcodes lists.
 
 ------
 v1.0.0

@@ -531,7 +531,8 @@ class FlowCell(models.Model):
                     and self.sequencing_machine.dual_index_workflow == INDEX_WORKFLOW_B
                 ):
                     the_seq = revcomp(the_seq)
-                expected_seqs.add(the_seq)
+                for split_seq in the_seq.split(","):  # could be adapter list, e.g., for chromium
+                    expected_seqs.add(split_seq)
             # Collect errors and write into result
             sample_size = hist.sample_size
             for seq, count in hist.histogram.items():
