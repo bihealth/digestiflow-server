@@ -1,0 +1,35 @@
+{% load crispy_forms_tags %}
+{% csrf_token %}
+
+{#{% if form_show_errors %}#}
+    {% include "bootstrap4/errors.html" %}
+{#{% endif %}#}
+
+{{ form.libraries_json }}
+
+<h4>Basic Properties</h4>
+
+{{ form.name|as_crispy_field }}
+{{ form.manual_label|as_crispy_field }}
+{{ form.description|as_crispy_field }}
+{{ form.num_lanes|as_crispy_field }}
+{{ form.rta_version|as_crispy_field }}
+{{ form.planned_reads|as_crispy_field }}
+
+<h4>Demultiplexing and State</h4>
+
+{{ form.operator|as_crispy_field }}
+{{ form.demux_operator|as_crispy_field }}
+{{ form.current_reads|as_crispy_field }}
+{{ form.status_sequencing|as_crispy_field }}
+{{ form.status_conversion|as_crispy_field }}
+{{ form.status_delivery|as_crispy_field }}
+{{ form.delivery_type|as_crispy_field }}
+
+<h4>Parameters for <code>bcl2fastq</code></h4>
+
+{{ form.barcode_mismatches|as_crispy_field }}
+{{ form.demux_reads|as_crispy_field }}
+{{ form.minimum_trimmed_read_length|as_crispy_field }}
+{{ form.mask_short_adapter_reads|as_crispy_field }}
+{{ form.create_fastq_for_index_reads|as_crispy_field }}

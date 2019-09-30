@@ -1,5 +1,7 @@
 {% load flowcells %}
 
+<h4>Meta Info</h4>
+
 <dl class="row flowcell-properties">
   <dt class="col-12 col-md-3 col-xl-2">UUID</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.sodar_uuid }}</dd>
@@ -12,7 +14,11 @@
 
   <dt class="col-12 col-md-3 col-xl-2">Last Modified</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.date_modified }}</dd>
+</dl>
 
+<h4>Basic Properties</h4>
+
+<dl class="row flowcell-properties">
   <dt class="col-12 col-md-3 col-xl-2">Full Name</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.get_full_name }}</dd>
 
@@ -27,17 +33,30 @@
   <dt class="col-12 col-md-3 col-xl-2">Manual Label</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.manual_label|default:"-" }}</dd>
 
+  <dt class="col-12 col-md-3 col-xl-2">Description</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.description }}</dd>
+
   <dt class="col-12 col-md-3 col-xl-2">Number of Lanes</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.num_lanes|default:"-" }}</dd>
 
+  <dt class="col-12 col-md-3 col-xl-2">RTA Version</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.rta_version }}</dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Planned Reads</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.planned_reads }}</dd>
+</dl>
+
+<h4>Demultiplexing and State</h4>
+
+<dl class="row flowcell-properties">
   <dt class="col-12 col-md-3 col-xl-2">Operator</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.operator|default:"-" }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Demux Operator</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.demux_operator.name|default:"-" }}</dd>
 
-  <dt class="col-12 col-md-3 col-xl-2">RTA Version</dt>
-  <dd class="col-12 col-md-9 col-xl-10">{{ object.rta_version }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Current Reads</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.current_reads }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Status Sequencing</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.status_sequencing }}</dd>
@@ -50,19 +69,30 @@
 
   <dt class="col-12 col-md-3 col-xl-2">Delivery Type</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.delivery_type }}</dd>
+</dl>
 
-  <dt class="col-12 col-md-3 col-xl-2">Planned Reads</dt>
-  <dd class="col-12 col-md-9 col-xl-10">{{ object.planned_reads }}</dd>
+<h4>Parameters for <code>bcl2fastq</code></h4>
 
-  <dt class="col-12 col-md-3 col-xl-2">Current Reads</dt>
-  <dd class="col-12 col-md-9 col-xl-10">{{ object.current_reads }}</dd>
+<dl class="row flowcell-properties">
+  <dt class="col-12 col-md-3 col-xl-2">Barcode Mismatches</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.barcode_mismatches|default:"-" }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Manual Demux Reads</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.demux_reads|default:"-" }}</dd>
 
-  <dt class="col-12 col-md-3 col-xl-2">Barcode Mismatches</dt>
-  <dd class="col-12 col-md-9 col-xl-10">{{ object.barcode_mismatches|default:"-" }}</dd>
+  <dt class="col-12 col-md-3 col-xl-2">Minimum Trimmed Read Length</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.minimum_trimmed_read_length|default:"-" }}</dd>
 
+  <dt class="col-12 col-md-3 col-xl-2">Mask Short Adapter Reads</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.mask_short_adapter_reads|default:"-" }}</dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Create FASTQ for Index Reads</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{% if form.create_fastq_for_index_reads %}yes{% else %}no{% endif %}</dd>
+</dl>
+
+<h4>Sheet Sanity Check and Quality Control</h4>
+
+<dl class="row flowcell-properties">
   <dt class="col-12 col-md-3 col-xl-2">Sheet Completeness</dt>
   <dd class="col-12 col-md-9 col-xl-10">
     {% get_lanes_with_missing_sheets object as lanes_with_missing_sheets %}

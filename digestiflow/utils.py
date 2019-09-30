@@ -11,12 +11,15 @@ from projectroles.views import ProjectPermissionMixin as _ProjectPermissionMixin
 
 
 class HorizontalFormHelper(FormHelper):
-    form_class = "form-horizontal"
-    template_pack = "bootstrap4"
-    label_class = "px-0 col-12 col-md-3 col-xl-2 col-form-label font-weight-bold"
-    field_class = "px-0 col-12 col-md-9 col-xl-10"
-    # We write our own form tags in the HTML.
-    form_tag = False
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_class = "form-horizontal"
+        self.template_pack = "bootstrap4"
+        self.label_class = "px-0 col-12 col-md-2 col-xl-2 col-form-label font-weight-bold"
+        self.field_class = "px-0 col-12 col-md-10 col-xl-10"
+        self.field_template = "bootstrap4/field.html"
+        # We write our own form tags in the HTML.
+        self.form_tag = False
 
 
 def model_to_dict(*args, rename={}, **kwargs):

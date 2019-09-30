@@ -15,8 +15,6 @@
 import os
 import sys
 
-import digestiflow
-
 sys.path.insert(0, os.path.abspath("."))
 
 # Get the project root dir, which is the parent dir of this
@@ -28,6 +26,7 @@ project_root = os.path.dirname(cwd)
 # version is used.
 sys.path.insert(0, project_root)
 
+import digestiflow  # noqa: E402
 
 # -- Project information -----------------------------------------------------
 
@@ -39,6 +38,9 @@ author = "Manuel Holtgrewe"
 version = ".".join(digestiflow.__version__.split(".")[:2])
 # The full version, including alpha/beta/rc tags
 release = digestiflow.__version__
+# Fixup if dirty.
+if ".dirty" in release:
+    release = release.split("+")[0]
 
 
 # -- General configuration ---------------------------------------------------

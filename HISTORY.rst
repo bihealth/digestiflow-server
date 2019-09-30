@@ -19,6 +19,8 @@ HEAD (unreleased)
 - Fixing adapter validation in case of chromium barcodes/barcodes lists.
 - Fixing organism input and making error message more clear.
 - Fixing manual creation of flow cells.
+- Fixing "dirty" in readthedocs manual release PDF.
+- Improving detail display and form layout for flow cell.
 
 ------
 v1.0.0
