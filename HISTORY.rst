@@ -4,9 +4,9 @@
 History / Changelog
 ===================
 
------------------
-HEAD (unreleased)
------------------
+------
+v0.1.1
+------
 
 - Paginating large lists.
 - More prefetching for large list for speedups.
