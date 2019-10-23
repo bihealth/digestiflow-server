@@ -4,6 +4,12 @@
 History / Changelog
 ===================
 
+-----------------
+HEAD (unreleased)
+-----------------
+
+- Fixing rendering error with empty barcodes.
+
 ------
 v0.1.1
 ------

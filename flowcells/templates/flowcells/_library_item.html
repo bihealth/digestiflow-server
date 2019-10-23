@@ -75,6 +75,8 @@
             {{ item.get_barcode_seq }}
             <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
           </span>
+        {% else %}
+          -
         {% endif %}
       {% else %}
         {{ item.get_barcode_seq }}

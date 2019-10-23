@@ -102,7 +102,7 @@ def get_index_errors(flowcell, lane, index_read_no, sequence):
 
 @register.simple_tag
 def get_reverse_index_errors(flowcell, library_uuid):
-    return flowcell.get_reverse_index_errors().get(str(library_uuid), ((), ()))
+    return flowcell.get_reverse_index_errors().get(str(library_uuid), {"barcode": [], "barcode2": []})
 
 
 @register.simple_tag
