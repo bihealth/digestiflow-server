@@ -132,7 +132,7 @@ FIXTURE_DIRS = (str(APPS_DIR.path("fixtures")),)
 EMAIL_BACKEND = env("DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend")
 EMAIL_SENDER = env("EMAIL_SENDER", default="noreply@example.com")
 EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default="")
-DEFAULT_EMAIL_SENDER = EMAIL_SENDER
+DEFAULT_FROM_EMAIL = EMAIL_SENDER
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
