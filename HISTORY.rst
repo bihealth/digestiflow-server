@@ -9,6 +9,7 @@ HEAD (unreleased)
 -----------------
 
 - Fixing rendering error with empty barcodes.
+- Fixing email sending (obtaining of address).
 
 ------
 v0.1.1
