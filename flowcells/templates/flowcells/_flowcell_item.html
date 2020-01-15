@@ -167,8 +167,8 @@
       </a>
     </div>
   </td>
-  <td>
-    {{ flowcell.planned_reads }}
+  <td class="text-nowrap">
+    {{ flowcell.planned_reads|format_basemask }}
   </td>
   <td>
     {{ flowcell.operator|default:"-" }} /

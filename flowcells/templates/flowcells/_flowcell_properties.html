@@ -43,7 +43,7 @@
   <dd class="col-12 col-md-9 col-xl-10">{{ object.rta_version }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Planned Reads</dt>
-  <dd class="col-12 col-md-9 col-xl-10">{{ object.planned_reads }}</dd>
+  <dd class="col-12 col-md-9 col-xl-10 text-nowrap">{{ object.planned_reads|format_basemask }}</dd>
 </dl>
 
 <h4>Demultiplexing and State</h4>
@@ -56,7 +56,7 @@
   <dd class="col-12 col-md-9 col-xl-10">{{ object.demux_operator.name|default:"-" }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Current Reads</dt>
-  <dd class="col-12 col-md-9 col-xl-10">{{ object.current_reads }}</dd>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.current_reads|format_basemask }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Status Sequencing</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.status_sequencing }}</dd>
@@ -78,7 +78,7 @@
   <dd class="col-12 col-md-9 col-xl-10">{{ object.barcode_mismatches|default:"-" }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Manual Demux Reads</dt>
-  <dd class="col-12 col-md-9 col-xl-10">{{ object.demux_reads|default:"-" }}</dd>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.demux_reads|format_basemask|default:"-" }}</dd>
 
   <dt class="col-12 col-md-3 col-xl-2">Minimum Trimmed Read Length</dt>
   <dd class="col-12 col-md-9 col-xl-10">{{ object.minimum_trimmed_read_length|default:"-" }}</dd>

@@ -10,6 +10,7 @@ HEAD (unreleased)
 
 - Fixing rendering error with empty barcodes.
 - Fixing email sending (obtaining of address).
+- More human-oriented rendering and editing of bases mask strings.
 
 ------
 v0.1.1

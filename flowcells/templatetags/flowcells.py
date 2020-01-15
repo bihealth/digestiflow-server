@@ -2,6 +2,7 @@ import itertools
 
 from django import template
 from django.db.models import Q
+from django.utils.safestring import mark_safe
 
 from .. import bases_mask
 from ..models import (
@@ -102,7 +103,9 @@ def get_index_errors(flowcell, lane, index_read_no, sequence):
 
 @register.simple_tag
 def get_reverse_index_errors(flowcell, library_uuid):
-    return flowcell.get_reverse_index_errors().get(str(library_uuid), {"barcode": [], "barcode2": []})
+    return flowcell.get_reverse_index_errors().get(
+        str(library_uuid), {"barcode": [], "barcode2": []}
+    )
 
 
 @register.simple_tag
@@ -222,3 +225,11 @@ def valid_status(attribute, value):
 def is_user_watching_flowcell(user, flowcell):
     """Wehther the ``user`` is watching ``flowcell``"""
     return flowcell.is_user_watching(user)
+
+
+@register.filter(is_safe=True)
+def format_basemask(x):
+    if not x:
+        return x
+    safe = [(op if op.upper() in "BMTS" else "?", c) for op, c in bases_mask.split_bases_mask(x)]
+    return mark_safe(",".join("%d%s" % (c, op) for op, c in safe))

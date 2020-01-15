@@ -48,6 +48,21 @@ FLOW_CELL_NAME_RE = (
 )
 
 
+class BasesMaskField(forms.CharField):
+    def prepare_value(self, value):
+        if isinstance(value, str):
+            safe = "".join([c for c in value if c in "0123456789MSTB"])
+            return ",".join(["%d%s" % (c, op) for op, c in bases_mask.split_bases_mask(safe)])
+        else:
+            return value
+
+    def to_python(self, value):
+        if value:
+            return "".join([c for c in str(value) if c in "0123456789MSTB"])
+        else:
+            return value
+
+
 class FlowCellForm(forms.ModelForm):
     """Form for creating and updating ``FlowCell`` records."""
 
@@ -153,6 +168,11 @@ class FlowCellForm(forms.ModelForm):
             "mask_short_adapter_reads",
         )
         widgets = {"description": forms.Textarea(attrs={"rows": 3})}
+        field_classes = {
+            "planned_reads": BasesMaskField,
+            "current_reads": BasesMaskField,
+            "demux_reads": BasesMaskField,
+        }
 
 
 class FlowCellUpdateStatusForm(forms.ModelForm):
