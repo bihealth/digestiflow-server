@@ -54,7 +54,8 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
         if not search_type:
             flow_cells = FlowCell.objects.find(search_term, keywords)
             libraries = Library.objects.find(search_term, keywords)
-            items = list(flow_cells) + list(libraries)
+            messages = Message.objects.find(search_term, keywords).filter(state=MSG_STATE_SENT)
+            items = list(flow_cells) + list(libraries) + list(messages)
             items.sort(key=lambda x: x.name.lower())
         elif search_type == "flowcell":
             items = FlowCell.objects.find(search_term, keywords)
@@ -65,8 +66,8 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
 
         return {
             "all": {
-                "title": "Flow Cells and Libraries",
-                "search_types": ["flowcell", "library"],
+                "title": "Flow Cells, Libraries and Messages",
+                "search_types": ["flowcell", "library", "message"],
                 "items": items,
             }
         }

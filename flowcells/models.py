@@ -1213,6 +1213,10 @@ class Message(models.Model):
     #: Search-enabled manager.
     objects = MessageManager()
 
+    @property
+    def name(self):
+        return self.subject or self.body or ""
+
     def save(self, *args, **kwargs):
         try:
             self.attachment_folder
