@@ -24,6 +24,23 @@
     {% include "flowcells/_flowcell_detail_buttons.html" %}
   </div>
 
+  {% count_barcode_reads object as num_barcodes %}
+  {% get_lanes_with_missing_sheets object as lanes_with_missing_sheets  %}
+
+  {% if object.get_sample_sheet_errors or object.get_reverse_index_errors or object.get_index_errors or lanes_with_missing_sheets or object.lanes_suppress_no_sample_found_for_observed_index_warning %}
+    <div class="alert alert-warning">
+      <i class="fa fa-info-circle"></i>
+      Your flow cell and sample sheet have been saved.
+      However, there are some issues that you <strong>must</strong> fix before demultiplexing it.
+      See below for more information.
+    </div>
+  {% elif not flowcell_libraries %}
+    <div class="alert alert-info">
+      <i class="fa fa-info-circle"></i>
+      No libraries have been registered for this flow cell yet!
+    </div>
+  {% endif %}
+
   <div class="container-fluid sodar-page-container">
     <ul class="nav nav-tabs">
       <li class="nav-item">
@@ -42,8 +59,6 @@
       <li class="nav-item">
         <a class="nav-link" id="index-stats-tab" data-toggle="tab" href="#index-stats" aria-controls="index-stats" aria-selected="true">
           Index Stats
-          {% count_barcode_reads object as num_barcodes %}
-          {% get_lanes_with_missing_sheets object as lanes_with_missing_sheets  %}
           {% if num_barcodes == 0 %}
             <i class="fa fa-info-circle text-success p-1" data-toggle="tooltip" title="No barcode read configured, not expecting histograms"></i>
           {% elif object.get_index_errors %}

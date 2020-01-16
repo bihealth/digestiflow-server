@@ -1041,6 +1041,13 @@ class Library(models.Model):
     class Meta:
         ordering = ["flow_cell", "rank", "name"]
 
+    @staticmethod
+    def get_project_filter_key():
+        return "flow_cell__project"
+
+    def get_project(self):
+        return self.flow_cell.project
+
     @property
     def sodar_uuid_str(self):
         return str(self.sodar_uuid)

@@ -13,6 +13,7 @@ HEAD (unreleased)
 - More human-oriented rendering and editing of bases mask strings.
 - Update cache when registering new histogram stats (#25).
 - Fixing search for messages (#15).
+- Fixing but preventing suppression of index errors.
 
 ------
 v0.1.1
