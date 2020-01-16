@@ -21,15 +21,12 @@ class LaneIndexHistogramSerializer(serializers.ModelSerializer):
             instance = self.context["flowcell"].index_histograms.get(
                 lane=validated_data["lane"], index_read_no=validated_data["index_read_no"]
             )
+            self.update(instance, validated_data)
         except LaneIndexHistogram.DoesNotExist:
-            return super().create(validated_data)
-        else:
-            return self.update(instance, validated_data)
+            instance = super().create(validated_data)
 
-    def create(self, *args, **kwargs):
-        result = super().create(*args, **kwargs)
-        flowcell_update_error_caches.delay(result.flowcell.pk)
-        return result
+        flowcell_update_error_caches.delay(instance.flowcell.pk)
+        return instance
 
     def update(self, *args, **kwargs):
         result = super().update(*args, **kwargs)
