@@ -11,6 +11,7 @@ HEAD (unreleased)
 - Fixing rendering error with empty barcodes.
 - Fixing email sending (obtaining of address).
 - More human-oriented rendering and editing of bases mask strings.
+- Update cache when registering new histogram stats (#25).
 
 ------
 v0.1.1

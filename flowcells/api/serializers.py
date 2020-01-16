@@ -9,6 +9,7 @@ from projectroles.utils import build_secret
 
 from sequencers.models import SequencingMachine
 from ..models import FlowCell, LaneIndexHistogram, Library, Message
+from ..tasks import flowcell_update_error_caches
 
 
 class LaneIndexHistogramSerializer(serializers.ModelSerializer):
@@ -24,6 +25,16 @@ class LaneIndexHistogramSerializer(serializers.ModelSerializer):
             return super().create(validated_data)
         else:
             return self.update(instance, validated_data)
+
+    def create(self, *args, **kwargs):
+        result = super().create(*args, **kwargs)
+        flowcell_update_error_caches.delay(result.flowcell.pk)
+        return result
+
+    def update(self, *args, **kwargs):
+        result = super().update(*args, **kwargs)
+        flowcell_update_error_caches.delay(result.flowcell.pk)
+        return result
 
     class Meta:
         model = LaneIndexHistogram
