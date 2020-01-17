@@ -153,7 +153,7 @@ FLOWCELL_ERROR_CACHE_VERSION = 2
 class FlowCellManager(models.Manager):
     """Manager for custom table-level SequencingMachine queries"""
 
-    def find(self, search_term, _keywords=None):
+    def find(self, search_term, keywords=None):
         """Return objects matching the query.
 
         :param search_term: Search term (string)

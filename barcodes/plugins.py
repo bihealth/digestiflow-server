@@ -1,3 +1,4 @@
+from projectroles.models import RoleAssignment, Project
 from projectroles.plugins import ProjectAppPluginPoint
 
 from digestiflow.utils import humanize_dict
@@ -51,9 +52,18 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
         """
         items = []
 
+        if not user.is_superuser:
+            projects = [a.project for a in RoleAssignment.objects.filter(user=user)]
+        else:
+            projects = Project.objects.all()
+
         if not search_type:
-            barcode_sets = BarcodeSet.objects.find(search_term, keywords)
-            barcode_set_entries = BarcodeSetEntry.objects.find(search_term, keywords)
+            barcode_sets = BarcodeSet.objects.find(search_term, keywords).filter(
+                project__in=projects
+            )
+            barcode_set_entries = BarcodeSetEntry.objects.find(search_term, keywords).filter(
+                barcode_set__project__in=projects
+            )
             items = list(barcode_sets) + list(barcode_set_entries)
             items.sort(key=lambda x: x.name.lower())
         elif search_type == "barcodeset":

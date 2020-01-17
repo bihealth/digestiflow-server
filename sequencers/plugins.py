@@ -1,3 +1,4 @@
+from projectroles.models import RoleAssignment, Project
 from projectroles.plugins import ProjectAppPluginPoint
 
 from digestiflow.utils import humanize_dict
@@ -51,12 +52,21 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
         """
         items = []
 
+        if not user.is_superuser:
+            projects = [a.project for a in RoleAssignment.objects.filter(user=user)]
+        else:
+            projects = Project.objects.all()
+
         if not search_type:
-            sequencers = SequencingMachine.objects.find(search_term, keywords)
+            sequencers = SequencingMachine.objects.find(search_term, keywords).filter(
+                project__in=projects
+            )
             items = list(sequencers)
             items.sort(key=lambda x: x.vendor_id.lower())
         elif search_type == "sequencer":
-            items = SequencingMachine.objects.find(search_term, keywords)
+            items = SequencingMachine.objects.find(search_term, keywords).filter(
+                project__in=projects
+            )
 
         return {
             "all": {

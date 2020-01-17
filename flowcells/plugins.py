@@ -1,3 +1,4 @@
+from projectroles.models import RoleAssignment, Project
 from projectroles.plugins import ProjectAppPluginPoint
 
 from digestiflow.utils import humanize_dict
@@ -51,10 +52,19 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
         """
         items = []
 
+        if not user.is_superuser:
+            projects = [a.project for a in RoleAssignment.objects.filter(user=user)]
+        else:
+            projects = Project.objects.all()
+
         if not search_type:
-            flow_cells = FlowCell.objects.find(search_term, keywords)
-            libraries = Library.objects.find(search_term, keywords)
-            messages = Message.objects.find(search_term, keywords).filter(state=MSG_STATE_SENT)
+            flow_cells = FlowCell.objects.find(search_term, keywords).filter(project__in=projects)
+            libraries = Library.objects.find(search_term, keywords).filter(
+                flow_cell__project__in=projects
+            )
+            messages = Message.objects.find(search_term, keywords).filter(
+                state=MSG_STATE_SENT, flow_cell__project__in=projects
+            )
             items = list(flow_cells) + list(libraries) + list(messages)
             items.sort(key=lambda x: x.name.lower())
         elif search_type == "flowcell":

@@ -16,6 +16,7 @@ HEAD (unreleased)
 - Fixing but preventing suppression of index errors.
 - Using commas in cycle specification in sample sheet (#48).
 - Serving attachments as download files (#49).
+- Using role assignment in search (#47).
 
 ------
 v0.1.1
