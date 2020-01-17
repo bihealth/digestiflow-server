@@ -54,7 +54,6 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "raven.contrib.django.raven_compat",
     "crispy_forms",  # Form layouts
     "rules.apps.AutodiscoverRulesConfig",  # Django rules engine
     "djangoplugins",  # Django plugins
