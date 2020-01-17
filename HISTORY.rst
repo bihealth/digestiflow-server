@@ -21,6 +21,7 @@ HEAD (unreleased)
 - Adding Sentry user feedback form.
 - Updating dependencies.
 - Making lane information required (#39).
+- Hovering BCL adapters highlights similar ones.
 
 ------
 v0.1.1

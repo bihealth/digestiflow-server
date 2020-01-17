@@ -10,8 +10,9 @@
       <i class="fa fa-info-circle"></i>
       The index histogram statistics are computed from the flow cell's raw base calls.
       They can be used for sanity-checking your sample sheets.
+      Moving your mouse over an adapter will highlight all adapters with at most one base difference.
     </em>
-</p>
+  </p>
 {% endif %}
 
 {% if object.index_histograms.all %}
@@ -71,6 +72,7 @@
               {% for seq, count in entry.histogram.items|dictsortreversed:1 %}
                 {% get_contamination contaminations seq as entry_contamination %}
                 {% get_index_errors object entry.lane entry.index_read_no seq as index_errors %}
+                {% get_adapter_siblings object seq as adapter_siblings %}
                 <span class="histogram-entry">
                   <small>
                     <div class="hist-bar" data-toggle="tooltip" title="{{ count|intcomma }}/{{ entry.sample_size|intcomma }}">
@@ -87,7 +89,7 @@
                     {% else %}
                       <span>
                     {% endif %}
-                      {{ seq }}
+                      <span class="adapter-seq-hover adapter-{{ seq }}" data-siblings="{{ adapter_siblings|join:" " }}">{{ seq }}</span>
                       ({{ count|divide:entry.sample_size|multiply:100|stringformat:".2f"|stringformat:"05s" }}%)
                     </span>
                   </small>
@@ -133,4 +135,27 @@
     height: 10px;
     background-color: #0c6604;
   }
+
+  .adapter-seq-hovered {
+    text-decoration: underline;
+    background-color: #ffe8a1;
+    color: black;
+  }
 </style>
+
+<script type="text/javascript">
+  $(function () {
+    $(".adapter-seq-hover").hover(
+            function () {
+              for (seq of $(this).data("siblings").split(" ")) {
+                $(".adapter-" + seq).addClass("adapter-seq-hovered");
+              }
+            },
+            function () {
+              for (seq of $(this).data("siblings").split(" ")) {
+                $(".adapter-" + seq).removeClass("adapter-seq-hovered");
+              }
+            }
+    )
+  })
+</script>

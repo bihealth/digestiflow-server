@@ -233,3 +233,14 @@ def format_basemask(x):
         return x
     safe = [(op if op.upper() in "BMTS" else "?", c) for op, c in bases_mask.split_bases_mask(x)]
     return mark_safe(",".join("%d%s" % (c, op) for op, c in safe))
+
+
+@register.simple_tag
+def get_adapter_siblings(flowcell, seq):
+    max_dist = 1
+    seqs = flowcell.get_cached_adapter_seqs()
+    result = []
+    for s in seqs:
+        if len([x for x, y in zip(seq, s) if x != y]) <= max_dist:
+            result.append(s)
+    return result

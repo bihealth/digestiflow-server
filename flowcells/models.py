@@ -385,6 +385,14 @@ class FlowCell(models.Model):
     #: Search-enabled manager.
     objects = FlowCellManager()
 
+    def get_cached_adapter_seqs(self, clear=False):
+        if not hasattr(self, "_cached_adapter_seqs") or clear:
+            seqs = set()
+            for hist in self.index_histograms.all():
+                seqs |= hist.histogram.keys()
+            self._cached_adapter_seqs = tuple(sorted(seqs))
+        return self._cached_adapter_seqs
+
     @property
     def is_paired(self):
         """Return whether flow cell contains paired read data."""
