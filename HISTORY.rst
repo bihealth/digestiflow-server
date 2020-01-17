@@ -18,6 +18,7 @@ HEAD (unreleased)
 - Serving attachments as download files (#49).
 - Using role assignment in search (#47).
 - Updating sentry client library to ``sentry-sdk`` (#50).
+- Adding Sentry user feedback form.
 
 ------
 v0.1.1

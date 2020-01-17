@@ -399,7 +399,8 @@ if env.bool("ENABLE_SENTRY", False):
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
 
-    sentry_sdk.init("%s?verify_ssl=0" % env.str("SENTRY_DSN"), integrations=[DjangoIntegration()])
+    SENTRY_DSN = "%s?verify_ssl=0" % env.str("SENTRY_DSN")
+    sentry_sdk.init(SENTRY_DSN, integrations=[DjangoIntegration()])
 
 # General site settings
 # ------------------------------------------------------------------------------
