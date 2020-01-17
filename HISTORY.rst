@@ -15,6 +15,7 @@ HEAD (unreleased)
 - Fixing search for messages (#15).
 - Fixing but preventing suppression of index errors.
 - Using commas in cycle specification in sample sheet (#48).
+- Serving attachments as download files (#49).
 
 ------
 v0.1.1
