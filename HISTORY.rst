@@ -14,6 +14,7 @@ HEAD (unreleased)
 - Update cache when registering new histogram stats (#25).
 - Fixing search for messages (#15).
 - Fixing but preventing suppression of index errors.
+- Using commas in cycle specification in sample sheet (#48).
 
 ------
 v0.1.1

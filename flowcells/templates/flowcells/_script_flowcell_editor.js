@@ -12,7 +12,7 @@ function demuxValidator (query, report) {
   if (!query) {
     report(true)
   } else {
-    report(query.match(/^(\d+[BMTSbmts])*$/) !== null)
+    report(query.match(/^(\d+[BMTSbmts],?)*$/) !== null)
   }
 }
 

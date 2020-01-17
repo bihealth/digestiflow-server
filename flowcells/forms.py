@@ -101,6 +101,12 @@ class FlowCellForm(forms.ModelForm):
             }
             for entry in self.instance.libraries.all()
         ]
+        for row in initial_value:  # display demux_reads colums with commas
+            try:
+                split_result = bases_mask.split_bases_mask(row["demux_reads"])
+                row["demux_reads"] = ",".join(["%d%s" % (c, op) for op, c in split_result])
+            except bases_mask.BaseMaskConfigException:
+                pass  # swallow, keep unchanged
         self.fields["libraries_json"] = forms.CharField(
             widget=forms.HiddenInput(), initial=json.dumps(initial_value)
         )
@@ -124,6 +130,13 @@ class FlowCellForm(forms.ModelForm):
         self.cleaned_data["slot"] = name_dict["slot"]
         self.cleaned_data["vendor_id"] = name_dict["vendor_id"]
         self.cleaned_data["label"] = name_dict["label"]
+
+        # Clean "demux_reads" fields from sample sheet, strip commas.
+        libraries_json = json.loads(self.cleaned_data["libraries_json"])
+        for row in libraries_json:
+            if "demux_reads" in row:
+                row["demux_reads"] = str(row["demux_reads"]).replace(",", "")
+        self.cleaned_data["libraries_json"] = json.dumps(libraries_json)
 
         # Check compatibility between demux reads (if given) and plannned reads.
         if self.cleaned_data["demux_reads"]:

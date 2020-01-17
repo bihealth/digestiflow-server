@@ -169,7 +169,7 @@
     {% if reverse_errors.library_cycles %}
       <span class="text-danger" data-toggle="tooltip" title="{{ reverse_errors.library_cycles|join:", " }}">
     {% endif %}
-        {{ item.demux_reads|default:"-" }}
+        {{ item.demux_reads|format_basemask|default:"-" }}
     {% if reverse_errors.library_cycles %}
         <i class="fa fa-exclamation-triangle pl-1"></i>
       </span>
