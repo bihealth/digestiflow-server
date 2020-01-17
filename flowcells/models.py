@@ -741,14 +741,16 @@ class FlowCell(models.Model):
                 sorted(no for no in library.lane_numbers if no < 1 or no > self.num_lanes)
             )
             if bad_lanes:
-                result.setdefault(library.sodar_uuid_str, {}).setdefault(
-                    "lane",
-                    [
-                        "Flow cell does not have lane{} #{}".format(
-                            "s" if len(bad_lanes) > 1 else "", pretty_range(bad_lanes)
-                        )
-                    ],
+                result.setdefault(library.sodar_uuid_str, {}).setdefault("lane", [])
+                result[library.sodar_uuid_str]["lane"].append(
+                    "Flow cell does not have lane{} #{}".format(
+                        "s" if len(bad_lanes) > 1 else "", pretty_range(bad_lanes)
+                    )
                 )
+            # Check for missing lanes.
+            if not library.lane_numbers:
+                result.setdefault(library.sodar_uuid_str, {}).setdefault("lane", [])
+                result[library.sodar_uuid_str]["lane"].append("No lane given for flow cell!")
             # Store per-lane information for ambiguity evaluation
             for lane in library.lane_numbers:
                 by_name.setdefault((lane, library.name), []).append(library)

@@ -20,6 +20,7 @@ HEAD (unreleased)
 - Updating sentry client library to ``sentry-sdk`` (#50).
 - Adding Sentry user feedback form.
 - Updating dependencies.
+- Making lane information required (#39).
 
 ------
 v0.1.1
