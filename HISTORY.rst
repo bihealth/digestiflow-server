@@ -19,6 +19,7 @@ HEAD (unreleased)
 - Using role assignment in search (#47).
 - Updating sentry client library to ``sentry-sdk`` (#50).
 - Adding Sentry user feedback form.
+- Updating dependencies.
 
 ------
 v0.1.1
