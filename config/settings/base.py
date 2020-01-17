@@ -396,17 +396,10 @@ LOGGING = set_logging(DEBUG)
 # ------------------------------------------------------------------------------
 
 if env.bool("ENABLE_SENTRY", False):
-    import os
-    import raven
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
 
-    RAVEN_CONFIG = {
-        "dsn": "%s?verify_ssl=0" % env.str("SENTRY_DSN"),
-        # If you are using git, you can also automatically configure the
-        # release based on the git info.
-        "release": raven.fetch_git_sha(
-            os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-        ),
-    }
+    sentry_sdk.init("%s?verify_ssl=0" % env.str("SENTRY_DSN"), integrations=[DjangoIntegration()])
 
 # General site settings
 # ------------------------------------------------------------------------------

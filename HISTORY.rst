@@ -17,6 +17,7 @@ HEAD (unreleased)
 - Using commas in cycle specification in sample sheet (#48).
 - Serving attachments as download files (#49).
 - Using role assignment in search (#47).
+- Updating sentry client library to ``sentry-sdk`` (#50).
 
 ------
 v0.1.1
