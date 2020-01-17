@@ -4,9 +4,9 @@
 History / Changelog
 ===================
 
------------------
-HEAD (unreleased)
------------------
+------
+v0.2.0
+------
 
 - Fixing rendering error with empty barcodes.
 - Fixing email sending (obtaining of address).
