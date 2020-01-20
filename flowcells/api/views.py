@@ -37,12 +37,33 @@ class FlowCellApiViewMixin(ProjectMixin):
         return result
 
     def get_queryset(self):
-        return FlowCell.objects.filter(project=self.get_project())
+        return FlowCell.objects.filter(project=self.get_project()).prefetch_related(
+            "index_histograms",
+            "messages",
+            "libraries",
+            "libraries__barcode",
+            "libraries__barcode__barcode_set",
+            "libraries__barcode2",
+            "libraries__barcode2__barcode_set",
+        )
 
 
 class FlowCellListCreateApiView(FlowCellApiViewMixin, ListCreateAPIView):
     permission_classes = (SodarObjectInProjectPermissions,)
     serializer_class = FlowCellSerializer
+
+    def get_queryset(self):
+        """Restrict flow cells to those with a sequencing, processing, or delivery state from query string.
+
+        For this, the query parameters "sequencing_status", "conversion_status", and "delivery_status" are interpreted.
+        """
+        queryset = super().get_queryset().all()
+        for token in ("sequencing", "conversion", "delivery"):
+            key = "status_%s" % token
+            status = self.request.query_params.get(key, None)
+            if status:
+                queryset = queryset.filter(**{key: status})
+        return queryset
 
     def perform_create(self, serializer):
         super().perform_create(serializer)

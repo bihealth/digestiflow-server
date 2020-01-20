@@ -4,6 +4,12 @@
 History / Changelog
 ===================
 
+-----------------
+HEAD (unreleased)
+-----------------
+
+- Allowing to filter flow cells by status (#51).
+
 ------
 v0.2.0
 ------

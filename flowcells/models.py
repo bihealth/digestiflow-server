@@ -834,6 +834,11 @@ class FlowCell(models.Model):
     class Meta:
         unique_together = ("vendor_id", "run_number", "sequencing_machine")
         ordering = ("-run_date", "sequencing_machine", "run_number", "slot")
+        indexes = (
+            models.Index(fields=["project", "status_sequencing"]),
+            models.Index(fields=["project", "status_conversion"]),
+            models.Index(fields=["project", "status_delivery"]),
+        )
 
 
 #: Identifier for "watching" tag.
