@@ -11,6 +11,7 @@ HEAD (unreleased)
 - Allowing to filter flow cells by status (#51).
 - Fixing issue when only barcode sequence was entered.
 - Fixing JS issue with superuser support.
+- Fixing issue when parsing bases mask.
 
 ------
 v0.2.0

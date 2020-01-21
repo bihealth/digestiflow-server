@@ -4,7 +4,7 @@ from django import template
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 
-from .. import bases_mask
+from .. import bases_mask, BaseMaskConfigException
 from ..models import (
     FlowCell,
     REFERENCE_CHOICES,
@@ -20,9 +20,12 @@ register = template.Library()
 @register.simple_tag
 def count_barcode_reads(flow_cell):
     """Count number of barcode reads in the planned reads of ``flow_cell``."""
-    return len(
-        [op for op, count in bases_mask.split_bases_mask(flow_cell.planned_reads) if op == "B"]
-    )
+    try:
+        return len(
+            [op for op, count in bases_mask.split_bases_mask(flow_cell.planned_reads) if op == "B"]
+        )
+    except BaseMaskConfigException:
+        return None
 
 
 @register.simple_tag
@@ -231,7 +234,11 @@ def is_user_watching_flowcell(user, flowcell):
 def format_basemask(x):
     if not x:
         return x
-    safe = [(op if op.upper() in "BMTS" else "?", c) for op, c in bases_mask.split_bases_mask(x)]
+    try:
+        split_result = bases_mask.split_bases_mask(x)
+    except BaseMaskConfigException:
+        return x
+    safe = [(op if op.upper() in "BMTS" else "?", c) for op, c in split_result]
     return mark_safe(",".join("%d%s" % (c, op) for op, c in safe))
 
 
