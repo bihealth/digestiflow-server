@@ -12,6 +12,7 @@ HEAD (unreleased)
 - Fixing issue when only barcode sequence was entered.
 - Fixing JS issue with superuser support.
 - Fixing issue when parsing bases mask.
+- Warning if barcode to short for demux instructions.
 
 ------
 v0.2.0

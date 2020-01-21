@@ -147,7 +147,7 @@ RTA_VERSION_CHOICES = (
 
 
 #: Current version of error cache computation code.
-FLOWCELL_ERROR_CACHE_VERSION = 2
+FLOWCELL_ERROR_CACHE_VERSION = 3
 
 
 class FlowCellManager(models.Manager):
@@ -517,6 +517,7 @@ class FlowCell(models.Model):
         for library in self.libraries.prefetch_related("barcode", "barcode2"):
             for lane_number in library.lane_numbers:
                 libraries.setdefault(lane_number, []).append(library)
+        #
         # Build error messages
         result = {}
         for hist in self.index_histograms.all():
@@ -656,8 +657,31 @@ class FlowCell(models.Model):
                     pretty_range(error_lanes2),
                 )
             ]
-        # Build error message for per-library demux cycles if problematic.
         library_cycles = []
+        # Compare barcode lengths with demux reads.
+        demux_mask = bases_mask.split_bases_mask(
+            library.demux_reads or library.demux_reads or library.planned_reads
+        )
+        barcode_masks = [x for x in demux_mask if x[0] == "B"]
+        if len(barcode_masks) > 0 and barcode_masks[0][1] > len(library.get_barcode_seq() or ""):
+            library_cycles.append(
+                (
+                    "Too few bases in barcode (%d) when compared to demux cycles (%d). Either "
+                    "append more barcode bases or reduce the demux cycles per-library or per "
+                    "flow cell."
+                )
+                % (len(library.get_barcode_seq() or ""), barcode_masks[0][1])
+            )
+        if len(barcode_masks) > 1 and barcode_masks[1][1] > len(library.get_barcode_seq2() or ""):
+            library_cycles.append(
+                (
+                    "Too few bases in barcode (%d) when compared to demux cycles (%d). Either "
+                    "append more barcode bases or reduce the demux cycles per-library or per "
+                    "flow cell."
+                )
+                % (len(library.get_barcode_seq2() or ""), barcode_masks[1][1])
+            )
+        # Build error message for per-library demux cycles if problematic.
         if library.demux_reads:
             try:
                 len1 = bases_mask.bases_mask_length(self.planned_reads or "")
