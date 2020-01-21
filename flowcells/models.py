@@ -678,7 +678,7 @@ class FlowCell(models.Model):
                 count for op, count in bases_mask.split_bases_mask(demux_reads) if op == "B"
             ]
         except bases_mask.BaseMaskConfigException:
-            pass  # will have error above already
+            return  # will have error above already
         if len(barcodes) == 2:
             msg = "Demultiplexing instructions have two barcodes."
             if not library.get_barcode_seq():
