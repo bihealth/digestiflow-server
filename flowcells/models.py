@@ -660,7 +660,9 @@ class FlowCell(models.Model):
         library_cycles = []
         # Compare barcode lengths with demux reads.
         demux_mask = bases_mask.split_bases_mask(
-            library.demux_reads or library.demux_reads or library.planned_reads
+            library.flow_cell.demux_reads
+            or library.flow_cell.demux_reads
+            or library.flow_cell.planned_reads
         )
         barcode_masks = [x for x in demux_mask if x[0] == "B"]
         if len(barcode_masks) > 0 and barcode_masks[0][1] > len(library.get_barcode_seq() or ""):
