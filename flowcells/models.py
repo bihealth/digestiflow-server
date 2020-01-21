@@ -666,7 +666,7 @@ class FlowCell(models.Model):
         )
         barcode_masks = [x for x in demux_mask if x[0] == "B"]
         if len(barcode_masks) > 0 and barcode_masks[0][1] > len(library.get_barcode_seq() or ""):
-            library_cycles.append(
+            msgs.append(
                 (
                     "Too few bases in barcode (%d) when compared to demux cycles (%d). Either "
                     "append more barcode bases or reduce the demux cycles per-library or per "
@@ -675,7 +675,7 @@ class FlowCell(models.Model):
                 % (len(library.get_barcode_seq() or ""), barcode_masks[0][1])
             )
         if len(barcode_masks) > 1 and barcode_masks[1][1] > len(library.get_barcode_seq2() or ""):
-            library_cycles.append(
+            msgs2.append(
                 (
                     "Too few bases in barcode (%d) when compared to demux cycles (%d). Either "
                     "append more barcode bases or reduce the demux cycles per-library or per "
