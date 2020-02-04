@@ -134,7 +134,7 @@ class FlowCellForm(forms.ModelForm):
         # Clean "demux_reads" fields from sample sheet, strip commas.
         libraries_json = json.loads(self.cleaned_data["libraries_json"])
         for row in libraries_json:
-            if "demux_reads" in row:
+            if "demux_reads" in row and row["demux_reads"]:
                 row["demux_reads"] = str(row["demux_reads"]).replace(",", "")
         self.cleaned_data["libraries_json"] = json.dumps(libraries_json)
 

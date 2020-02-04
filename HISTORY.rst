@@ -14,6 +14,7 @@ HEAD (unreleased)
 - Fixing issue when parsing bases mask.
 - Warning if barcode to short for demux instructions.
 - Fixing i5 kit display (#57).
+- Fixing ``None`` barcode read (#56).
 
 ------
 v0.2.0
