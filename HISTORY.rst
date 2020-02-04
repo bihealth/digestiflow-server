@@ -13,6 +13,7 @@ HEAD (unreleased)
 - Fixing JS issue with superuser support.
 - Fixing issue when parsing bases mask.
 - Warning if barcode to short for demux instructions.
+- Fixing i5 kit display (#57).
 
 ------
 v0.2.0

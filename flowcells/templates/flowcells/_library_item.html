@@ -109,7 +109,7 @@
         -
       {% else %}
         <a href="{% url "barcodes:barcodeset-detail" project=project.sodar_uuid barcodeset=item.barcode2.barcode_set.sodar_uuid %}">
-          {{ item.barcode.barcode_set.name }}
+          {{ item.barcode2.barcode_set.name }}
         </a>
       {% endif %}
     </td>
