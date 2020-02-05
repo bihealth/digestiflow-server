@@ -27,7 +27,7 @@
   {% count_barcode_reads object as num_barcodes %}
   {% get_lanes_with_missing_sheets object as lanes_with_missing_sheets  %}
 
-  {% if object.get_sample_sheet_errors or object.get_reverse_index_errors or object.get_index_errors or lanes_with_missing_sheets or object.lanes_suppress_no_sample_found_for_observed_index_warning %}
+  {% if object.get_sample_sheet_errors or object.get_reverse_index_errors or object.get_index_errors or object.lanes_suppress_no_sample_found_for_observed_index_warning %}
     <div class="alert alert-warning">
       <i class="fa fa-info-circle"></i>
       Your flow cell and sample sheet have been saved.
