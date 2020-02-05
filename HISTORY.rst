@@ -16,6 +16,7 @@ HEAD (unreleased)
 - Fixing i5 kit display (#57).
 - Fixing ``None`` barcode read (#56).
 - Adding citation (#53).
+- Validator interprets library demux reads (#58).
 
 ------
 v0.2.0
