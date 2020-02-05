@@ -15,6 +15,7 @@ HEAD (unreleased)
 - Warning if barcode to short for demux instructions.
 - Fixing i5 kit display (#57).
 - Fixing ``None`` barcode read (#56).
+- Adding citation (#53).
 
 ------
 v0.2.0

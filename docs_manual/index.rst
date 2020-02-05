@@ -14,6 +14,17 @@ DigestiFlow is a suite of programs for managing Illumina flow cells, curating sa
     The Digestiflow Server documentation is currently under construction and in **beta** state.
     Don't hesitate to open issues in our `GitHub bug tracker <https://github.com/bihealth/digestiflow-server/issues/>`_ in case of any question or problem.
 
+------------------
+Citing DigestiFlow
+------------------
+
+Please cite DigestiFlow as:
+
+Holtgrewe, Manuel, Clemens Messerschmidt, Mikko Nieminen, and Dieter Beule.
+"DigestiFlow: From BCL to FASTQ with Ease."
+Bioinformatics, November 14, 2019, btz850.
+https://doi.org/10.1093/bioinformatics/btz850.
+
 .. toctree::
     :maxdepth: 1
     :caption: Installation & Getting Started
