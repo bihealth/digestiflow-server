@@ -31,7 +31,7 @@
     <div class="alert alert-warning">
       <i class="fa fa-info-circle"></i>
       Your flow cell and sample sheet have been saved.
-      However, there are some issues that you <strong>must</strong> fix before demultiplexing it.
+      However, there are some issues that you <strong>should</strong> fix before demultiplexing it.
       See below for more information.
     </div>
   {% elif object.lanes_suppress_no_sample_found_for_observed_index_warning %}
@@ -43,6 +43,12 @@
     <div class="alert alert-info">
       <i class="fa fa-info-circle"></i>
       No libraries have been registered for this flow cell yet!
+    </div>
+  {% else %}
+    <div class="alert alert-success">
+      <i class="fa fa-check-circle"></i>
+      Your flow cell information looks correct.
+      Excellent!
     </div>
   {% endif %}
 
