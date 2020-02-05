@@ -548,7 +548,7 @@ class FlowCell(models.Model):
                 errors = []
                 if not seq or seq in self.get_known_contaminations():
                     continue  # contamination are not errors, will be displayed in template
-                if not prefix_match(seq, expected_seqs):
+                if not prefix_match(seq, expected_seqs) and "N" not in seq:
                     if (
                         hist.lane
                         not in self.lanes_suppress_no_sample_found_for_observed_index_warning

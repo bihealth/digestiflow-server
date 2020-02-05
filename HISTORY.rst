@@ -17,6 +17,7 @@ HEAD (unreleased)
 - Fixing ``None`` barcode read (#56).
 - Adding citation (#53).
 - Validator interprets library demux reads (#58).
+- Do not look for adapters that have an "N".
 
 ------
 v0.2.0
