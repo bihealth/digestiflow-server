@@ -27,12 +27,17 @@
   {% count_barcode_reads object as num_barcodes %}
   {% get_lanes_with_missing_sheets object as lanes_with_missing_sheets  %}
 
-  {% if object.get_sample_sheet_errors or object.get_reverse_index_errors or object.get_index_errors or object.lanes_suppress_no_sample_found_for_observed_index_warning %}
+  {% if object.get_sample_sheet_errors or object.get_reverse_index_errors or object.get_index_errors %}
     <div class="alert alert-warning">
       <i class="fa fa-info-circle"></i>
       Your flow cell and sample sheet have been saved.
       However, there are some issues that you <strong>must</strong> fix before demultiplexing it.
       See below for more information.
+    </div>
+  {% elif object.lanes_suppress_no_sample_found_for_observed_index_warning %}
+    <div class="alert alert-info">
+      <i class="fa fa-info-circle"></i>
+      Some warnings have been suppressed.
     </div>
   {% elif not flowcell_libraries %}
     <div class="alert alert-info">

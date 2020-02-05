@@ -19,6 +19,7 @@ HEAD (unreleased)
 - Validator interprets library demux reads (#58).
 - Do not look for adapters that have an "N".
 - Making save warning message not display on missing sheets.
+- Some display improvements.
 
 ------
 v0.2.0
