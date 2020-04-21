@@ -4,6 +4,12 @@
 History / Changelog
 ===================
 
+-----------------
+HEAD (unreleased)
+-----------------
+
+- Dependency bump, including upgrade to sodar-core v0.8.0.
+
 ------
 v0.3.0
 ------

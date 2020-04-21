@@ -1,14 +1,8 @@
-# Read .env files in Django.
-python-dotenv ==0.9.1
-
-# Wheel 0.25+ needed to install certain packages on CPython 3.5+
-# like Pillow and psycopg2
-# See http://bitly.com/wheel-building-fails-CPython-35
-# Verified bug on Python 3.5.1
-wheel==0.30.0
+# Wheel
+wheel==0.34.2
 
 # Conservative Django
-django==1.11.27
+django==1.11.29, <2.0
 
 # Configuration
 django-environ==0.4.5
@@ -17,44 +11,41 @@ django-environ==0.4.5
 django-crispy-forms==1.7.2
 
 # Models
-django-model-utils==3.1.2
+django-model-utils==3.2.0
 
 # Images
-Pillow==6.2.0
+Pillow==7.0.0
 
 # Password storage
-argon2-cffi==18.3.0
+argon2-cffi==19.2.0
 
 # Python-PostgreSQL Database Adapter
-psycopg2-binary==2.7.5
+psycopg2-binary==2.8.4
 
 # Unicode slugification
 awesome-slugify==1.6.5
 
 # Time zones support
-pytz==2018.5
-
-# Profiling
-django-cprofile-middleware==1.0
+pytz==2019.3
 
 # Versioning
 versioneer==0.18
 
 # Sentry client.
-sentry-sdk ==0.14.0
+sentry-sdk ==0.14.3
 
 # Online documentation via django-docs.
-Sphinx==1.7.9
-django-docs==0.3.0
-sphinx-rtd-theme==0.4.1
+Sphinx==2.4.4
+django-docs==0.3.1
+sphinx-rtd-theme==0.4.3
 
 # Manipulation of integer rages
 pagerange ==0.4
 
 # Required also in production for collecting static
-django-debug-toolbar ==1.9.1
+django-debug-toolbar ==1.11
 # Required for collectstatic
-django-extensions ==2.1.4
+django-extensions ==2.2.9
 
 # Helpful for creating emails.
 django-mail-factory==0.21
@@ -64,28 +55,34 @@ django-mail-factory==0.21
 #####################
 
 # Rules for permissions
-rules==2.0
+rules==2.2
 
 # REST framework
-djangorestframework==3.9.1
+djangorestframework==3.11.0
+
+# Keyed list addon for DRF
+drf-keyed-list==0.0.2
 
 # Token authentication
-django-rest-knox==3.1.5
+django-rest-knox==4.1.0
 
 # Markdown field support
-markdown==2.6.11
-django-markupfield==1.5.0
+markdown==3.2.1
+django-markupfield==1.5.1
 django-pagedown==1.0.6
-mistune==0.8.3
+mistune==0.8.4
+
+# Django Autocomplete Light
+django-autocomplete-light==3.2.10  # Higher versions are not compatible with django 1.11
 
 # Django-plugins (with self-made Django 1.10 support)
 -e git+https://github.com/mikkonie/django-plugins.git@1bc07181e6ab68b0f9ed3a00382eb1f6519e1009#egg=django-plugins
 
 # SODAR Core
--e git+https://github.com/bihealth/sodar_core.git@v0.6.2#egg=django-sodar-core
+-e git+https://github.com/bihealth/sodar_core.git@v0.8.0#egg=django-sodar-core
 
 celery <4.2  # pyup: <4.2  # blocker: https://github.com/celery/celery/issues/4878
 redis>=3.2.0  # git+https://github.com/antirez/redis
 
-python-ldap==3.2.0
-django-auth-ldap==2.0.0
+django-auth-ldap==1.2.8
+pyldap==2.4.25.1
