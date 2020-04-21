@@ -1,0 +1,30 @@
+{% if up %}
+  <div class="row">
+    <div class="btn-group dropup ml-auto" id="sodar-ff-buttons-list-up">
+{% else %}
+  <div class="btn-group ml-auto" id="sodar-ff-buttons-list">
+{% endif %}
+  <button class="btn btn-primary dropdown-toggle"
+          type="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+    File Box Operations
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+    <a class="dropdown-item" href="{% url 'fileboxes:filebox-create' project=project.sodar_uuid %}">
+      <i class="fa fa-fw fa-plus"></i> Create New
+    </a>
+    <a class="dropdown-item" href="{% url 'fileboxes:filebox-update' project=project.sodar_uuid filebox=object.sodar_uuid %}">
+      <i class="fa fa-fw fa-pencil"></i> Update
+    </a>
+    <a class="dropdown-item" href="{% url 'fileboxes:filebox-delete' project=project.sodar_uuid filebox=object.sodar_uuid %}">
+      <i class="fa fa-fw fa-times"></i> Delete
+    </a>
+{#    <div class="dropdown-divider"></div>#}
+{#    <a class="dropdown-item" href="{% url 'api:fileboxes' project=project.sodar_uuid filebox=object.sodar_uuid %}?format=json">#}
+{#      <i class="fa fa-fw fa-cloud-download"></i> JSON Export#}
+{#    </a>#}
+  </div>
+</div>
+{% if up %}
+  </div>
+{% endif %}

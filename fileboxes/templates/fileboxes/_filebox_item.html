@@ -1,0 +1,18 @@
+{% load fileboxes %}
+{% load humanize %}
+
+<tr>
+  <td class="text-nowrap">
+    <span data-toggle="tooltip" title="{{ message.date_created }}">
+      {{ item.date_created|naturaltime }}
+    </span>
+  </td>
+  <td>
+    <a href="{% url "fileboxes:filebox-detail" project=project.sodar_uuid filebox=item.sodar_uuid %}">
+      {{ item.title }}
+    </a>
+  </td>
+  <td>
+    {{ item.grant_list|join:", "|default:"-" }}{% if item.grant_list %} ({{ item.grant_list | length }}){% endif %}
+  </td>
+</tr>

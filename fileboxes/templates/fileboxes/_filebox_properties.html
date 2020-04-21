@@ -1,0 +1,35 @@
+<dl class="row">
+  <dt class="col-12 col-md-3 col-xl-2">UUID</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.sodar_uuid }}</dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Project</dt>
+  <dd class="col-12 col-md-9 col-xl-10">
+    <a href="{% url "fileboxes:filebox-list" project=object.project.sodar_uuid %}">
+      {{ object.project.title }}
+    </a>
+  </dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Created</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.date_created }}</dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Last Modified</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.date_modified }}</dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Data Frozen</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.date_frozen }}</dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Data Deleted</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.date_expiry }}</dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Title</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.title }}</dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Description</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.description|default:"-" }}</dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Management Status</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.state_meta }}</dd>
+
+  <dt class="col-12 col-md-3 col-xl-2">Data Status</dt>
+  <dd class="col-12 col-md-9 col-xl-10">{{ object.state_data }}</dd>
+</dl>

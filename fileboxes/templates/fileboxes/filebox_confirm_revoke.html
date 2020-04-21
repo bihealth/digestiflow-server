@@ -1,0 +1,50 @@
+{% extends "projectroles/project_base.html" %}
+
+{% block navi_sub_project_extend %}
+  <li class="breadcrumb-item">
+    <a href="{% url 'fileboxes:filebox-list' project=project.sodar_uuid %}">File Boxes</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="{% url 'fileboxes:filebox-detail' project=project.sodar_uuid filebox=object.sodar_uuid %}">
+      {{ object.title }}
+    </a>
+  </li>
+  <li class="breadcrumb-item active">Revoke Access</li>
+{% endblock %}
+
+{% block title %}
+  Confirm Access Revokal for File Box {{ object.title }}
+{% endblock title %}
+
+{% block projectroles %}
+  <div class="row sodar-pr-content-title pb-2">
+    {# Project menu dropdown, only visible if browser width < X and sidebar is hidden #}
+    {% include 'projectroles/_project_menu_btn.html' %}
+
+    <h2 class="sodar-pr-content-title">
+      Really Revoke Access to File Box &quot;{{ object.title }}&quot;?
+    </h2>
+  </div>
+
+  <div class="container-fluid sodar-page-container">
+
+    <p>
+      The access for the account <span class="badge badge-warning">{{ grant.username }}</span> to file box {{ object.title }} will be marked for revokal.
+      Do you want to continue?
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="btn-group pull-right">
+        <a role="button" class="btn btn-secondary"
+            href="{{ request.session.real_referer }}">
+          <i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Cancel
+        </a>
+        <button type="submit" class="btn btn-danger">
+          <i class="fa fa-times" aria-hidden="true"></i> Revoke Access
+        </button>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

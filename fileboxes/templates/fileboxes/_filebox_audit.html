@@ -1,0 +1,40 @@
+{% load humanize %}
+
+<p>
+  <em>
+    <i class="fa fa-info-circle"></i>
+    Audit trail of this file box.
+  </em>
+</p>
+
+<table class="table table-striped table-hover table-sm popover-form-container">
+  <thead>
+    <tr>
+      <th style="width: 100px;" class="text-center">Date</th>
+      <th style="width: 100px;" class="text-center">Actor</th>
+      <th style="width: 100px;" class="text-center">Operation</th>
+      <th class="text-center">Message</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in object.fileboxauditentry_set.all %}
+      <tr>
+        <td class="text-nowrap">
+            <span data-toggle="tooltip" title="{{ message.date_created }}">
+            {{ entry.date_created|naturaltime }}
+          </span>
+        </td>
+        <td class="text-nowrap">
+          {{ entry.actor.username }}
+        </td>
+        <td class="text-nowrap">
+          {{ entry.action }}
+        </td>
+        <td class="text-nowrap">
+          {{ entry.message }}
+          {% if entry.raw_log %}<pre>{{ entry.raw_log }}</pre>{% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

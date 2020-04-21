@@ -1,0 +1,103 @@
+{% extends "projectroles/project_base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block navi_sub_project_extend %}
+  <li class="breadcrumb-item">
+    <a href="{% url 'fileboxes:filebox-list' project=project.sodar_uuid %}">File Boxes</a>
+  </li>
+  {% if object.pk %}
+    <li class="breadcrumb-item">
+      <a href="{% url 'fileboxes:filebox-detail' project=project.sodar_uuid filebox=object.sodar_uuid %}">
+        {{ object.vendor_id }} ({{ object.label }})
+      </a>
+    </li>
+    <li class="breadcrumb-item active">
+      Update
+    </li>
+  {% else %}
+    <li class="breadcrumb-item active">
+      Create
+    </li>
+  {% endif %}
+{% endblock %}
+
+{% block title %}
+  {% if object.pk %}
+    Updating {{ object.vendor_id }} ({{ vendor.label }})
+  {% else %}
+    Create new File Box in {{ project.title }}
+  {% endif %}
+{% endblock title %}
+
+{% block projectroles %}
+  <div class="row sodar-pr-content-title pb-2">
+    {# Project menu dropdown, only visible if browser width < X and sidebar is hidden #}
+    {% include 'projectroles/_project_menu_btn.html'  %}
+
+    <h2 class="sodar-pr-content-title">
+      {% if object.pk %}
+        Update
+      {% else %}
+        Create
+      {% endif %}
+      File Box
+    </h2>
+  </div>
+
+  <div class="container-fluid sodar-page-container">
+    <form method="post">
+      {% if object.pk %}
+        <div class="form-group row">
+          <label class="form-control-label {{ form.helper.label_class }}">UUID</label>
+          <div class="{{ form.helper.field_class}}">
+            <input type="text" readonly class="form-control-plaintext" value="{{ object.sodar_uuid }}">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="form-control-label {{ form.helper.label_class }}">Project</label>
+          <div class="{{ form.helper.field_class}}">
+            <input type="text" readonly class="form-control-plaintext" value="{{ object.project.title }}">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="form-control-label {{ form.helper.label_class }}">Created</label>
+          <div class="{{ form.helper.field_class}}">
+            <input type="text" readonly class="form-control-plaintext" value="{{ object.date_created }}">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="form-control-label {{ form.helper.label_class }}">Last Update</label>
+          <div class="{{ form.helper.field_class}}">
+            <input type="text" readonly class="form-control-plaintext" value="{{ object.date_modified }}">
+          </div>
+        </div>
+      {% endif %}
+
+      {% crispy form form.helper %}
+
+      <div class="text-right mb-3">
+        <div class="btn-group" role="group">
+          <a role="button" class="btn btn-secondary"
+            {% if object.pk %}
+              href="{% url 'fileboxes:filebox-detail' project=project.sodar_uuid filebox=object.sodar_uuid %}">
+            {% else %}
+              href="{% url 'fileboxes:filebox-list' project=project.sodar_uuid %}">
+            {% endif %}
+            <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+            Cancel
+          </a>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa fa-check" aria-hidden="true"></i>
+            {% if object.pk %}
+              Update
+            {% else %}
+              Create
+            {% endif %}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

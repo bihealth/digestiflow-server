@@ -1,6 +1,9 @@
 # Wheel
 wheel==0.34.2
 
+# Reading .env files
+python-dotenv ==0.13.0
+
 # Conservative Django
 django==1.11.29, <2.0
 

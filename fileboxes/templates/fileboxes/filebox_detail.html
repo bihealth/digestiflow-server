@@ -1,0 +1,64 @@
+{% extends "projectroles/project_base.html" %}
+
+{% load fileboxes %}
+
+{% block navi_sub_project_extend %}
+  <li class="breadcrumb-item">
+    <a href="{% url 'fileboxes:filebox-list' project=project.sodar_uuid %}">File Boxes</a>
+  </li>
+  <li class="breadcrumb-item active">
+      {{ object.title }}
+  </li>
+{% endblock %}
+
+{% block projectroles %}
+  <div id="ajax-form-errors"></div>
+
+  <div class="row sodar-pr-content-title pb-2">
+    {# Project menu dropdown, only visible if browser width < X and sidebar is hidden #}
+    {% include 'projectroles/_project_menu_btn.html' %}
+
+    <h2 class="sodar-pr-content-title">
+      File Box &quot;{{ object.title }}&quot;
+    </h2>
+    {% include "fileboxes/_filebox_detail_buttons.html" %}
+  </div>
+
+  <div class="container-fluid sodar-page-container">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" id="properties-tab" data-toggle="tab" href="#properties" aria-controls="properties" aria-selected="true">
+          Properties &amp; Access
+          <span class="badge badge-secondary ml-1">{{ object.fileboxaccountgrant_set.count }}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="audit-tab" data-toggle="tab" href="#audit" aria-controls="audit" aria-selected="true">
+          Audit Trail
+          <span class="badge badge-secondary ml-1">{{ object.fileboxauditentry_set.count }}</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="tab-content border-left border-right border-bottom" id="fileBoxTabContent">
+      <div class="tab-pane show active" id="properties" role="tabpanel" aria-labelledby="properties-tab">
+        <div class="row py-3">
+          <div class="col">
+            {% include "fileboxes/_filebox_properties.html" %}
+            <h4 class="mt-3">File Box Access</h4>
+            {% include "fileboxes/_filebox_access.html" %}
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane face" id="audit" role="tabpanel" aria-labelledby="audit-tab">
+        <div class="row py-3">
+          <div class="col">
+            {% include "fileboxes/_filebox_audit.html" %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

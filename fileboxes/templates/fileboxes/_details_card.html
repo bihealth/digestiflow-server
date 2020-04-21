@@ -1,0 +1,19 @@
+{% load fileboxes %}
+
+<table class="table table-striped sodar-card-table">
+  <thead>
+    {% include 'fileboxes/_filebox_table_header.html' %}
+  </thead>
+  <tbody>
+    {% get_details_fileboxes project as fileboxes %}
+    {% if fileboxes.count > 0 %}
+      {% for filebox in fileboxes %}
+        {% include 'fileboxes/_filebox_item.html' with item=filebox details_card_mode=True %}
+      {% endfor %}
+    {% else %}
+        <tr>
+          <td class="bg-faded font-italic text-center" colspan="3">No file boxes (yet)</td>
+        </tr>
+    {% endif %}
+  </tbody>
+</table>
