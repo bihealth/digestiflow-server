@@ -1,5 +1,6 @@
 """Included in ``config/urls.py`` under namespace "api"."""
 
+from django.conf import settings
 from django.conf.urls import url
 
 from sequencers.api import views as sequencer_views
@@ -124,3 +125,30 @@ urlpatterns = [
         name="attachments",
     ),
 ]
+
+if settings.FILEBOXES_ENABLED:
+    from fileboxes.api import views as filebox_views  # noqa
+
+    urlpatterns += [
+        #
+        # App "fileboxes"
+        #
+        # /fileboxes/:project/
+        url(
+            regex=r"^fileboxes/(?P<project>[0-9a-f-]+)/$",
+            view=filebox_views.FileBoxListCreateApiView.as_view(),
+            name="fileboxes",
+        ),
+        # /fileboxes/:project/:filebox/
+        url(
+            regex=r"^fileboxes/(?P<project>[0-9a-f-]+)/(?P<filebox>[^/]+)/$",
+            view=filebox_views.FileBoxRetrieveUpdateApiView.as_view(),
+            name="fileboxes",
+        ),
+        # /audit-entries/:project/:filebox/
+        url(
+            regex=r"^audit-entries/(?P<project>[0-9a-f-]+)/(?P<filebox>[^/]+)/$",
+            view=filebox_views.FileBoxAuditEntryListCreateApiView.as_view(),
+            name="audit-entries",
+        ),
+    ]

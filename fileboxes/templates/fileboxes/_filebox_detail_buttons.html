@@ -19,10 +19,10 @@
     <a class="dropdown-item" href="{% url 'fileboxes:filebox-delete' project=project.sodar_uuid filebox=object.sodar_uuid %}">
       <i class="fa fa-fw fa-times"></i> Delete
     </a>
-{#    <div class="dropdown-divider"></div>#}
-{#    <a class="dropdown-item" href="{% url 'api:fileboxes' project=project.sodar_uuid filebox=object.sodar_uuid %}?format=json">#}
-{#      <i class="fa fa-fw fa-cloud-download"></i> JSON Export#}
-{#    </a>#}
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="{% url 'api:fileboxes' project=project.sodar_uuid filebox=object.sodar_uuid %}?format=json">
+      <i class="fa fa-fw fa-cloud-download"></i> JSON Export
+    </a>
   </div>
 </div>
 {% if up %}

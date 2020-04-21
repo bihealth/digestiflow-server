@@ -89,7 +89,7 @@ class FileBoxCreateView(
         form.instance.project = self.get_project(self.request, self.kwargs)
         result = super().form_valid(form)
         # Add audit trail event.
-        form.instance.fileboxauditentry_set.create(
+        form.instance.audit_entries.create(
             actor=self.request.user,
             action="CREATE",
             message="created new file box '%s'" % form.instance.title,
@@ -154,7 +154,7 @@ class FileBoxUpdateView(
         changes_str = ", ".join(
             ["'%s': '%s' -> '%s'" % tuple(map(str, change)) for change in changes]
         )
-        self.object.fileboxauditentry_set.create(
+        self.object.audit_entries.create(
             actor=self.request.user,
             action="UPDATE_ATTRS",
             message="updated attributes of file box '%s': %s" % (self.object.title, changes_str),
@@ -207,7 +207,7 @@ class FileBoxDeleteView(
             self.object.state_meta = "DELETED"
             self.object.save()
         # Add audit trail event.
-        self.object.fileboxauditentry_set.create(
+        self.object.audit_entries.create(
             actor=self.request.user,
             action="UPDATE_STATE",
             message="deactivated file box '%s'" % self.object.title,
@@ -301,9 +301,7 @@ class FileBoxGrantView(
                         username = "%s@%s" % (record["sAMAccountName"][0].decode("utf-8"), domain)
                         full_name = record["displayName"][0].decode("utf-8")
                         email = record["mail"][0].decode("utf-8")
-                        if self.object.fileboxaccountgrant_set.filter(
-                            Q(username=username) | Q(email=email)
-                        ):
+                        if self.object.account_grants.filter(Q(username=username) | Q(email=email)):
                             preexisting_accounts.append(account)
                         else:
                             self._grant_user(
@@ -324,7 +322,7 @@ class FileBoxGrantView(
         preexisting_accounts = []
         with transaction.atomic():
             for account in good_accounts:
-                if self.object.fileboxaccountgrant_set.filter(username=account):
+                if self.object.account_grants.filter(username=account):
                     preexisting_accounts.append(account)
                 else:
                     self._grant_user(username=account)
@@ -332,14 +330,12 @@ class FileBoxGrantView(
         return preexisting_accounts, created_accounts, bad_accounts
 
     def _grant_user(self, username, full_name=None, email=None):
-        self.object.fileboxauditentry_set.create(
+        self.object.audit_entries.create(
             actor=self.request.user,
             action="ADD_MEMBER",
             message="adding member '%s' to file box '%s'" % (username, self.object.title),
         )
-        self.object.fileboxaccountgrant_set.create(
-            username=username, full_name=full_name, email=email
-        )
+        self.object.account_grants.create(username=username, full_name=full_name, email=email)
         # Register event with timeline.
         timeline = get_backend_api("timeline_backend")
         if timeline:
@@ -407,9 +403,7 @@ class FileBoxRevokeView(
     slug_field = "sodar_uuid"
 
     def _get_grant(self):
-        return self.object.fileboxaccountgrant_set.filter(
-            sodar_uuid=self.request.GET.get("grant")
-        ).first()
+        return self.object.account_grants.filter(sodar_uuid=self.request.GET.get("grant")).first()
 
     def get_context_data(self, *args, **kwargs):
         result = super().get_context_data(*args, **kwargs)
@@ -419,7 +413,7 @@ class FileBoxRevokeView(
     def form_valid(self, form):
         with transaction.atomic():
             grant = self._get_grant()
-            self.object.fileboxauditentry_set.create(
+            self.object.audit_entries.create(
                 actor=self.request.user,
                 action="REMOVE_MEMBER",
                 message="removing member '%s' from file box '%s'"

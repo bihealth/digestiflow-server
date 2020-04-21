@@ -29,13 +29,13 @@
       <li class="nav-item">
         <a class="nav-link active" id="properties-tab" data-toggle="tab" href="#properties" aria-controls="properties" aria-selected="true">
           Properties &amp; Access
-          <span class="badge badge-secondary ml-1">{{ object.fileboxaccountgrant_set.count }}</span>
+          <span class="badge badge-secondary ml-1">{{ object.account_grants.count }}</span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" id="audit-tab" data-toggle="tab" href="#audit" aria-controls="audit" aria-selected="true">
           Audit Trail
-          <span class="badge badge-secondary ml-1">{{ object.fileboxauditentry_set.count }}</span>
+          <span class="badge badge-secondary ml-1">{{ object.audit_entries.count }}</span>
         </a>
       </li>
     </ul>

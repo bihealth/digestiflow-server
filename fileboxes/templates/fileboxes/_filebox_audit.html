@@ -17,7 +17,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for entry in object.fileboxauditentry_set.all %}
+    {% for entry in object.audit_entries.all %}
       <tr>
         <td class="text-nowrap">
             <span data-toggle="tooltip" title="{{ message.date_created }}">
@@ -32,7 +32,12 @@
         </td>
         <td class="text-nowrap">
           {{ entry.message }}
-          {% if entry.raw_log %}<pre>{{ entry.raw_log }}</pre>{% endif %}
+          {% if entry.raw_log %}
+            <a onclick="javascript:$('#raw-log-{{ entry.sodar_uuid }}').toggle()"
+              class="badge badge-light">
+              <i class="fa fa-file-text-o"></i> toggle log</a>
+              <pre style="display: none;" id="raw-log-{{ entry.sodar_uuid }}">{{ entry.raw_log }}</pre>
+          {% endif %}
         </td>
       </tr>
     {% endfor %}

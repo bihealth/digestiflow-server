@@ -100,11 +100,11 @@ class FileBox(models.Model):
 
     def update_state_meta(self, user, field, new_state):
         # Add audit trail event.
-        self.fileboxauditentry_set.create(
+        self.audit_entries.create(
             actor=user,
             action="UPDATE_STATE",
-            message="updated state of file box '%s' from '%s' to '%s'"
-            % (self.title, getattr(self, field), new_state),
+            message="updated %s of file box '%s' from '%s' to '%s'"
+            % (field, self.title, getattr(self, field), new_state),
         )
         # Register event with timeline.
         timeline = get_backend_api("timeline_backend")
@@ -120,7 +120,7 @@ class FileBox(models.Model):
             tl_event.add_object(obj=self, label="filebox", name=self.title)
 
     def grant_list(self):
-        return [grant.username for grant in self.fileboxaccountgrant_set.all()]
+        return [grant.username for grant in self.account_grants.all()]
 
     def get_absolute_url(self):
         return reverse(
@@ -153,6 +153,7 @@ class FileBoxAuditEntry(models.Model):
 
     file_box = models.ForeignKey(
         FileBox,
+        related_name="audit_entries",
         null=False,
         blank=False,
         on_delete=models.PROTECT,
@@ -192,6 +193,7 @@ class FileBoxAccountGrant(models.Model):
 
     file_box = models.ForeignKey(
         FileBox,
+        related_name="account_grants",
         null=False,
         blank=False,
         on_delete=models.PROTECT,

@@ -54,7 +54,7 @@ urlpatterns = [
 
 if settings.FILEBOXES_ENABLED:
     urlpatterns += [
-        url(r"fileboxes", include("fileboxes.urls")),
+        url(r"fileboxes/", include("fileboxes.urls")),
     ]
 
 if settings.DEBUG:
