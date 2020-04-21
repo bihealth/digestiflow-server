@@ -4,9 +4,9 @@
 History / Changelog
 ===================
 
------------------
-HEAD (unreleased)
------------------
+------
+v0.3.0
+------
 
 - Allowing to filter flow cells by status (#51).
 - Fixing issue when only barcode sequence was entered.
