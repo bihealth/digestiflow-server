@@ -111,7 +111,7 @@ def sync_grants(config: Config, project_uuid: str, file_box: FileBox, log_lines=
     new_htaccess_path = ".htaccess"
     htaccess_tpl = textwrap.dedent(TPL_HTACCESS).strip()
     users = [g.username for g in file_box.account_grants]
-    htaccess_txt = htaccess_tpl.format(users=", ".join(users))
+    htaccess_txt = htaccess_tpl.format(users=" ".join(users))
 
     diff_lines = list(
         difflib.unified_diff(
