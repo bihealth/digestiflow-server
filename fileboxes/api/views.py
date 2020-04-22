@@ -1,25 +1,22 @@
 """API Views for the flowcells app."""
 
-from digestiflow.utils import SodarObjectInProjectPermissions, ProjectMixin
+from projectroles.views_api import SODARAPIBaseProjectMixin
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
 from .serializers import FileBoxSerializer, FileBoxAuditEntrySerializer
 from ..models import FileBox, FileBoxAuditEntry
 
 
-# TODO: authorization still missing, need mixin for this!
-
-
-class FileBoxListCreateApiView(ListCreateAPIView, ProjectMixin):
-    permission_classes = (SodarObjectInProjectPermissions,)
+class FileBoxListCreateApiView(SODARAPIBaseProjectMixin, ListCreateAPIView):
+    permission_required = "fileboxes.view_data"
     serializer_class = FileBoxSerializer
 
     def get_queryset(self):
         return FileBox.objects.filter(project=self.get_project()).prefetch_related("account_grants")
 
 
-class FileBoxRetrieveUpdateApiView(RetrieveUpdateAPIView, ProjectMixin):
-    permission_classes = (SodarObjectInProjectPermissions,)
+class FileBoxRetrieveUpdateApiView(SODARAPIBaseProjectMixin, RetrieveUpdateAPIView):
+    permission_required = "fileboxes.view_data"
     serializer_class = FileBoxSerializer
 
     lookup_url_kwarg = "filebox"
@@ -29,8 +26,8 @@ class FileBoxRetrieveUpdateApiView(RetrieveUpdateAPIView, ProjectMixin):
         return FileBox.objects.filter(project=self.get_project()).prefetch_related("account_grants")
 
 
-class FileBoxAuditEntryListCreateApiView(ListCreateAPIView, ProjectMixin):
-    permission_classes = (SodarObjectInProjectPermissions,)
+class FileBoxAuditEntryListCreateApiView(SODARAPIBaseProjectMixin, ListCreateAPIView):
+    permission_required = "fileboxes.view_data"
     serializer_class = FileBoxAuditEntrySerializer
 
     def get_serializer_context(self):
