@@ -132,7 +132,6 @@ class FileBoxUpdateView(
     def form_valid(self, form):
         with transaction.atomic():
             old_object = FileBox.objects.get(id=self.object.id)
-            print("FORM VALID")
             if getattr(old_object, "state_meta") != form.cleaned_data["state_meta"]:
                 self._register_state_change(
                     "state_meta", getattr(old_object, "state_meta"), form.cleaned_data["state_meta"]
@@ -268,22 +267,30 @@ class FileBoxGrantView(
             import ldap  # noqa
 
             ldap_conn = ldap.initialize(settings.AUTH_LDAP_SERVER_URI)
-            ldap_conn.set_option(ldap.OPT_REFERRALS, 0)
+            ldap_conn.set_option(ldap.OPT_REFERRALS, ldap.OPT_OFF)
             ldap_conn.set_option(ldap.OPT_TIMEOUT, 5)
             ldap_conn.simple_bind_s(settings.AUTH_LDAP_BIND_DN, settings.AUTH_LDAP_BIND_PASSWORD)
-            ldap_conns.append((settings.AUTH_LDAP_USERNAME_DOMAIN, ldap_conn))
+            ldap_conns.append(
+                (settings.AUTH_LDAP_USERNAME_DOMAIN, settings.AUTH_LDAP_USER_SEARCH_BASE, ldap_conn)
+            )
         if settings.ENABLE_LDAP_SECONDARY:
             import ldap  # noqa
 
             ldap_conn = ldap.initialize(settings.AUTH_LDAP2_SERVER_URI)
-            ldap_conn.set_option(ldap.OPT_REFERRALS, 0)
+            ldap_conn.set_option(ldap.OPT_REFERRALS, ldap.OPT_OFF)
             ldap_conn.set_option(ldap.OPT_TIMEOUT, 5)
             ldap_conn.simple_bind_s(settings.AUTH_LDAP2_BIND_DN, settings.AUTH_LDAP2_BIND_PASSWORD)
-            ldap_conns.append((settings.AUTH_LDAP2_USERNAME_DOMAIN, ldap_conn))
+            ldap_conns.append(
+                (
+                    settings.AUTH_LDAP2_USERNAME_DOMAIN,
+                    settings.AUTH_LDAP2_USER_SEARCH_BASE,
+                    ldap_conn,
+                )
+            )
 
         with transaction.atomic():
             for account in accounts:
-                for domain, conn in ldap_conns:
+                for domain, search_base, conn in ldap_conns:
                     search_filter = "(|(mail=%s)(userPrincipalName=%s))" % (account, account)
                     if account.endswith("@%s" % domain):
                         search_filter = "(|%s(sAMAccountName=%s))" % (
@@ -291,7 +298,7 @@ class FileBoxGrantView(
                             account[: -len(domain) - 1],
                         )
                     results = conn.search_s(
-                        settings.AUTH_LDAP_USER_SEARCH_BASE,
+                        search_base,
                         ldap.SCOPE_SUBTREE,
                         search_filter,
                         ["sAMAccountName", "userPrincipalName", "displayName", "mail"],

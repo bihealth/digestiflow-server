@@ -39,7 +39,9 @@ class FileBoxAuditEntryListCreateApiView(ListCreateAPIView, ProjectMixin):
         return result
 
     def get_filebox(self):
-        return FileBox.objects.get(project=self.get_project(), sodar_uuid=self.kwargs.get("filebox"))
+        return FileBox.objects.get(
+            project=self.get_project(), sodar_uuid=self.kwargs.get("filebox")
+        )
 
     def get_queryset(self):
         return FileBoxAuditEntry.objects.filter(file_box=self.get_filebox())
