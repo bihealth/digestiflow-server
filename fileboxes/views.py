@@ -241,7 +241,7 @@ class FileBoxGrantView(
     UpdateView,
 ):
     template_name = "fileboxes/filebox_detail.html"
-    permission_required = "fileboxes.update_data"
+    permission_required = "fileboxes.change_data"
 
     model = FileBox
     form_class = FileBoxGrantForm
@@ -401,7 +401,7 @@ class FileBoxRevokeView(
     UpdateView,
 ):
     template_name = "fileboxes/filebox_confirm_revoke.html"
-    permission_required = "fileboxes.update_data"
+    permission_required = "fileboxes.change_data"
 
     model = FileBox
     form_class = FileBoxRevokeForm
