@@ -13,6 +13,7 @@ import datetime
 import difflib
 import logging
 import os
+import shutil
 import sys
 import textwrap
 import typing
@@ -27,6 +28,8 @@ import requests
 
 #: Template for constructing file box list URLs.
 URL_TPL_LIST = "%(base_url)s/api/fileboxes/%(project)s/"
+#: Template for fetch/upadate file box list URLs.
+URL_TPL_DETAIL = "%(base_url)s/api/fileboxes/%(project)s/%(filebox)s/"
 #: Template for constructing audit entries list URLs.
 URL_TPL_AUDIT = "%(base_url)s/api/audit-entries/%(project)s/%(filebox)s/"
 #: Template for .htaccess file.
@@ -91,6 +94,7 @@ def setup_dir(config: Config, project_uuid: str, file_box: FileBox, log_lines=No
 
     logger.info("Creating directory %s...", path)
     os.makedirs(path, exist_ok=True)
+    return "ACTIVE"
 
 
 def sync_grants(config: Config, project_uuid: str, file_box: FileBox, log_lines=None):
@@ -139,10 +143,13 @@ def delete_dir(config: Config, project_uuid: str, file_box: FileBox, log_lines=N
     logger.info("Deleting directory %s...", path)
     log_lines.append("Deleting directory %s" % path)
     try:
-        shutil.rmtree(path)
+        if os.path.exists(path):
+            shutil.rmtree(path)
     except OSError as e:
         log_lines.append("Problem with deletion of %s: %s" % (path, e))
         logger.warn("Problem with deletion of %s: %s", path, e)
+    else:
+        return "DELETED"
 
 
 def process_project(config: Config, project_uuid: str):
@@ -175,7 +182,7 @@ def process_project(config: Config, project_uuid: str):
         ("DELETING", "INACTIVE"): (),
         ("DELETED", "INACTIVE"): (),
         # deleted in metadata
-        ("INITIAL", "DELETED"): (),
+        ("INITIAL", "DELETED"): (delete_dir,),
         ("ACTIVE", "DELETED"): (delete_dir,),
         ("INACTIVE", "DELETED"): (delete_dir,),
         ("DELETING", "DELETED"): (),
@@ -184,9 +191,10 @@ def process_project(config: Config, project_uuid: str):
     for file_box in file_boxes:
         logger.info("Processing file box %s", file_box.sodar_uuid)
         logger.debug("state = (%s, %s)", file_box.state_data, file_box.state_meta)
+        new_state = None  # first function can return new state
         funcs = dispatch[(file_box.state_data, file_box.state_meta)]
         for func in funcs:
-            func(config, project_uuid, file_box, log_lines)
+            new_state = new_state or func(config, project_uuid, file_box, log_lines)
         if log_lines:
             if delete_dir in funcs:
                 data = {
@@ -213,6 +221,18 @@ def process_project(config: Config, project_uuid: str):
                 verify=config.cert_check,
             )
             res.raise_for_status()
+            url = URL_TPL_DETAIL % {
+                "base_url": config.digestiflow_url,
+                "project": project_uuid,
+                "filebox": file_box.sodar_uuid,
+            }
+            logger.debug("PATCH to %s", url)
+            res = requests.patch(
+                url,
+                data={"state_data": new_state},
+                headers={"Authorization": "Token %s" % config.auth_token},
+                verify=config.cert_check,
+            )
     if log_lines:
         print("LOGS\n%s" % "\n".join(log_lines))
     else:
