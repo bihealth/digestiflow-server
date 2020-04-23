@@ -477,6 +477,7 @@ ADMINALERTS_PAGINATION = 15
 
 # Enable "fileboxes" app by environment variable.
 FILEBOXES_ENABLED = env.bool("FILEBOXES_ENABLED", False)
+FILEBOXES_BASE_URL = env.str("FILEBOXES_BASE_URL", None)
 
 if FILEBOXES_ENABLED:
     INSTALLED_APPS += ["fileboxes"]

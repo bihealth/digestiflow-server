@@ -1,0 +1,26 @@
+{% load projectroles_common_tags %}
+
+{% get_django_setting 'FILEBOXES_BASE_URL' as filebox_base_url %}
+
+
+<div class="row">
+  <div class="col">
+    <textarea class="form-control" rows="10">Dear Recipient,
+
+I have created a shared folder on our file exchange server for us to exchange files. You can log in with your Charite (user@CHARITE) or MDC account (user@MDC-BERLIN) to access it.
+
+{% if filebox_base_url %}The full URL of the shared folder is:
+
+- {{  filebox_base_url }}/{{ object.sodar_uuid }}/
+{% else %}The ID of the shared folder is:
+
+- {{ object.sodar_uuid }}
+{% endif %}
+You can find out detailed instruction accessing the folder for different operating systems here:
+
+- https://bihealth.github.io/bih-cluster/how-to/service/file-exchange/
+
+Best wishes,
+</textarea>
+  </div>
+</div>

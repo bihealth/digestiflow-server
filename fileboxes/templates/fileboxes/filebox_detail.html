@@ -38,6 +38,11 @@
           <span class="badge badge-secondary ml-1">{{ object.audit_entries.count }}</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" id="audit-tab" data-toggle="tab" href="#copypasta" aria-controls="audit" aria-selected="true">
+          Email Copy &amp; Paste
+        </a>
+      </li>
     </ul>
 
     <div class="tab-content border-left border-right border-bottom" id="fileBoxTabContent">
@@ -55,6 +60,14 @@
         <div class="row py-3">
           <div class="col">
             {% include "fileboxes/_filebox_audit.html" %}
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane face" id="copypasta" role="tabpanel" aria-labelledby="audit-tab">
+        <div class="row py-3">
+          <div class="col">
+            {% include "fileboxes/_filebox_email.html" %}
           </div>
         </div>
       </div>
