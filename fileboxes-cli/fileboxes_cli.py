@@ -221,18 +221,19 @@ def process_project(config: Config, project_uuid: str):
                 verify=config.cert_check,
             )
             res.raise_for_status()
-            url = URL_TPL_DETAIL % {
-                "base_url": config.digestiflow_url,
-                "project": project_uuid,
-                "filebox": file_box.sodar_uuid,
-            }
-            logger.debug("PATCH to %s", url)
-            res = requests.patch(
-                url,
-                data={"state_data": new_state},
-                headers={"Authorization": "Token %s" % config.auth_token},
-                verify=config.cert_check,
-            )
+            if new_state:
+                url = URL_TPL_DETAIL % {
+                    "base_url": config.digestiflow_url,
+                    "project": project_uuid,
+                    "filebox": file_box.sodar_uuid,
+                }
+                logger.debug("PATCH to %s", url)
+                res = requests.patch(
+                    url,
+                    data={"state_data": new_state},
+                    headers={"Authorization": "Token %s" % config.auth_token},
+                    verify=config.cert_check,
+                )
     if log_lines:
         print("LOGS\n%s" % "\n".join(log_lines))
     else:
