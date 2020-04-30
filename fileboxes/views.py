@@ -316,8 +316,8 @@ class FileBoxGrantView(
                             )
                             created_accounts.append(account)
                         break
-                    else:
-                        bad_accounts.append(account)
+                else:
+                    bad_accounts.append(account)
 
         return preexisting_accounts, created_accounts, bad_accounts
 
