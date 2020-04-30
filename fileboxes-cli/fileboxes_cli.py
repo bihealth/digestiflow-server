@@ -160,7 +160,6 @@ def process_project(config: Config, project_uuid: str):
         verify=config.cert_check,
     )
     res.raise_for_status()
-    log_lines = []
     file_boxes = [converter.structure(box_data, FileBox) for box_data in res.json()]
     dispatch = {  # (state_data, state_meta)
         # initial in metadata == active
@@ -189,6 +188,7 @@ def process_project(config: Config, project_uuid: str):
         ("DELETED", "DELETED"): (),
     }
     for file_box in file_boxes:
+        log_lines = []
         logger.info("Processing file box %s", file_box.sodar_uuid)
         logger.debug("state = (%s, %s)", file_box.state_data, file_box.state_meta)
         new_state = None  # first function can return new state
