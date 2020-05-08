@@ -154,6 +154,7 @@ def delete_dir(config: Config, project_uuid: str, file_box: FileBox, log_lines=N
 
 def process_project(config: Config, project_uuid: str):
     """Process one project."""
+    log_lines = []
     res = requests.get(
         URL_TPL_LIST % {"base_url": config.digestiflow_url, "project": project_uuid},
         headers={"Authorization": "Token %s" % config.auth_token},
