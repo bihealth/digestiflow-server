@@ -60,6 +60,9 @@ def twenty_one_days_in_the_future():
 class FileBox(models.Model):
     """Information stored for each file exchange box."""
 
+    #: Search-enabled manager.
+    objects = FileBoxManager()
+
     #: DateTime of creation
     date_created = models.DateTimeField(auto_now_add=True, help_text="DateTime of creation")
     #: DateTime of last modification
