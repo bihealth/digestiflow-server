@@ -60,7 +60,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
         if not search_type:
             file_boxes = FileBox.objects.find(search_term, keywords).filter(project__in=projects)
             items = list(file_boxes)
-            items.sort(key=lambda x: x.name.lower())
+            items.sort(key=lambda x: x.title.lower())
         elif search_type == "filebox":
             items = FileBox.objects.find(search_term, keywords).filter(project__in=projects)
 
