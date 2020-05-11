@@ -307,7 +307,10 @@ class FileBoxGrantView(
                         record_dn, record = results[0]
                         username = "%s@%s" % (record["sAMAccountName"][0].decode("utf-8"), domain)
                         full_name = record["displayName"][0].decode("utf-8")
-                        email = record["mail"][0].decode("utf-8")
+                        try:
+                            email = record["mail"][0].decode("utf-8")
+                        except KeyError:
+                            email = None
                         if self.object.account_grants.filter(Q(username=username) | Q(email=email)):
                             preexisting_accounts.append(account)
                         else:
