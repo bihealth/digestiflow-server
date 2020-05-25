@@ -7,6 +7,11 @@
       {{ item.date_created|naturaltime }}
     </span>
   </td>
+  <td class="text-center">
+    <span class="badge badge-{{ item.state_meta|filebox_state_to_color }}">{{ item.state_meta|filebox_state_to_label }}</span>
+    /
+    <span class="badge badge-{{ item.state_meta|filebox_state_to_color }}">{{ item.state_meta|filebox_state_to_label }}</span>
+  </td>
   <td>
     <a href="{% url "fileboxes:filebox-detail" project=project.sodar_uuid filebox=item.sodar_uuid %}">
       {{ item.title }}

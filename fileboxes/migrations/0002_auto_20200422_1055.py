@@ -9,18 +9,28 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('fileboxes', '0001_initial'),
+        ("fileboxes", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='fileboxaccountgrant',
-            name='file_box',
-            field=models.ForeignKey(help_text='The file box that this audit entry belongs to', on_delete=django.db.models.deletion.PROTECT, related_name='account_grants', to='fileboxes.FileBox'),
+            model_name="fileboxaccountgrant",
+            name="file_box",
+            field=models.ForeignKey(
+                help_text="The file box that this audit entry belongs to",
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="account_grants",
+                to="fileboxes.FileBox",
+            ),
         ),
         migrations.AlterField(
-            model_name='fileboxauditentry',
-            name='file_box',
-            field=models.ForeignKey(help_text='The file box that this audit entry belongs to', on_delete=django.db.models.deletion.PROTECT, related_name='audit_entries', to='fileboxes.FileBox'),
+            model_name="fileboxauditentry",
+            name="file_box",
+            field=models.ForeignKey(
+                help_text="The file box that this audit entry belongs to",
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="audit_entries",
+                to="fileboxes.FileBox",
+            ),
         ),
     ]

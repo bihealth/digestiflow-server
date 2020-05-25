@@ -131,6 +131,9 @@ class FileBox(models.Model):
             kwargs={"project": self.project.sodar_uuid, "filebox": self.sodar_uuid},
         )
 
+    class Meta:
+        ordering = ("-date_created",)
+
 
 #: Choices for the FileBoxAuditEntry.action field.
 ACTION_CHOICES = (
