@@ -7,6 +7,11 @@
       {{ item.date_created|naturaltime }}
     </span>
   </td>
+  <td class="text-nowrap">
+    <span data-toggle="tooltip" title="{{ message.date_expiry }}">
+      {{ item.date_expiry|naturaltime }}
+    </span>
+  </td>
   <td class="text-center">
     <span class="badge badge-{{ item.state_meta|filebox_state_to_color }}">{{ item.state_meta|filebox_state_to_label }}</span>
     /
