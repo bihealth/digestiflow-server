@@ -114,7 +114,10 @@ def sync_grants(config: Config, project_uuid: str, file_box: FileBox, log_lines=
 
     new_htaccess_path = ".htaccess"
     htaccess_tpl = textwrap.dedent(TPL_HTACCESS).strip()
-    users = [g.username for g in file_box.account_grants]
+    if file_box.state_meta == "INACTIVE":
+        users = []
+    else:
+        users = [g.username for g in file_box.account_grants]
     htaccess_txt = htaccess_tpl.format(users=" ".join(users))
 
     diff_lines = list(
@@ -134,6 +137,7 @@ def sync_grants(config: Config, project_uuid: str, file_box: FileBox, log_lines=
     logging.debug("Writing to %s", htaccess_path)
     with open(htaccess_path, "wt") as outf:
         print(htaccess_txt, file=outf)
+    return file_box.state_meta
 
 
 def delete_dir(config: Config, project_uuid: str, file_box: FileBox, log_lines=None):
@@ -196,6 +200,9 @@ def process_project(config: Config, project_uuid: str):
         funcs = dispatch[(file_box.state_data, file_box.state_meta)]
         for func in funcs:
             new_state = new_state or func(config, project_uuid, file_box, log_lines)
+        if new_state and new_state != file_box.state_data:
+            log_lines.append("Updating state to %s" % new_state)
+            file_box = attr.evolve(file_box, state_data=new_state)
         if log_lines:
             if delete_dir in funcs:
                 data = {
@@ -236,9 +243,9 @@ def process_project(config: Config, project_uuid: str):
                     verify=config.cert_check,
                 )
     if log_lines:
-        print("LOGS\n%s" % "\n".join(log_lines))
+        logger.debug("LOGS\n%s" % "\n".join(log_lines))
     else:
-        print("NO LOGS")
+        logger.debug("NO LOGS")
 
 
 def run(config: Config):
