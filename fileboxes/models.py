@@ -121,6 +121,9 @@ class FileBox(models.Model):
                 status_type="OK",
             )
             tl_event.add_object(obj=self, label="filebox", name=self.title)
+        # Actually update field.
+        setattr(self, field, new_state)
+        self.save()
 
     def grant_list(self):
         return [grant.username for grant in self.account_grants.all()]

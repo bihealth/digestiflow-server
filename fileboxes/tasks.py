@@ -22,7 +22,7 @@ def fileboxes_update_states(_self):
         for object in models.FileBox.objects.filter(
             date_frozen__lt=timezone.now(), state_meta="ACTIVE"
         ):
-            object.update_state_meta(root, "state_meta", "FROZEN")
+            object.update_state_meta(root, "state_meta", "INACTIVE")
 
 
 @app.on_after_configure.connect
