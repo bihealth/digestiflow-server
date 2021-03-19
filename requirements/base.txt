@@ -61,7 +61,7 @@ django-mail-factory==0.21
 rules==2.2
 
 # REST framework
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 
 # Keyed list addon for DRF
 drf-keyed-list==0.0.2
