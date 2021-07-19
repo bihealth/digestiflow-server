@@ -1,82 +1,82 @@
 # Wheel
-wheel==0.34.2
+wheel>=0.34.2,<0.35
 
 # Reading .env files
-python-dotenv ==0.13.0
+python-dotenv >=0.13.0,<0.14
 
 # Conservative Django
 django==1.11.29, <2.0
 
 # Configuration
-django-environ==0.4.5
+django-environ>=0.4.5,<0.5
 
 # Forms
-django-crispy-forms==1.7.2
+django-crispy-forms>=1.7.2,<1.8
 
 # Models
-django-model-utils==3.2.0
+django-model-utils>=3.2.0,<3.3
 
 # Images
-Pillow==7.0.0
+Pillow>=7.0.0,<7.1
 
 # Password storage
-argon2-cffi==19.2.0
+argon2-cffi>=19.2.0,<19.1
 
 # Python-PostgreSQL Database Adapter
-psycopg2-binary==2.8.4
+psycopg2-binary>=2.8.4,<2.9
 
 # Unicode slugification
-awesome-slugify==1.6.5
+awesome-slugify>=1.6.5,<1.7
 
 # Time zones support
-pytz==2019.3
+pytz>=2019.3
 
 # Versioning
-versioneer==0.18
+versioneer>=0.18
 
 # Sentry client.
-sentry-sdk ==0.14.3
+sentry-sdk >=0.14.3,<0.15
 
 # Online documentation via django-docs.
-Sphinx==2.4.4
-django-docs==0.3.1
-sphinx-rtd-theme==0.4.3
+Sphinx>=2.4.4,<2.5
+django-docs>=0.3.1,<0.4
+sphinx-rtd-theme>=0.4.3,<0.5
 
 # Manipulation of integer rages
-pagerange ==0.4
+pagerange >=0.4,<0.5
 
 # Required also in production for collecting static
-django-debug-toolbar ==1.11
+django-debug-toolbar >=1.11,<1.12
 # Required for collectstatic
-django-extensions ==2.2.9
+django-extensions>=2.2.9,<2.3.0
 
 # Helpful for creating emails.
-django-mail-factory==0.21
+django-mail-factory >=0.21,<0.22
 
 #####################
 # SODAR Core imports
 #####################
 
 # Rules for permissions
-rules==2.2
+rules >=2.2,<2.3
 
 # REST framework
-djangorestframework==3.11.0
+djangorestframework >=3.11.0,<3.12
 
 # Keyed list addon for DRF
-drf-keyed-list==0.0.2
+drf-keyed-list >=0.0.2
 
 # Token authentication
-django-rest-knox==4.1.0
+django-rest-knox >=4.1.0,<4.2
 
 # Markdown field support
-markdown==3.2.1
-django-markupfield==1.5.1
-django-pagedown==1.0.6
-mistune==0.8.4
+markdown >=3.2.1,<3.3
+django-markupfield >=1.5.1,<1.6
+django-pagedown >=1.0.6,<1.1
+mistune >=0.8.4,<0.9
 
 # Django Autocomplete Light
-django-autocomplete-light==3.2.10  # Higher versions are not compatible with django 1.11
+django-autocomplete-light >=3.2.10,<3.3  # Higher versions are not compatible with django 1.11
 
 # Django-plugins (with self-made Django 1.10 support)
 -e git+https://github.com/mikkonie/django-plugins.git@1bc07181e6ab68b0f9ed3a00382eb1f6519e1009#egg=django-plugins
@@ -85,7 +85,7 @@ django-autocomplete-light==3.2.10  # Higher versions are not compatible with dja
 -e git+https://github.com/bihealth/sodar_core.git@v0.8.0#egg=django-sodar-core
 
 celery <4.2  # pyup: <4.2  # blocker: https://github.com/celery/celery/issues/4878
-redis>=3.2.0  # git+https://github.com/antirez/redis
+redis >=3.2.0  # git+https://github.com/antirez/redis
 
-django-auth-ldap==1.2.8
-pyldap==2.4.25.1
+django-auth-ldap >=1.2.8,<1.3
+pyldap >=2.4.25.1,<2.5
