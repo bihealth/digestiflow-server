@@ -10,9 +10,8 @@ As a server component, it is the most complex component of Digestiflow Suite to 
 You will be able to install the client components Digestiflow CLI and Digestiflow Demux as standalone (Bio-)conda packages which will be considerably easier.
 
 Overall, Digestiflow Server is a `Twelve-Factor App <https://12factor.net/>`_ which means that it is fairly easy to deploy (as modern web applications go) but you will have to fulfill a few prerequisites.
-Further, we will outline the specific installation and configuration steps below.
-In the Digestiflow Server repository, you will also find a directory ``ansible`` which contains some Ansible playbooks that you can base your own Ansible playbooks for the installation on.
-It should be easy convert this into your existing server management infrastructure (Ansible, Puppet, Salt, ...)
+We strongly recommend the setup using Docker Compose and the instructions below refer to this.
+You can also find a Quickstart tutorial in the `digestiflow-docker-compose <https://github.com/bihealth/digestiflow-docker-compose/>`_ Github repository.
 
 -------------
 Prerequisites
@@ -20,20 +19,9 @@ Prerequisites
 
 You will need to have the following prerequisites fulfilled.
 
-Linux/Unixoid Operating System
+Linux with Docker Compose
     The following instructions have been tested on Linux.
     Your mileage might vary for Mac or Windows Linux Subsystem etc.
-Linux/Unix Experience
-    Intermediate knowledge about managing a Linux/Unix system will be required.
-Python 3, >=3.5
-    Digestiflow Server is a Django-based web server and requires Python 3.
-Python Virtualenv
-    You should be able to run the ``virtualenv`` command.
-    Consult your operating system's or Python distribution's manual on how to do this.
-PostgreSQL, >=9.5
-    A modern PostgreSQL installation is required for storing the data.
-Redis
-    A key/value store required for caching and task queues.
 
 --------
 Overview
@@ -57,70 +45,56 @@ Afterwards, you should follow through the tutorial and then explore the rest of 
 Install with Docker Compose
 ---------------------------
 
-If you have not done so yet, follow the `Docker CE installation instructions <https://docs.docker.com/install/>_` for installing Docker itself.
+If you have not done so yet, follow the `Get Docker <https://docs.docker.com/install/>`_ for installing Docker Engine itself and `Install Docker Compose <https://docs.docker.com/compose/install/>`_
 
-Install Docker (Compose)
-========================
-
-E.g., on CentOS
+Next, you will use Docker Compose to startup a server.
+First, checkout the digestiflow-docker-compose repository.
 
 .. code-block:: shell
 
-    $ sudo yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
-    $ sudo yum install -y yum-utils device-mapper-persistent-data lvm2
-    $ sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-    $ sudo yum install docker-ce docker-ce-cli containerd.io
-    $ sudo systemctl enable docker
-    $ sudo systemctl start docker
-    $ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    $ sudo chmod +x /usr/local/bin/docker-compose
+    $ git clone https://github.com/bihealth/digestiflow-docker-compose.git
 
-or on Ubuntu:
+Next, initialize some directories, copy the example configuration file to ``.env`` and optionally adjust the settings.
 
 .. code-block:: shell
 
-    $ sudo apt-get remove docker docker-engine docker.io containerd runc
-    $ sudo apt-get update
-    $ sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-    $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    $ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-    $ sudo apt-get update
-    $ sudo apt-get install docker-ce docker-ce-cli containerd.io
-    $ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    $ sudo chmod +x /usr/local/bin/docker-compose
+    $ bash init.sh
+    $ cp env.example .env
+    $ $EDIT .env
 
-Digestiflow Server with Docker Compose
-======================================
-
-First, checkout the source code
-
-.. code-block:: shell
-
-    $ git clone https://github.com/bihealth/digestiflow-server.git
-
-Next, simply call `sudo docker-compose up` in the `docker` sub folder of your setup
+Finally, simply call `sudo docker-compose up` folder of your setup
 
 .. code-block:: shell
 
     $ cd digestiflow-server/docker
     $ sudo docker-compose up
-    Creating network "docker_db_network" with driver "bridge"
-    Creating network "docker_nginx_network" with driver "bridge"
-    Creating volume "docker_db_volume" with default driver
-    Pulling db (postgres:9.6)...
-    9.6: Pulling from library/postgres
-    27833a3ba0a5: Pull complete
-    [...]
-    web_1    | [2019-04-10 21:04:58 +0000] [1] [INFO] Starting gunicorn 19.9.0
-    web_1    | [2019-04-10 21:04:58 +0000] [1] [INFO] Listening at: http://0.0.0.0:8000 (1)
-    web_1    | [2019-04-10 21:04:58 +0000] [1] [INFO] Using worker: sync
-    web_1    | [2019-04-10 21:04:58 +0000] [79] [INFO] Booting worker with pid: 79
+    Creating digestiflow-docker-compose_redis_1    ... done
+    Creating digestiflow-docker-compose_traefik_1  ... done
+    Creating digestiflow-docker-compose_postgres_1 ... done
+    Creating digestiflow-docker-compose_digestiflow-web_1 ... done
+    Creating digestiflow-docker-compose_digestiflow-celeryd-default_1 ... done
+    Creating digestiflow-docker-compose_digestiflow-celerybeat_1      ... done
+    Attaching to digestiflow-docker-compose_redis_1, digestiflow-docker-compose_traefik_1, digestiflow-docker-compose_postgres_1, digestiflow-docker-compose_digestiflow-web_1, digestiflow-docker-compose_digestiflow-celeryd-default_1, digestiflow-docker-compose_digestiflow-celerybeat_1
+    digestiflow-web_1              | [2021-07-20 09:16:28 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+    digestiflow-web_1              | [2021-07-20 09:16:28 +0000] [1] [INFO] Using worker: sync
+    digestiflow-web_1              | [2021-07-20 09:16:28 +0000] [21] [INFO] Booting worker with pid: 21
+
+If everything went well, either start the server in the background (``docker-compose up -d``) or open a new terminal to create a ``root`` user:
+
+.. code-block:: shell
+
+    $ docker-compose exec digestiflow-web python /usr/src/app/manage.py createsuperuser \
+    --username root
+    Email address:
+    Password:
+    Password (again):
+    Superuser created successfully.
 
 You can now log into Digestiflow Server through the following URL (ignore the security warning for the self-signed SSL certificate):
 
-- https://localhost:8443/
+- https://<your-host-maybe-localhost>/
 
-You can login with user name `root` and password `root`.
+You can login with user name `root` and the password that you used above.
 
 -------------------
 Manual Installation
