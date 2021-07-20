@@ -14,11 +14,6 @@
 .. image:: https://api.codacy.com/project/badge/Coverage/7e9c21b3ba844a1588a7d7fa6e4f82d4
     :target: https://www.codacy.com/app/bihealth/digestiflow-server?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bihealth/digestiflow-server&amp;utm_campaign=Badge_Coverage
 
-.. image:: https://www.herokucdn.com/deploy/button.svg
-    :height: 20px
-    :alt: Deploy to Heroku
-    :target: https://heroku.com/deploy?template=https://github.com/bihealth/digestiflow-server/tree/master
-
 ===============
 Digestiflow Server
 ===============

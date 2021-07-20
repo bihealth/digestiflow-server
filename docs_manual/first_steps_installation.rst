@@ -261,24 +261,3 @@ Do this and log in as the super use you just created.
     # python manage.py collectstatic
     # python manage.py runserver
     [now direct your browser to the displayed URL and login]
-
-----------------
-Deploy to Heroku
-----------------
-
-The easiest way to try out Digestiflow Server is to click `Deploy to Heroku <https://heroku.com/deploy?template=https://github.com/bihealth/digestiflow-server/tree/master>`_ (or the button on the Github project README) and follow the step-by-step process.
-
-1. Create an account and sign in if necessary.
-2. Set the application name, e.g., to ``my-digestiflow-demo``.
-3. Click **Deploy app** and... wait a bit.
-    - It seems that, sadly, you will have to enter credit card for account verification.
-      Note that you can try out Digestiflow Server with free/hobby plan only.
-      Also, this is a bit unintuitive, deployment will fail.
-      You have to enter your credit card information and then continue...
-4. After deployment has succeeded, go to ``Manage App``, then ``Settings`` in the Heroku Dashboard.
-   There, click ``Reveal Config Vars`` and copy the value after ``DIGESTIFLOW_INITIAL_ROOT_PASSWORD`` into your clipboard.
-5. Go to https://my-digestiflow-demo.herokuapp.com/login/ and login as `root` with the root password copied above.
-6. Finally click the little user icon on the top left and then `Admin`.
-   Here you can change the root user's password, create new users etc.
-
-From here, you can read the built-in manual at https://my-digestiflow-demo.herokuapp.com/manual/ (or clicking "Manual" in the right of the top navigation bar).
