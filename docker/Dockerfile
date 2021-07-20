@@ -1,5 +1,8 @@
 FROM python:3.6-buster
 
+MAINTAINER Manuel Holtgrewe <manuel.holtgrewe@bih-charite.de>
+LABEL org.opencontainers.image.source https://github.com/bihealth/digestiflow-server
+
 ARG app_git_url=https://github.com/bihealth/digestiflow-server.git
 ARG app_git_tag
 ARG app_git_depth=1
