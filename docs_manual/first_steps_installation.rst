@@ -66,7 +66,7 @@ Finally, simply call `sudo docker-compose up` folder of your setup
 
 .. code-block:: shell
 
-    $ cd digestiflow-server/docker
+    $ cd digestiflow-docker-compose
     $ sudo docker-compose up
     Creating digestiflow-docker-compose_redis_1    ... done
     Creating digestiflow-docker-compose_traefik_1  ... done
