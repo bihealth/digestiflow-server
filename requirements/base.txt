@@ -46,7 +46,7 @@ sphinx-rtd-theme==0.4.3
 pagerange ==0.4
 
 # Required also in production for collecting static
-django-debug-toolbar ==1.11
+django-debug-toolbar ==1.11.1
 # Required for collectstatic
 django-extensions ==2.2.9
 
