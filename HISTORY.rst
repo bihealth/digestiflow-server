@@ -9,6 +9,7 @@ HEAD (unreleased)
 -----------------
 
 - Dependency bump, including upgrade to sodar-core v0.8.0.
+- Fixing celerybeat for fileboxes.
 
 ------
 v0.3.0
