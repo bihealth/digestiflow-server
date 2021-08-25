@@ -29,4 +29,4 @@ def fileboxes_update_states(_self):
 def setup_periodic_tasks(sender, **_kwargs):
     """Register periodic tasks"""
     # Update the error message caches hourly, if necessary.
-    sender.add_periodic_task(schedule=crontab(), signature=fileboxes_update_states.s())
+    sender.add_periodic_task(crontab(), fileboxes_update_states.s())

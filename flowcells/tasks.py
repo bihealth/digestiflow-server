@@ -33,6 +33,4 @@ def flowcell_update_outdated_error_caches(_self):
 def setup_periodic_tasks(sender, **_kwargs):
     """Register periodic tasks"""
     # Update the error message caches hourly, if necessary.
-    sender.add_periodic_task(
-        schedule=crontab(minute=11), signature=flowcell_update_outdated_error_caches.s()
-    )
+    sender.add_periodic_task(crontab(minute=11), flowcell_update_outdated_error_caches.s())
