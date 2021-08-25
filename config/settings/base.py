@@ -480,4 +480,4 @@ FILEBOXES_ENABLED = env.bool("FILEBOXES_ENABLED", False)
 FILEBOXES_BASE_URL = env.str("FILEBOXES_BASE_URL", None)
 
 if FILEBOXES_ENABLED:
-    INSTALLED_APPS += ["fileboxes"]
+    INSTALLED_APPS += ["fileboxes.apps.FileboxesConfig"]

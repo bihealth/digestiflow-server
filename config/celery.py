@@ -12,5 +12,13 @@ app = Celery("digestiflow")
 #   should have a `CELERY_` prefix.
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
+if "production" in os.environ.get("DJANGO_SETTINGS_MODULE"):
+    app.conf.task_routes = {
+        "*": {"queue": "default"},
+    }
+
+    # Explicitely set the name of the default queue to default (is celery).
+    app.conf.task_default_queue = "default"
+
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
