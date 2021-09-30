@@ -8,6 +8,11 @@ History / Changelog
 HEAD (unreleased)
 -----------------
 
+------
+v0.3.3
+------
+
+- Various fixes, related to Docker deployment.
 - Dependency bump, including upgrade to sodar-core v0.8.0.
 - Fixing celerybeat for fileboxes.
 
