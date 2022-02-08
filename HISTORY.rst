@@ -8,6 +8,8 @@ History / Changelog
 HEAD (unreleased)
 -----------------
 
+- Fixing scheduling of Celery tasks (#72)
+
 ------
 v0.3.3
 ------
