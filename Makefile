@@ -4,7 +4,7 @@ default:
 	@echo "USAGE: make migrate|shell|dbshell|black|test"
 
 celery:
-	celery worker -A config.celery_app -l info --concurrency=4 --beat
+	celery -A config.celery_app worker -l info --concurrency=4 --beat
 
 migrate:
 	python manage.py makemigrations

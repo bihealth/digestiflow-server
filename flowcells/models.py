@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Q
@@ -194,7 +194,9 @@ class FlowCell(models.Model):
     )
 
     #: The project containing this barcode set.
-    project = models.ForeignKey(Project, help_text="Project in which this flow cell belongs")
+    project = models.ForeignKey(
+        Project, help_text="Project in which this flow cell belongs", on_delete=models.CASCADE,
+    )
 
     #: Run date of the flow cell
     run_date = models.DateField()
@@ -877,7 +879,11 @@ class FlowCellTag(models.Model):
 
     #: FlowCell to which the tag is assigned
     flowcell = models.ForeignKey(
-        FlowCell, null=False, related_name="tags", help_text="FlowCell to which the tag is assigned"
+        FlowCell,
+        null=False,
+        related_name="tags",
+        help_text="FlowCell to which the tag is assigned",
+        on_delete=models.CASCADE,
     )
 
     #: User for whom the tag is assigned
@@ -886,6 +892,7 @@ class FlowCellTag(models.Model):
         null=False,
         related_name="flowcell_tags",
         help_text="User for whom the tag is assigned",
+        on_delete=models.CASCADE,
     )
 
     #: Name of tag to be assigned

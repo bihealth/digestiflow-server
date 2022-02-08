@@ -28,5 +28,8 @@ def fileboxes_update_states(_self):
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **_kwargs):
     """Register periodic tasks"""
+    import pdb
+
+    pdb.set_trace()
     # Update the error message caches hourly, if necessary.
     sender.add_periodic_task(schedule=crontab(), signature=fileboxes_update_states.s())

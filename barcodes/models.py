@@ -5,7 +5,7 @@ import uuid as uuid_object
 
 from django.apps import apps
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.db.models import Q
 from django.contrib.postgres.fields import ArrayField
@@ -65,7 +65,9 @@ class BarcodeSet(models.Model):
     )
 
     #: The project containing this barcode set.
-    project = models.ForeignKey(Project, help_text="Project in which this objects belongs")
+    project = models.ForeignKey(
+        Project, help_text="Project in which this objects belongs", on_delete=models.CASCADE,
+    )
 
     #: Full name of the index set
     name = models.CharField(max_length=100, help_text="Full name of the barcode adapter set")
