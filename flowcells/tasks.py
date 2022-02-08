@@ -29,7 +29,7 @@ def flowcell_update_outdated_error_caches(_self):
     return tuple(result)
 
 
-@app.on_after_configure.connect
+@app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **_kwargs):
     """Register periodic tasks"""
     # Update the error message caches hourly, if necessary.

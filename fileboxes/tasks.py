@@ -25,7 +25,7 @@ def fileboxes_update_states(_self):
             object.update_state_meta(root, "state_meta", "INACTIVE")
 
 
-@app.on_after_configure.connect
+@app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **_kwargs):
     """Register periodic tasks"""
     # Update the error message caches hourly, if necessary.
