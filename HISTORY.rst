@@ -4,9 +4,9 @@
 History / Changelog
 ===================
 
------------------
-HEAD (unreleased)
------------------
+------
+v0.3.4
+------
 
 - Fixing scheduling of Celery tasks (#72)
 
