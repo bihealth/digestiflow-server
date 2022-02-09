@@ -7,7 +7,7 @@
     <div class="sodar-overflow-container">
       <a href="{{ item.get_absolute_url }}">
         {% autoescape off %}
-          {% highlight_search_term item.title %}
+          {% highlight_search_term item.title search_term %}
         {% endautoescape %}
       </a>
     </div>
