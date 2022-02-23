@@ -5,6 +5,12 @@ History / Changelog
 ===================
 
 ------
+v0.3.5
+------
+
+- Fixing execution of Celery tasks (#72).
+
+------
 v0.3.4
 ------
 
