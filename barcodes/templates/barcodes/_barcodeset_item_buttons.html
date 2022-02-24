@@ -1,15 +1,15 @@
 <div class="btn-group sodar-list-btn-group pull-right">
   <button class="btn btn-secondary dropdown-toggle sodar-list-dropdown"
       type="button" data-toggle="dropdown" aria-expanded="false">
-    <i class="fa fa-cog"></i>
+    <i class="iconify" data-icon="mdi:cog"></i>
   </button>
   <div class="dropdown-menu dropdown-menu-right">
     <a class="dropdown-item" href="{% url 'barcodes:barcodeset-update' project=project.sodar_uuid barcodeset=item.sodar_uuid %}">
-      <i class="fa fa-fw fa-pencil"></i>
+      <i class="iconify" data-icon="mdi:lead-pencil"></i>
       Update
     </a>
     <a class="dropdown-item" href="{% url 'barcodes:barcodeset-delete' project=project.sodar_uuid barcodeset=item.sodar_uuid %}">
-      <i class="fa fa-fw fa-close"></i>
+      <i class="iconify" data-icon="mdi:close-thick"></i>
       Delete
     </a>
   </div>

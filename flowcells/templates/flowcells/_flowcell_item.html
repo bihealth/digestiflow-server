@@ -10,136 +10,139 @@
 
     {% if flowcell.get_sample_sheet_errors %}
       {# sample sheet errors (sample name and uniqueness); cannot be suppressed #}
-      <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
+      <i class="iconify fc-fw text-danger" data-icon="mdi:alert" aria-hidden="true"
          data-toggle="tooltip"
          title="There were errors with the sample sheet!"></i>
     {% elif flowcell.get_index_errors and flowcell_libraries %}
       {# index errors (BCL -> sheet) and sample sheet NOT empty, other case see below #}
-      <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
+      <i class="iconify fc-fw text-danger" data-icon="mdi:alert" aria-hidden="true"
          data-toggle="tooltip"
          title="There were errors with indexes!"></i>
     {% elif flowcell.get_index_errors and not flowcell_libraries %}
       {# index errors (BCL -> sheet) and sample sheet IS empty, other case see above #}
-      <i class="fa fc-fw fa-exclamation-circle text-warning" aria-hidden="true"
+      <i class="iconify fc-fw text-warning" data-icon="mdi:alert-circle" aria-hidden="true"
          data-toggle="tooltip"
          title="The sample sheet is empty!"></i>
     {% elif lanes_with_missing_sheets %}
       {# missing sample sheet for some lanes; can be suppressed, see below #}
-      <i class="fa fc-fw fa-exclamation-circle text-warning" title="Missing sample sheet"
+      <i class="iconify fc-fw text-warning" data-icon="mdi:alert-circle" title="Missing sample sheet"
          data-toggle="tooltip"
          data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=any_lanes_with_missing_sheets|join:"," %}?render=flowcell-line"></i>
     {% elif flowcell.get_reverse_index_errors %}
       {# reverse index errors (sheet -> BCL); suppressed case #}
-      <i class="fa fc-fw fa-exclamation-triangle text-danger" aria-hidden="true"
+      <i class="iconify fc-fw text-danger" data-icon="mdi:alert" aria-hidden="true"
          data-toggle="tooltip"
          title="Indexes from sample sheet cannot be found in BCLs!"></i>
     {% elif libraries_with_suppressed_reverse_index_errors %}
       {# reverse index errors (sheet -> BCL); can be suppressed, see below #}
-      <i class="fa fc-fw fa-exclamation-circle text-muted" aria-hidden="true"
+      <i class="iconify fc-fw text-muted" data-icon="mdi:alert-circle" aria-hidden="true"
          data-toggle="tooltip"
          title="Suppressed warnings about indices in sample sheet that cannot be found in BCLs."></i>
     {% elif any_lanes_with_missing_sheets %}
       {# missing sample sheet for some lanes; suppressed case #}
-       <i class="fa fc-fw fa-exclamation-circle text-muted" title="Suppressed warning about missing sample sheet"
+       <i class="iconify fc-fw text-muted" data-icon="mdi:alert-circle" title="Suppressed warning about missing sample sheet"
           data-toggle="tooltip"
           data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=any_lanes_with_missing_sheets|join:"," %}?render=flowcell-line"></i>
     {% else %}
-      <i class="fa fc-fw fa-check text-muted fc-super-muted" aria-hidden="true"></i>
+      <i class="iconify fc-fw text-muted fc-super-muted" data-icon="mdi:check-bold" aria-hidden="true"></i>
     {% endif %}
 
     {% if is_watching %}
-      <i class="fa fc-fw fa-eye text-muted" title="watching flow cell, click to toggle"
+      <i class="iconify fc-fw text-muted" data-icon="mdi:eye-outline" title="watching flow cell, click to toggle"
          data-toggle-url="{% url 'flowcells:flowcell-toggle-watching' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}?render=flowcell-line"></i>
     {% else %}
-      <i class="fa fc-fw fa-eye-slash fc-super-muted" title="not watching, click to toggle"
+      <i class="iconify fc-fw text-muted fc-super-muted" data-icon="mdi:eye-off-outline" title="not watching, click to toggle"
          data-toggle-url="{% url 'flowcells:flowcell-toggle-watching' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}?render=flowcell-line"></i>
     {% endif %}
 
-    <i class="ml-3 {{ flowcell.status_sequencing|status_to_icon }}"
+    <i class="iconify fc-fw ml-3 {% get_status_class flowcell.status_sequencing %}"
+       data-icon="{% get_status_icon flowcell.status_sequencing %}"
        title="Update sequencing status"
        data-popover-url="{% url 'flowcells:flowcell-update-status' project=project.sodar_uuid flowcell=flowcell.sodar_uuid attribute="status_sequencing" %}"
     ></i>
-    <i class="{{ flowcell.status_conversion|status_to_icon }}"
+    <i class="iconify fc-fw {% get_status_class flowcell.status_conversion %}"
+       data-icon="{% get_status_icon flowcell.status_conversion %}"
        title="Update conversion status"
        data-popover-url="{% url 'flowcells:flowcell-update-status' project=project.sodar_uuid flowcell=flowcell.sodar_uuid attribute="status_conversion" %}"
     ></i>
-    <i class="{{ flowcell.status_delivery|status_to_icon }}"
+    <i class="iconify fc-fw {% get_status_class flowcell.status_delivery %}"
+       data-icon="{% get_status_icon flowcell.status_delivery %}"
        data-toggle="tooltip"
        title="Update delivery status"
        data-popover-url="{% url 'flowcells:flowcell-update-status' project=project.sodar_uuid flowcell=flowcell.sodar_uuid attribute="status_delivery" %}"
     ></i>
     {% if flowcell.delivery_type == "seq" %}
-      <i class="ml-3 fa fc-fw fa-file-text-o" aria-hidden="true"
+      <i class="iconify fc-fw ml-3" data-icon="mdi:file-document-outline" aria-hidden="true"
          data-toggle="tooltip"
          title="Convert base calls to sequences"
       ></i>
-      <i class="fa fc-fw fa-file-archive-o text-muted" aria-hidden="true"
+      <i class="iconify fc-fw text-muted ml-3" data-icon="mdi:archive-outline" aria-hidden="true"
          data-toggle="tooltip"
          title="DO NOT create raw base call archives"
          style="opacity: 0.3"
       ></i>
     {% elif flowcell.delivery_type == "bcl" %}
-      <i class="ml-3 fa fc-fw fa-file-text-o text-muted"
+      <i class="iconify fc-fw text-muted ml-3" data-icon="mdi:file-document-outline"
          data-toggle="tooltip"
          title="DO NOT convert base calls to sequences"
          style="opacity: 0.3"
       ></i>
-      <i class="fa fc-fw fa-file-archive-o"
+      <i class="iconify fc-fw" data-icon="mdi:archive-outline"
          aria-hidden="true" data-toggle="tooltip"
          title="Create raw base call archives"
       ></i>
     {% else %}
-      <i class="ml-3 fa fc-fw fa-file-text-o"
+      <i class="iconify fc-fw ml-3" data-icon="mdi:file-document-outline"
          aria-hidden="true" data-toggle="tooltip"
          title="Convert base calls to sequences"
       ></i>
-      <i class="fa fc-fw fa-file-archive-o"
+      <i class="iconify fc-fw" data-icon="mdi:archive-outline"
          aria-hidden="true" data-toggle="tooltip"
          title="Create raw base call archives"
       ></i>
     {% endif %}
     {% if flowcell.description %}
-      <i class="ml-3 fa fc-fw fa-comment-o"  aria-hidden="true"
+      <i class="iconify fc-fw ml-3" data-icon="mdi:comment-outline"  aria-hidden="true"
          data-toggle="tooltip"
          title="{{ flowcell.description }}"></i>
     {% else %}
-      <i class="ml-3 fa fc-fw fa-comment-o text-muted" aria-hidden="true" style="opacity: 0.3;"
+      <i class="iconify fc-fw text-muted ml-3" data-icon="mdi:comment-outline" aria-hidden="true" style="opacity: 0.3;"
          data-toggle="tooltip"
          title="no description"
          ></i>
     {% endif %}
     {% if flowcell.messages.all %}
       <a href="{% url 'flowcells:flowcell-detail' project=project.sodar_uuid flowcell=flowcell.sodar_uuid %}#message-top" class="text-dark"><i
-        class="fa fc-fw fa-envelope-o" aria-hidden="true"
+        class="iconify fc-fw" data-icon="mdi:email-outline" aria-hidden="true"
            data-toggle="tooltip"
            title="{{ flowcell.messages.all|length }} message(s)"></i></a>
     {% else %}
-      <i class="fa fc-fw fa-envelope-o text-muted" aria-hidden="true" style="opacity: 0.3;"
+      <i class="iconify fc-fw text-muted" data-icon="mdi:email-outline" aria-hidden="true" style="opacity: 0.3;"
          data-toggle="tooltip"
          title="no message"
       ></i>
     {% endif %}
     {% if flowcell.count_files %}
-      <i class="fa fc-fw fa-files-o" aria-hidden="true"
+      <i class="iconify fc-fw" data-icon="mdi:file-multiple-outline" aria-hidden="true"
          data-toggle="tooltip"
          title="{{ flowcell.count_files }} file(s)"></i>
     {% else %}
-      <i class="fa fc-fw fa-files-o text-muted" aria-hidden="true" style="opacity: 0.3;"
+      <i class="iconify fc-fw text-muted" data-icon="mdi:file-multiple-outline" aria-hidden="true" style="opacity: 0.3;"
          data-toggle="tooltip"
          title="no files"
       ></i>
     {% endif %}
     {% count_barcode_reads flowcell as num_barcodes %}
     {% if num_barcodes == 0 %}
-      <i class="fa fc-fw fa-minus567 text-muted mr-3" aria-hidden="true"  style="opacity: 0.3;"
+      <i class="iconify fc-fw text-muted ml-3" data-icon="mdi:minus-thick" aria-hidden="true"  style="opacity: 0.3;"
          data-toggle="tooltip"
          title="no barcode reads in sequencing, not expecting histogram"></i>
     {% elif flowcell.index_histograms.all %}
-      <i class="fa fc-fw fa-bar-chart-o mr-3" aria-hidden="true"
+      <i class="iconify fc-fw mr-3" data-icon="mdi:chart-bar" aria-hidden="true"
          data-toggle="tooltip"
          title="has index histograms"></i>
     {% else %}
-      <i class="fa fc-fw fa-bar-chart-o text-muted mr-3" aria-hidden="true" style="opacity: 0.3;"
+      <i class="iconify fc-fw text-muted mr-3" data-icon="mdi:chart-bar" aria-hidden="true" style="opacity: 0.3;"
          data-toggle="tooltip"
          title="no index histograms"
       ></i>

@@ -142,7 +142,9 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("username",),},
+            options={
+                "ordering": ("username",),
+            },
         ),
         migrations.CreateModel(
             name="FileBoxAuditEntry",
@@ -199,6 +201,8 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("-date_created",),},
+            options={
+                "ordering": ("-date_created",),
+            },
         ),
     ]

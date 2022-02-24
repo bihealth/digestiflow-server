@@ -18,18 +18,19 @@ AUTH_USER_MODEL = getattr(settings, "AUTH_USER_MODEL", "auth.User")
 class FileBoxManager(models.Manager):
     """Manager for custom table-level FileBox queries"""
 
-    def find(self, search_term, keywords=None):
-        """Return objects matching the query.
+    def find(self, search_terms, keywords=None):
+        """
+        Return FileBox objects matching the query.
 
-        :param search_term: Search term (string)
+        :param search_terms: Search terms (list of strings)
         :param keywords: Optional search keywords as key/value pairs (dict)
-        :return: Python list of FileBox objects
+        :return: QuerySet of FileBox objects
         """
         objects = super().get_queryset()
-        objects = objects.filter(
-            Q(title__icontains=search_term) | Q(description__icontains=search_term)
-        )
-        return objects
+        query = Q()
+        for t in search_terms:
+            query = query | Q(title__icontains=t) | Q(description__icontains=t)
+        return objects.filter(query)
 
 
 #: Choices for the state of the meta data in the management.
@@ -71,7 +72,9 @@ class FileBox(models.Model):
     sodar_uuid = models.UUIDField(default=uuid_object.uuid4, unique=True, help_text="SODAR UUID")
 
     #: The project containing this file box.
-    project = models.ForeignKey(Project, help_text="Project that this file box belongs to")
+    project = models.ForeignKey(
+        Project, help_text="Project that this file box belongs to", on_delete=models.CASCADE
+    )
 
     #: Date when write access is lost.
     date_frozen = models.DateTimeField(null=False, blank=False, default=fourteen_days_in_the_future)

@@ -28,7 +28,7 @@ $(function () {
                 '<div class="alert alert-danger sodar-alert-top mb-3">' +
                 '  <div class="sodar-alert-top-content">' +
                 newLine.data('errors') +
-                '    <a href="#" class="pull-right sodar-alert-close-link"><i class="fa fa-close text-muted"></i></a>' +
+                '    <a href="#" class="pull-right sodar-alert-close-link"><i class="iconify text-muted" data-icon="mdi:close-thick"></i></a>' +
                 '  </div>' +
                 '</div>'
               ).appendTo($('#ajax-form-errors'))

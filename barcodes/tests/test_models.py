@@ -58,19 +58,19 @@ class BarcodeSetManagerTest(SetupBarcodeSetMixin, SetupProjectMixin, SetupUserMi
     def testFindByShortName(self):
         """Test finding by ``short_name``"""
         barcode_set = self.make_barcode_set()
-        result = BarcodeSet.objects.find("3TS")
+        result = BarcodeSet.objects.find(["3TS"])
         self.assertEqual(list(result), [barcode_set])
 
     def testFindByName(self):
         """Test finding by ``name``"""
         barcode_set = self.make_barcode_set()
-        result = BarcodeSet.objects.find("third")
+        result = BarcodeSet.objects.find(["third"])
         self.assertEqual(list(result), [barcode_set])
 
     def testFindByDescription(self):
         """Test finding by ``description``"""
         barcode_set = self.make_barcode_set()
-        result = BarcodeSet.objects.find("third example")
+        result = BarcodeSet.objects.find(["third example"])
         self.assertEqual(list(result), [barcode_set])
 
 
@@ -125,12 +125,12 @@ class BarcodeSetEntryManagerTest(SetupBarcodeSetMixin, SetupProjectMixin, SetupU
         """Test finding by ``name``"""
         barcode_set = self.make_barcode_set()
         barcode_set_entry = self.make_barcode_set_entry(barcode_set)
-        result = BarcodeSetEntry.objects.find("third")
+        result = BarcodeSetEntry.objects.find(["third"])
         self.assertEqual(list(result), [barcode_set_entry])
 
     def testFindBySequence(self):
         """Test finding by ``sequence``"""
         barcode_set = self.make_barcode_set()
         barcode_set_entry = self.make_barcode_set_entry(barcode_set)
-        result = BarcodeSetEntry.objects.find("GATTACA")
+        result = BarcodeSetEntry.objects.find(["GATTACA"])
         self.assertEqual(list(result), [barcode_set_entry])

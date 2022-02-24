@@ -222,22 +222,22 @@ class FlowCellManagerTest(
 
     def testFindByVendorId(self):
         """Test finding by ``vendor_id``"""
-        result = FlowCell.objects.find("hasdfghijkl")
+        result = FlowCell.objects.find(["hasdfghijkl"])
         self.assertEqual(list(result), [self.flow_cell])
 
     def testFindByLabel(self):
         """Test finding by ``label``"""
-        result = FlowCell.objects.find("my_flow_cell")
+        result = FlowCell.objects.find(["my_flow_cell"])
         self.assertEqual(list(result), [self.flow_cell])
 
     def testFindByManualLabel(self):
         """Test finding by ``manual_label``"""
-        result = FlowCell.objects.find("myflowcell")
+        result = FlowCell.objects.find(["myflowcell"])
         self.assertEqual(list(result), [self.flow_cell])
 
     def testFindByDescription(self):
         """Test finding by ``manual_label``"""
-        result = FlowCell.objects.find("first")
+        result = FlowCell.objects.find(["first"])
         self.assertEqual(list(result), [self.flow_cell])
 
 
@@ -436,21 +436,21 @@ class LibraryManagerTest(
         """Test finding by ``name``"""
         flow_cell = self.make_flow_cell()
         library = self.make_library(flow_cell)
-        result = Library.objects.find("three")
+        result = Library.objects.find(["three"])
         self.assertEqual(list(result), [library])
 
     def testFindByBarcodeSeq(self):
         """Test finding by ``barcode_seq``"""
         flow_cell = self.make_flow_cell()
         library = self.make_library(flow_cell)
-        result = Library.objects.find("atatat")
+        result = Library.objects.find(["atatat"])
         self.assertEqual(list(result), [library])
 
     def testFindByBarcodeSeq2(self):
         """Test finding by ``barcode_seq2``"""
         flow_cell = self.make_flow_cell()
         library = self.make_library(flow_cell)
-        result = Library.objects.find("gcgcgcgc")
+        result = Library.objects.find(["gcgcgcgc"])
         self.assertEqual(list(result), [library])
 
 
@@ -555,14 +555,14 @@ class MessageManagerTest(
         """Test finding by ``subject``"""
         flow_cell = self.make_flow_cell()
         message = self.make_message(flow_cell)
-        result = Message.objects.find("third subject")
+        result = Message.objects.find(["third subject"])
         self.assertEqual(list(result), [message])
 
     def testFindByBody(self):
         """Test finding by ``body``"""
         flow_cell = self.make_flow_cell()
         message = self.make_message(flow_cell)
-        result = Message.objects.find("third body")
+        result = Message.objects.find(["third body"])
         self.assertEqual(list(result), [message])
 
 

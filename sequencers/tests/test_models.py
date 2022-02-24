@@ -62,17 +62,17 @@ class SequencingMachineManagerTest(
     def testFindByVendorId(self):
         """Test finding by ``vendor_id``"""
         machine = self.make_machine()
-        result = SequencingMachine.objects.find("Hyyyyyyyy")
+        result = SequencingMachine.objects.find(["Hyyyyyyyy"])
         self.assertEqual(list(result), [machine])
 
     def testFindByLabel(self):
         """Test finding by ``label``"""
         machine = self.make_machine()
-        result = SequencingMachine.objects.find("another")
+        result = SequencingMachine.objects.find(["another"])
         self.assertEqual(list(result), [machine])
 
     def testFindByDescription(self):
         """Test finding by ``description``"""
         machine = self.make_machine()
-        result = SequencingMachine.objects.find("this")
+        result = SequencingMachine.objects.find(["this"])
         self.assertEqual(list(result), [machine])

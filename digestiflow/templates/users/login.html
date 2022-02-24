@@ -19,7 +19,9 @@
   {% if request.POST %}
   <div class="alert alert-danger sodar-alert-top">
      Login failed. Please make sure the user name, domain and password are correct.
-     <a href="#" class="pull-right sodar-alert-close-link"><i class="fa fa-close text-muted"></i></a>
+     <a href="#" class="pull-right sodar-alert-close-link">
+       <i class="iconify text-muted" data-icon="mdi:close-thick"></i>
+     </a>
   </div>
   {% endif %}
 
@@ -34,7 +36,9 @@
       {% csrf_token %}
       <input type="text" name="username" id="sodar-login-username" class="form-control" placeholder="username@DOMAIN" required autofocus>
       <input type="password" name="password" id="sodar-login-password" class="form-control my-sm-2 mb-sm-2" placeholder="Password" required>
-      <button class="btn btn-md btn-primary btn-block" type="submit" id="sodar-login-submit"><i class="fa fa-sign-in"></i> Log In</button>
+      <button class="btn btn-md btn-primary btn-block" type="submit" id="sodar-login-submit">
+        <i class="iconify" data-icon="mdi:login-variant"></i> Login
+      </button>
     </form>
 
     <p class="text-muted text-right mt-3">

@@ -103,3 +103,7 @@ flamegraph.pl
 # Certificate files
 *.crt
 *.pem
+
+# Icons
+*/static/iconify/*.json
+*/static/iconify/json/*.json

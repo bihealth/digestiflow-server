@@ -2,7 +2,7 @@
 
 <p>
   <em>
-    <i class="fa fa-info-circle"></i>
+    <i class="iconify" data-icon="mdi:information"></i>
     Audit trail of this file box.
   </em>
 </p>
@@ -35,7 +35,7 @@
           {% if entry.raw_log %}
             <a onclick="javascript:$('#raw-log-{{ entry.sodar_uuid }}').toggle()"
               class="badge badge-light">
-              <i class="fa fa-file-text-o"></i> toggle log</a>
+              <i class="iconify" data-icon="mdi:file-document-outline"></i> toggle log</a>
               <pre style="display: none;" id="raw-log-{{ entry.sodar_uuid }}">{{ entry.raw_log }}</pre>
           {% endif %}
         </td>

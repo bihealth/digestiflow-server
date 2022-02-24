@@ -18,42 +18,42 @@
 
       {% if initial_valid %}
         <button type="submit" name="{{ field.name }}" value="initial" class="list-group-item list-group-item-action list-group-item-light p-2">
-          <i class="fa fa-fw fa-asterisk"></i>
+          <i class="iconify" data-icon="mdi:asterisk"></i>
           reset to &quot;initial&quot;
         </button>
       {% endif %}
 
       {% if ready_valid %}
         <button type="submit" name="{{ field.name }}" value="ready" class="list-group-item list-group-item-action list-group-item-info p-2">
-          <i class="fa fa-fw fa-hourglass-1"></i>
+          <i class="iconify" data-icon="mdi:timer-sand"></i>
           mark &quot;ready&quot;
         </button>
       {% endif %}
 
       {% if canceled_valid %}
         <button type="submit" name="{{ field.name }}" value="canceled" class="list-group-item list-group-item-action list-group-item-danger p-2">
-          <i class="fa fa-fw fa-close"></i>
+          <i class="iconify" data-icon="mdi:close-thick"></i>
           confirm failure
         </button>
       {% endif %}
 
       {% if closed_valid %}
         <button type="submit" name="{{ field.name }}" value="closed" class="list-group-item list-group-item-action list-group-item-success p-2">
-          <i class="fa fa-fw fa-check"></i>
+          <i class="iconify" data-icon="mdi:check-bold"></i>
           confirm success
         </button>
       {% endif %}
 
       {% if closed_warnings_valid %}
         <button type="submit" name="{{ field.name }}" value="closed_warnings" class="list-group-item list-group-item-action list-group-item-warning p-2">
-          <i class="fa fa-fw fa-warning"></i>
+          <i class="iconify" data-icon="mdi:alert-box"></i>
           mark &quot;complete with warnings&quot;
         </button>
       {% endif %}
 
       {% if skipped_valid %}
         <button type="submit" name="{{ field.name }}" value="skipped" class="list-group-item list-group-item-action list-group-item-secondary p-2">
-          <i class="fa fa-fw fa-minus"></i>
+          <i class="iconify" data-icon="mdi:minus-thick"></i>
           mark skipped
         </button>
       {% endif %}

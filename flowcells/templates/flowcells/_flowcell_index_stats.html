@@ -7,7 +7,7 @@
 {% if num_barcodes > 0 %}
   <p>
     <em>
-      <i class="fa fa-info-circle"></i>
+      <i class="iconify" data-icon="mdi:information"></i>
       The index histogram statistics are computed from the flow cell's raw base calls.
       They can be used for sanity-checking your sample sheets.
       Moving your mouse over an adapter will highlight all adapters with at most one base difference.
@@ -36,27 +36,27 @@
             {% if not sheet_for_lane and entry.lane not in object.lanes_suppress_no_sample_sheet_warning %}
               <span class="text-warning" data-toggle="tooltip" title="No sample sheet information provided for lane">
                 {{ entry.lane }}
-                <i class="fa fa-exclamation-circle pl-1" title="Suppress Warning?"
+                <i class="iconify pl-1" data-icon="mdi:alert-circle" title="Suppress Warning?"
                  data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=entry.lane %}?return_to=index-stats"></i>
               </span>
             {% elif lane_index_errors %}
               <span class="text-danger" data-toggle="tooltip" title="Indices found that have no corresponding entry in sample sheet">
                 {{ entry.lane }}
-                <i class="fa fa-exclamation-circle pl-1" title="Suppress Warning?"
+                <i class="iconify pl-1" data-icon="mdi:alert-circle" title="Suppress Warning?"
                  data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_found_for_observed_index" lanes=entry.lane %}?return_to=index-stats"
                 ></i>
               </span>
             {% elif entry.lane in object.lanes_suppress_no_sample_sheet_warning %}
               {{ entry.lane }}
               <span data-toggle="tooltip" title="The warning &quot;no sample sheet information for lane {{ entry.lane }}&quot; is being suppressed">
-                <i class="fa fa-exclamation-circle pl-1 text-muted" title="Suppress Warning?"
+                <i class="iconify text-muted pl-1" data-icon="mdi:alert-circle" title="Suppress Warning?"
                   data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=entry.lane %}?return_to=index-stats"
                 ></i>
               </span>
             {% elif entry.lane in object.lanes_suppress_no_sample_found_for_observed_index_warning %}
               {{ entry.lane }}
               <span data-toggle="tooltip" title="The warning &quot;found an index adapter in BCLs without matching sample&quot; is being suppressed for lane {{ entry.lane }}">
-                <i class="fa fa-exclamation-circle pl-1 text-muted" title="Suppress Warning?"
+                <i class="iconify text-muted pl-1" data-icon="mdi:alert-circle" title="Suppress Warning?"
                   data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_found_for_observed_index" lanes=entry.lane %}?return_to=index-stats"
                 ></i>
               </span>

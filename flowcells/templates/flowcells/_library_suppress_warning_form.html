@@ -5,7 +5,7 @@
   {% csrf_token %}
   <input type="hidden" name="suppress_barcode{{ other_barcode_no }}_not_observed_error" {% if other_state %}value="on"{% endif %} />
   <button type="submit" class="btn btn-sm btn-primary" name="suppress_barcode{{ barcode_no }}_not_observed_error">
-    <i class="fa fa-exclamation-triangle"></i>
+    <i class="iconify" data-icon="mdi:alert"></i>
     Show Warning
   </button>
 </form>
@@ -13,7 +13,7 @@
   {% csrf_token %}
   <input type="hidden" name="suppress_barcode{{ other_barcode_no }}_not_observed_error" {% if other_state %}value="on"{% endif %} />
   <button type="submit" class="btn btn-sm btn-secondary" name="suppress_barcode{{ barcode_no }}_not_observed_error" value="1">
-    <i class="fa fa-ban"></i>
+    <i class="iconify" data-icon="mdi:cancel"></i>
     Suppress Warning
   </button>
 </form>

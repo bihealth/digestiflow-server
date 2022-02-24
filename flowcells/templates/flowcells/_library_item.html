@@ -19,19 +19,19 @@
       -->
       <i data-toggle="tooltip"
          title="There is a problem with this library"
-         class="fa fa-fw fa-times text-danger"></i>
+         class="iconify text-danger" data-icon="mdi:close-thick"></i>
     {% elif item.suppress_barcode1_not_observed_error or item.suppress_barcode2_not_observed_error %}
-      <i class="fa fa-fw fa-exclamation-circle text-muted"
+      <i class="iconify text-muted" data-icon="mdi:alert-circle"
         title="Some barcode error was suppressed"
         data-toggle="tooltip"></i>
     {% else %}
-      <i class="fa fa-fw fa-check text-success"></i>
+      <i class="iconify text-success" data-icon="mdi:check-bold"></i>
     {% endif %}
   </td>
   <td class="text-nowrap">
     {% if item.demux_reads %}
       <span class="text-muted" data-toggle="tooltip" title="{{ item.demux_reads }}">
-        <i class="fa fa-dot-circle-o "></i>
+        <i class="iconify" data-icon="mdi:circle-double"></i>
       </span>
     {% endif %}
   </td>
@@ -42,7 +42,7 @@
       {% endif %}
           {{ item.name }}
       {% if name_errors %}
-          <i class="fa fa-exclamation-triangle pl-1"></i>
+          <i class="iconify pl-1" data-icon="mdi:alert"></i>
         </span>
       {% endif %}
     </div>
@@ -75,7 +75,7 @@
         {% if item.barcode_seq %}
           <span data-toggle="tooltip" title="manually entered barcode">
             {{ item.get_barcode_seq }}
-            <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
+            <span class="text-muted">(<i class="iconify" data-icon="mdi:keyboard-outline"></i>)</span>
           </span>
         {% else %}
           -
@@ -87,13 +87,13 @@
 
       {% if barcode_errors or reverse_errors.barcode %}
           {% if item.suppress_barcode1_not_observed_error %}
-            <i class="fa fa-exclamation-circle pl-1"
+            <i class="iconify pl-1" data-icon="mdi:alert-circle"
               title="Suppress Barcode #1 Error"
               data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=1 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
             ></i>
             </span>
           {% else %}
-            <i class="fa fa-exclamation-triangle pl-1"
+            <i class="iconify pl-1" data-icon="mdi:alert"
               title="Suppress Barcode #1 Error"
               data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=1 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
             ></i>
@@ -128,7 +128,7 @@
         {% if item.barcode_seq2 %}
           <span data-toggle="tooltip" title="manually entered barcode">
             {{ item.get_barcode_seq2 }}
-            <span class="text-muted">(<i class="fa fa-keyboard-o"></i>)</span>
+            <span class="text-muted">(<i class="iconify" data-icon="mdi:keyboard-outline"></i>)</span>
           </span>
         {% else %}
           -
@@ -140,13 +140,13 @@
 
       {% if barcode2_errors or reverse_errors.barcode2 %}
         {% if item.suppress_barcode2_not_observed_error %}
-            <i class="fa fa-exclamation-circle pl-1"
+            <i class="iconify pl-1" data-icon="mdi:alert-circle"
                title="Suppress Barcode #2 Error"
                data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=2 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
             ></i>
           </span>
         {% else %}
-            <i class="fa fa-exclamation-triangle pl-1"
+            <i class="iconify pl-1" data-icon="mdi:alert"
               title="Suppress Barcode #2 Error"
               data-popover-url="{% url 'flowcells:library-suppress-warning' project=project.sodar_uuid flowcell=item.flow_cell.sodar_uuid library=item.sodar_uuid barcode_no=2 %}?forloop_counter={{ forloop.counter }}{{ forloop_counter }}"
             ></i>
@@ -161,7 +161,7 @@
     {% endif %}
         {{ item.lane_numbers|pretty_range|default:"-" }}
     {% if lane_errors %}
-        <i class="fa fa-exclamation-triangle pl-1"></i>
+        <i class="iconify pl-1" data-icon="mdi:alert"></i>
       </span>
     {% endif %}
   </td>
@@ -171,7 +171,7 @@
     {% endif %}
         {{ item.demux_reads|format_basemask|default:"-" }}
     {% if reverse_errors.library_cycles %}
-        <i class="fa fa-exclamation-triangle pl-1"></i>
+        <i class="iconify pl-1" data-icon="mdi:alert"></i>
       </span>
     {% endif %}
   </td>

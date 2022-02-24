@@ -4,7 +4,7 @@
 
 {% if num_barcodes > 0 and not object.index_histograms.all %}
   <div class="alert alert-info">
-    <i class="fa fa-info-circle"></i>
+    <i class="iconify" data-icon="mdi:information"></i>
     No index statistics found so far.
     Thus, we cannot compare sample sheet with real data.
     Thus, only sanity checks (e.g., unique names and adapters) will be performed.
@@ -15,8 +15,10 @@
   <thead>
     <tr>
       <th style="width: 10px">#</th>
-      <th style="width: 0px;"><i class="fa fa-fw fa-info-circle"></i></th>
-      <th style="width: 0px;" data-toggle="tooltip" title="has custom demultiplexing cycles"><i class="fa fa-fw fa-pencil"></i></th>
+      <th style="width: 0px;"><i class="iconify" data-icon="mdi:information"></i></th>
+      <th style="width: 0px;" data-toggle="tooltip" title="has custom demultiplexing cycles">
+        <i class="iconify" data-icon="mdi:lead-pencil"></i>
+      </th>
       <th style="width: 8em;">Name</th>
       <th style="width: 8em;">Project ID</th>
       <th style="width: 5em;">Organism</th>

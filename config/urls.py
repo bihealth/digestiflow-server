@@ -26,7 +26,9 @@ urlpatterns = [
     url(r"^logout/$", auth_views.logout_then_login, name="logout"),
     # Auth
     url(r"api/auth/", include("knox.urls")),
-    ## SODAR-core
+    # Iconify SVG icons
+    url(r"icons/", include("dj_iconify.urls")),
+    ## SODAR Core
     # Projectroles URLs
     url(r"^project/", include("projectroles.urls")),
     # Filesfolders URLs
@@ -41,11 +43,14 @@ urlpatterns = [
     url(r"^alerts/", include("adminalerts.urls")),
     # Background jobs URLs
     url(r"^bgjobs/", include("bgjobs.urls")),
+    # Site Info URLs
+    url(r"^siteinfo/", include("siteinfo.urls")),
+    # API Tokens URLs
+    url(r"^tokens/", include("tokens.urls")),
     ## Local Apps
     url(r"^sequencers/", include("sequencers.urls")),
     url(r"^barcodes/", include("barcodes.urls")),
     url(r"^flowcells/", include("flowcells.urls")),
-    url(r"^tokens/", include("tokens.urls")),
     ## Local Apps API
     url(r"^api/", include("digestiflow.api_urls")),
     # The rendered Sphinx-based manual.

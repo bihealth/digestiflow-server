@@ -168,17 +168,35 @@ def process_project(config: Config, project_uuid: str):
     file_boxes = [converter.structure(box_data, FileBox) for box_data in res.json()]
     dispatch = {  # (state_data, state_meta)
         # initial in metadata == active
-        ("INITIAL", "INITIAL"): (setup_dir, sync_grants,),
+        ("INITIAL", "INITIAL"): (
+            setup_dir,
+            sync_grants,
+        ),
         ("INITIAL", "INITIAL"): (sync_grants,),
-        ("ININITIAL", "INITIAL"): (setup_dir, sync_grants,),
+        ("ININITIAL", "INITIAL"): (
+            setup_dir,
+            sync_grants,
+        ),
         ("DELETING", "INITIAL"): (),
-        ("DELETED", "INITIAL"): (setup_dir, sync_grants,),
+        ("DELETED", "INITIAL"): (
+            setup_dir,
+            sync_grants,
+        ),
         # active in metadata
-        ("INITIAL", "ACTIVE"): (setup_dir, sync_grants,),
+        ("INITIAL", "ACTIVE"): (
+            setup_dir,
+            sync_grants,
+        ),
         ("ACTIVE", "ACTIVE"): (sync_grants,),
-        ("INACTIVE", "ACTIVE"): (setup_dir, sync_grants,),
+        ("INACTIVE", "ACTIVE"): (
+            setup_dir,
+            sync_grants,
+        ),
         ("DELETING", "ACTIVE"): (),
-        ("DELETED", "ACTIVE"): (setup_dir, sync_grants,),
+        ("DELETED", "ACTIVE"): (
+            setup_dir,
+            sync_grants,
+        ),
         # inactive in metadata
         ("INITIAL", "INACTIVE"): (),
         ("ACTIVE", "INACTIVE"): (sync_grants,),

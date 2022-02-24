@@ -13,7 +13,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     title = "Flow Cells"
     urls = urlpatterns
 
-    icon = "flask"
+    icon = "mdi:flask"
 
     entry_point_url_id = "flowcells:flowcell-list"
 
@@ -40,11 +40,13 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     #: Position in plugin ordering
     plugin_ordering = 10
 
-    def search(self, search_term, user, search_type=None, keywords=None):
+    def search(self, search_terms, user, search_type=None, keywords=None):
         """
-        Return app items based on a search term, user, optional type and optional keywords
+        Return app items based on one or more search terms, user, optional type
+        and optional keywords.
 
-        :param search_term: String
+        :param search_terms: Search terms to be joined with the OR operator
+                             (list of strings)
         :param user: User object for user initiating the search
         :param search_type: String
         :param keywords: List (optional)
@@ -58,21 +60,21 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
             projects = Project.objects.all()
 
         if not search_type:
-            flow_cells = FlowCell.objects.find(search_term, keywords).filter(project__in=projects)
-            libraries = Library.objects.find(search_term, keywords).filter(
+            flow_cells = FlowCell.objects.find(search_terms, keywords).filter(project__in=projects)
+            libraries = Library.objects.find(search_terms, keywords).filter(
                 flow_cell__project__in=projects
             )
-            messages = Message.objects.find(search_term, keywords).filter(
+            messages = Message.objects.find(search_terms, keywords).filter(
                 state=MSG_STATE_SENT, flow_cell__project__in=projects
             )
             items = list(flow_cells) + list(libraries) + list(messages)
             items.sort(key=lambda x: x.name.lower())
         elif search_type == "flowcell":
-            items = FlowCell.objects.find(search_term, keywords)
+            items = FlowCell.objects.find(search_terms, keywords)
         elif search_type == "library":
-            items = Library.objects.find(search_term, keywords)
+            items = Library.objects.find(search_terms, keywords)
         elif search_type == "message":
-            items = Message.objects.find(search_term, keywords).filter(state=MSG_STATE_SENT)
+            items = Message.objects.find(search_terms, keywords).filter(state=MSG_STATE_SENT)
 
         return {
             "all": {

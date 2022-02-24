@@ -1,4 +1,4 @@
-FROM python:3.6-buster
+FROM python:3.8-buster
 
 MAINTAINER Manuel Holtgrewe <manuel.holtgrewe@bih-charite.de>
 LABEL org.opencontainers.image.source https://github.com/bihealth/digestiflow-server
@@ -34,8 +34,7 @@ RUN apt-get update && \
 # Install Python dependencies.
 RUN cd /usr/src/app && \
     pip install --no-cache-dir -r requirements/production.txt && \
-    pip install --no-cache-dir -r requirements/ldap.txt && \
-    pip install --no-cache-dir -r requirements/local.txt
+    pip install --no-cache-dir -r requirements/ldap.txt
 
 # Build sphinx manual.
 RUN cd /usr/src/app/docs_manual && \
@@ -43,20 +42,9 @@ RUN cd /usr/src/app/docs_manual && \
 
 # Download files from CDN.
 RUN mkdir -p /usr/src/app/local-static/local/css && \
-    mkdir -p /usr/src/app/local-static/local/fonts && \
     mkdir -p /usr/src/app/local-static/local/js && \
-    cd /usr/src/app/local-static/local/fonts && \
-    wget \
-        https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/FontAwesome.otf \
-        https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.eot \
-        https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.svg \
-        https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf \
-        https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff \
-        https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2 && \
-    \
     cd /usr/src/app/local-static/local/css && \
     wget \
-        https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css \
         https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css \
         https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css \
         https://cdn.datatables.net/1.10.24/css/dataTables.jqueryui.min.css \
@@ -78,6 +66,13 @@ RUN mkdir -p /usr/src/app/local-static/local/css && \
         https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js \
         https://cdnjs.cloudflare.com/ajax/libs/google-palette/1.1.0/palette.min.js \
         https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js
+
+# Get icons
+RUN cd /usr/src/app && \
+    DJANGO_SECRET_KEY=for-build-only \
+    DJANGO_SETTINGS_MODULE=config.settings.production \
+    DATABASE_URL=postgres://sodar:sodar@fake/sodar \
+    python manage.py geticons
 
 # Prepare static files
 RUN cd /usr/src/app && \

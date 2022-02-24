@@ -9,17 +9,14 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 """
 
 import environ
+import os
+
 from projectroles.constants import get_sodar_constants
 
 SITE_PACKAGE = "digestiflow"
 
 ROOT_DIR = environ.Path(__file__) - 3
 APPS_DIR = ROOT_DIR.path(SITE_PACKAGE)
-
-# Load environment from .env.
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Load operating system environment variables and then prepare to use them
 env = environ.Env()
@@ -76,11 +73,13 @@ THIRD_PARTY_APPS = [
     "adminalerts.apps.AdminalertsConfig",
     # SODAR background jbos app
     "bgjobs.apps.BgjobsConfig",
-    # SODAR Taskflow backend app
-    # NOTE: Only enable if using sodar_taskflow
-    # 'taskflowbackend.apps.TaskflowbackendConfig',
+    # Site Info site app
+    "siteinfo.apps.SiteinfoConfig",
+    # API Tokens site app
+    "tokens.apps.TokensConfig",
     "dal",
     "dal_select2",
+    "dj_iconify.apps.DjIconifyConfig",
 ]
 
 # Project apps
@@ -90,7 +89,6 @@ LOCAL_APPS = [
     "sequencers.apps.SequencersConfig",
     "barcodes.apps.BarcodesConfig",
     "flowcells.apps.FlowcellsConfig",
-    "tokens.apps.TokensConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -149,6 +147,9 @@ MANAGERS = ADMINS
 DATABASES = {"default": env.db("DATABASE_URL", default="postgres:///sodar_core")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = False
 
+# Set default auto field (for Django 3.2+)
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 # Set django-db-file-storage as the default storage
 DEFAULT_FILE_STORAGE = "db_file_storage.storage.DatabaseFileStorage"
 
@@ -202,6 +203,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 # Site context processors
                 "projectroles.context_processors.urls_processor",
+                "projectroles.context_processors.site_app_processor",
             ],
         },
     }
@@ -220,6 +222,9 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
+
+# Iconify SVG icons
+ICONIFY_JSON_ROOT = os.path.join(STATIC_ROOT, "iconify")
 
 # MEDIA CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -367,6 +372,11 @@ if ENABLE_LDAP:
             )
         )
 
+# SAML configuration
+# ------------------------------------------------------------------------------
+
+ENABLE_SAML = False
+
 
 # Logging
 # ------------------------------------------------------------------------------
@@ -440,6 +450,12 @@ FILESFOLDERS_LINK_BAD_REQUEST_MSG = "Invalid request"
 
 # Projectroles app settings
 #
+# Allow unauthenticated users to access public projects if set true
+PROJECTROLES_ALLOW_ANONYMOUS = False
+
+# Allow showing and synchronizing local non-admin users
+PROJECTROLES_ALLOW_LOCAL_USERS = False
+
 # Disable categories to get simpler structure
 PROJECTROLES_DISABLE_CATEGORIES = True
 
@@ -456,6 +472,8 @@ PROJECTROLES_TARGET_CREATE = env.bool("PROJECTROLES_TARGET_CREATE", True)
 PROJECTROLES_DEFAULT_ADMIN = env.str("PROJECTROLES_DEFAULT_ADMIN", "admin")
 
 # General projectroles settings
+PROJECTROLES_SIDEBAR_ICON_SIZE = env.int("PROJECTROLES_SIDEBAR_ICON_SIZE", 24)
+PROJECTROLES_DELEGATE_LIMIT = 1
 PROJECTROLES_SECRET_LENGTH = 32
 PROJECTROLES_INVITE_EXPIRY_DAYS = env.int("PROJECTROLES_INVITE_EXPIRY_DAYS", 14)
 PROJECTROLES_SEND_EMAIL = env.bool("PROJECTROLES_SEND_EMAIL", False)
@@ -463,6 +481,12 @@ PROJECTROLES_EMAIL_SENDER_REPLY = False
 PROJECTROLES_HELP_HIGHLIGHT_DAYS = 7
 PROJECTROLES_ENABLE_SEARCH = True
 PROJECTROLES_SEARCH_PAGINATION = 5
+PROJECTROLES_BROWSER_WARNING = True
+PROJECTROLES_DISABLE_CDN_INCLUDES = False
+PROJECTROLES_INLINE_HEAD_INCLUDE = None
+PROJECTROLES_CUSTOM_JS_INCLUDES = []
+PROJECTROLES_CUSTOM_CSS_INCLUDES = []
+PROJECTROLES_ENABLE_PROFILING = False
 
 
 # Timeline app settings

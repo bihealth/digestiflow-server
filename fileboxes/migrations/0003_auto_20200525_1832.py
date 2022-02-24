@@ -12,5 +12,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(name="filebox", options={"ordering": ("-date_created",)},),
+        migrations.AlterModelOptions(
+            name="filebox",
+            options={"ordering": ("-date_created",)},
+        ),
     ]
