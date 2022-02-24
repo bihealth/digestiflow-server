@@ -4,6 +4,12 @@
 History / Changelog
 ===================
 
+----------
+Unreleased
+----------
+
+- Remove local legacy ``tokens`` app, use app from SODAR Core instead.
+
 ------
 v0.3.5
 ------
