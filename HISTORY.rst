@@ -5,6 +5,12 @@ History / Changelog
 ===================
 
 ------
+v0.3.6
+------
+
+- Fixing broken search.
+
+------
 v0.3.5
 ------
 
