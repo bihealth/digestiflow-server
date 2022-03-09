@@ -1,88 +1,91 @@
 # Wheel
-wheel==0.34.2
+wheel==0.37.1
 
-# Reading .env files
-python-dotenv ==0.13.0
-
-# Conservative Django
-django==1.11.29, <2.0
+# Django
+django>=3.2.12, <3.3
 
 # Configuration
-django-environ==0.4.5
+django-environ==0.8.1
 
 # Forms
-django-crispy-forms==1.7.2
+django-crispy-forms==1.13.0
 
 # Models
-django-model-utils==3.2.0
+django-model-utils==4.2.0
 
 # Images
-Pillow==7.0.0
+Pillow==9.0.1
 
 # Password storage
-argon2-cffi==19.2.0
+argon2-cffi==21.3.0
 
 # Python-PostgreSQL Database Adapter
-psycopg2-binary==2.8.4
+psycopg2-binary==2.9.3
 
 # Unicode slugification
 awesome-slugify==1.6.5
 
 # Time zones support
-pytz==2019.3
+pytz==2021.3
+
+# SVG icon support
+django-iconify==0.1.1
 
 # Versioning
-versioneer==0.18
+versioneer==0.21
 
-# Sentry client.
-sentry-sdk ==0.14.3
-
-# Online documentation via django-docs.
-Sphinx==2.4.4
+# Online documentation via django-docs
+docutils==0.17.1
+Sphinx==4.3.2
 django-docs==0.3.1
-sphinx-rtd-theme==0.4.3
+sphinx-rtd-theme==1.0.0
 
 # Manipulation of integer rages
-pagerange ==0.4
+pagerange==0.4
 
 # Required also in production for collecting static
-django-debug-toolbar ==1.11
+# TODO: Why is this required?
+django-debug-toolbar==3.2.4
+
 # Required for collectstatic
-django-extensions ==2.2.9
+django-extensions==3.1.5
 
 # Helpful for creating emails.
-django-mail-factory==0.21
+django-mail-factory==0.24
+
+# Sentry client
+sentry-sdk==0.14.3
 
 #####################
 # SODAR Core imports
 #####################
 
 # Rules for permissions
-rules==2.2
+rules==3.0
 
 # REST framework
-djangorestframework==3.11.0
+djangorestframework==3.13.1
 
 # Keyed list addon for DRF
-drf-keyed-list==0.0.2
+-e git+https://github.com/mikkonie/drf-keyed-list.git@b03607b866c5706b0e1ea46a7eeaab6527030734#egg=drf-keyed-list
 
 # Token authentication
 django-rest-knox==4.1.0
 
 # Markdown field support
-markdown==3.2.1
-django-markupfield==1.5.1
-django-pagedown==1.0.6
-mistune==0.8.4
+markdown==3.3.4  # NOTE: Markdown 3.3.6+ requires Python>=3.10
+django-markupfield>=2.0.1, <2.1
+django-pagedown>=2.2.1, <2.3
+mistune>=2.0.1, <2.1
 
 # Django Autocomplete Light
-django-autocomplete-light==3.2.10  # Higher versions are not compatible with django 1.11
+django-autocomplete-light==3.8.2
 
-# Django-plugins (with self-made Django 1.10 support)
--e git+https://github.com/mikkonie/django-plugins.git@1bc07181e6ab68b0f9ed3a00382eb1f6519e1009#egg=django-plugins
+# Django-plugins (with Django v3.0+ support)
+-e git+https://github.com/mikkonie/django-plugins.git@42e86e7904e5c09f1da32173862b26843eda5dd8#egg=django-plugins
 
 # SODAR Core
--e git+https://github.com/bihealth/sodar_core.git@v0.8.0#egg=django-sodar-core
+django-sodar-core==0.10.10
 
-celery <4.2  # pyup: <4.2  # blocker: https://github.com/celery/celery/issues/4878
+celery==5.2.3
 redis>=3.2.0  # git+https://github.com/antirez/redis

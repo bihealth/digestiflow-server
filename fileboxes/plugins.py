@@ -64,7 +64,13 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
         elif search_type == "filebox":
             items = FileBox.objects.find(search_term, keywords).filter(project__in=projects)
 
-        return {"all": {"title": "File Boxes", "search_types": ["filebox"], "items": items,}}
+        return {
+            "all": {
+                "title": "File Boxes",
+                "search_types": ["filebox"],
+                "items": items,
+            }
+        }
 
     def get_object_link(self, model_str, uuid):
         """

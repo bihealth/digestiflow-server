@@ -2,9 +2,9 @@
 
 import uuid as uuid_object
 
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
+from django.urls import reverse
 
 from projectroles.models import Project
 
@@ -106,7 +106,9 @@ class SequencingMachine(models.Model):
     )
 
     #: The project containing this sequencer.
-    project = models.ForeignKey(Project, help_text="Project in which this objects belongs")
+    project = models.ForeignKey(
+        Project, help_text="Project in which this objects belongs", on_delete=models.CASCADE
+    )
 
     #: Vendor ID of the machine, reflected in file names and read names later on.
     vendor_id = models.CharField(

@@ -315,7 +315,9 @@ class FileBoxGrantView(
                             preexisting_accounts.append(account)
                         else:
                             self._grant_user(
-                                username=username, full_name=full_name, email=email,
+                                username=username,
+                                full_name=full_name,
+                                email=email,
                             )
                             created_accounts.append(account)
                         break
@@ -443,7 +445,9 @@ class FileBoxRevokeView(
                 )
                 tl_event.add_object(obj=self.object, label="filebox", name=self.object.title)
         messages.add_message(
-            self.request, messages.SUCCESS, "Successfully revoked access from: %s" % grant.username,
+            self.request,
+            messages.SUCCESS,
+            "Successfully revoked access from: %s" % grant.username,
         )
         return redirect(
             "fileboxes:filebox-detail",

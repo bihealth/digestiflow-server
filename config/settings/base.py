@@ -16,11 +16,6 @@ SITE_PACKAGE = "digestiflow"
 ROOT_DIR = environ.Path(__file__) - 3
 APPS_DIR = ROOT_DIR.path(SITE_PACKAGE)
 
-# Load environment from .env.
-from dotenv import load_dotenv
-
-load_dotenv()
-
 # Load operating system environment variables and then prepare to use them
 env = environ.Env()
 
@@ -149,6 +144,9 @@ MANAGERS = ADMINS
 DATABASES = {"default": env.db("DATABASE_URL", default="postgres:///sodar_core")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = False
 
+# Set default auto field (for Django 3.2+)
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 # Set django-db-file-storage as the default storage
 DEFAULT_FILE_STORAGE = "db_file_storage.storage.DatabaseFileStorage"
 
@@ -202,6 +200,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 # Site context processors
                 "projectroles.context_processors.urls_processor",
+                "projectroles.context_processors.site_app_processor",
             ],
         },
     }
