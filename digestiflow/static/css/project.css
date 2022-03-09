@@ -47,10 +47,16 @@
   opacity: 0.3;
 }
 
+/* Fixed width setup for Font Awesome 4 icons */
+.fa-fw {
+  width: 1.28571429em;
+  text-align: center;
+}
+
 /* Custom spacing for icons */
 .fc-fw {
   width: .9em;
-  text-alignment: center;
+  text-align: center;
 }
 
 .sheet-table-container {

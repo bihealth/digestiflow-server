@@ -13,7 +13,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     title = "File Boxes"
     urls = urlpatterns
 
-    icon = "truck"
+    icon = "mdi:truck"
 
     entry_point_url_id = "fileboxes:filebox-list"
 

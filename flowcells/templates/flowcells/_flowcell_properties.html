@@ -98,7 +98,7 @@
     {% get_lanes_with_missing_sheets object as lanes_with_missing_sheets %}
     {% if lanes_with_missing_sheets %}
       <span class="text-warning">
-        <i class="fa fa-exclamation-circle pr-1" title="Missing sheet info {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|pretty_range }}"
+        <i class="iconify pr-1" data-icon="mdi:alert-circle" title="Missing sheet info {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|pretty_range }}"
            data-toggle="tooltip"
            data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=lanes_with_missing_sheets|join:"," %}?return_to=properties"></i>
         Sample sheet missing for {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|pretty_range }}.
@@ -106,7 +106,7 @@
     {% elif flowcell.lanes_suppress_no_sample_sheet_warning %}
       {% get_lanes_with_missing_sheets object True as lanes_with_missing_sheets %}
       <span class="text-muted">
-        <i class="fa fa-exclamation-circle pr-1" title="Missing sheet info {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|pretty_range }}"
+        <i class="iconify pr-1" data-icon="mdi:alert-circle" title="Missing sheet info {{ lanes_with_missing_sheets|pluralize:"lane,lanes" }} {{ lanes_with_missing_sheets|pretty_range }}"
            data-toggle="tooltip"
            data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_sheet" lanes=lanes_with_missing_sheets|join:"," %}?return_to=properties"></i>
         Suppressed warning {{ lanes_with_missing_sheets|pluralize:"s" }} on lanes with missing sample sheets.
@@ -121,14 +121,14 @@
     {% get_index_error_lanes object True as all_lanes_with_index_errors %}
     {% if flowcell.get_index_errors %}
       <span class="text-danger">
-        <i class="fa fa-exclamation-circle pr-1" title="Indices not found in sheet"
+        <i class="iconify pr-1" data-icon="mdi:alert-circle" title="Indices not found in sheet"
          data-toggle="tooltip"
          data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_found_for_observed_index" lanes=all_lanes_with_index_errors|join:"," %}?return_to=properties"></i>
         At least one index adapter was not found in the sample sheet.
       </span>
     {% elif flowcell.lanes_suppress_no_sample_found_for_observed_index_warning %}
       <span class="text-muted">
-        <i class="fa fa-exclamation-circle pr-1" title="Indices not found in sheet"
+        <i class="iconify pr-1" data-icon="mdi:alert-circle" title="Indices not found in sheet"
          data-toggle="tooltip"
          data-popover-url="{% url 'flowcells:flowcell-suppress-warning' project=project.sodar_uuid flowcell=flowcell.sodar_uuid warning="no_sample_found_for_observed_index" lanes=all_lanes_with_index_errors|join:"," %}?return_to=properties"></i>
         Suppressed warnings about BCL index adapters that cannot be found in the sample sheet.
@@ -143,12 +143,12 @@
     {% get_libraries_with_suppressed_reverse_index_errors object as libraries_with_suppressed_index_errors %}
     {% if flowcell.get_reverse_index_errors %}
       <span class="text-danger">
-        <i class="fa fa-exclamation-circle pr-1" title="There is an issue with a library on the sample shet." data-toggle="tooltip"></i>
+        <i class="iconify pr-1" data-icon="mdi:alert-circle" title="There is an issue with a library on the sample shet." data-toggle="tooltip"></i>
         There is an issue with a library on the sample shet.
       </span>
     {% elif libraries_with_suppressed_index_errors %}
       <span class="text-muted">
-        <i class="fa fa-exclamation-circle pr-1" title="Sheet index library not found in BCLs indices" data-toggle="tooltip"></i>
+        <i class="iconify pr-1" data-icon="mdi:alert-circle" title="Sheet index library not found in BCLs indices" data-toggle="tooltip"></i>
         Suppressed warnings about sample sheet index adapters that cannot be found in the BCL indices.
       </span>
     {% else %}

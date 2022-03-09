@@ -10,7 +10,7 @@
         <a class="pull-right text-muted" id="message-{{ message.sodar_uuid }}" href="#message-{{ message.sodar_uuid }}">#</a>
         {% if not delete_mode %}
           <a class="btn btn-danger btn-sm pull-right mb-2" href="{% url 'flowcells:message-delete' project=project.sodar_uuid flowcell=message.flow_cell.sodar_uuid message=message.sodar_uuid %}">
-            <i class="fa fa-times"></i>
+            <i class="iconify" data-icon="mdi:close-thick"></i>
             Delete
           </a>
         {% endif %}
@@ -54,7 +54,7 @@
               #{{ forloop.counter }}
             </span>
             <a href="{% url 'filesfolders:file_serve' file=item.sodar_uuid file_name=item.name %}" class="text-dark">
-              <i class="fa fa-{% get_file_icon item %}"></i>
+              <i class="iconify" data-icon="{% get_file_icon item %}"></i>
               {{ item.name }}
             </a>
            ({{ item.file.file.size|filesizeformat }})

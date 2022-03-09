@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 """
 
 import environ
+import os
+
 from projectroles.constants import get_sodar_constants
 
 SITE_PACKAGE = "digestiflow"
@@ -71,11 +73,9 @@ THIRD_PARTY_APPS = [
     "adminalerts.apps.AdminalertsConfig",
     # SODAR background jbos app
     "bgjobs.apps.BgjobsConfig",
-    # SODAR Taskflow backend app
-    # NOTE: Only enable if using sodar_taskflow
-    # 'taskflowbackend.apps.TaskflowbackendConfig',
     "dal",
     "dal_select2",
+    "dj_iconify.apps.DjIconifyConfig",
 ]
 
 # Project apps
@@ -219,6 +219,9 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
+
+# Iconify SVG icons
+ICONIFY_JSON_ROOT = os.path.join(STATIC_ROOT, "iconify")
 
 # MEDIA CONFIGURATION
 # ------------------------------------------------------------------------------

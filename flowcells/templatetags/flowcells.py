@@ -17,6 +17,60 @@ from ..models import (
 register = template.Library()
 
 
+FLOWCELL_STATUS = {
+    "initial": {
+        "class": "text-muted fc-super-muted",
+        "icon": "mdi:asterisk",
+        "title": "not started",
+    },
+    "ready": {
+        "class": "text-info",
+        "icon": "mdi:timer-sand",
+        "title": "ready to start",
+    },
+    "in_progress": {
+        "class": "",
+        "icon": "mdi:timer-sand-paused",
+        "title": "in progress",
+    },
+    "complete": {
+        "class": "text-success",
+        "icon": "mdi:timer-sand-complete",
+        "title": "complete (but unconfirmed)",
+    },
+    "complete_warnings": {
+        "class": "text-warning",
+        "icon": "mdi:alert-box",
+        "title": "complete with warnings",
+    },
+    "failed": {
+        "class": "text-danger",
+        "icon": "mdi:timer-sand-complete",
+        "title": "failed / canceled",
+    },
+    "closed": {
+        "class": "text-success",
+        "icon": "mdi:check-bold",
+        "title": "released confirmed",
+    },
+    "closed_warnings": {
+        "class": "text-warning",
+        "icon": "mdi:alert-box",
+        "title": "complete with warnings",
+    },
+    "canceled": {
+        "class": "text-danger",
+        "icon": "mdi:close-thick",
+        "title": "canceled confirmed",
+    },
+    "skipped": {
+        "class": "text-muted",
+        "icon": "mdi:minus-thick",
+        "title": "skipped or N/A",
+    },
+}
+
+
 @register.simple_tag
 def count_barcode_reads(flow_cell):
     """Count number of barcode reads in the planned reads of ``flow_cell``."""
@@ -180,36 +234,20 @@ def get_contamination(contaminations, seq):
     return contaminations.get(seq)
 
 
-@register.filter
-def status_to_icon(status):
-    return {
-        "initial": "fa fc-fw fa-asterisk text-muted fc-super-muted",
-        "ready": "fa fc-fw fa-hourglass-1 text-info",
-        "in_progress": "fc-fw fa fa-hourglass-half",
-        "complete": "fa fc-fw fa-hourglass-end text-success",
-        "complete_warnings": "fa fc-fw fa-warning text-warning",
-        "failed": "fa fc-fw fa-hourglass-end text-danger",
-        "closed": "fa fc-fw fa-check text-success",
-        "closed_warnings": "fa fc-fw fa-warning text-warning",
-        "canceled": "fa fc-fw fa-close text-danger",
-        "skipped": "fa fc-fw fa-minus text-muted",
-    }.get(status)
+@register.simple_tag
+def get_status_class(status):
+    return FLOWCELL_STATUS.get(status).get("class")
 
 
+@register.simple_tag
+def get_status_icon(status):
+    return FLOWCELL_STATUS.get(status, {}).get("icon")
+
+
+# TODO: This doesn't seem to be used anywhere?
 @register.filter
 def status_to_title(status):
-    return {
-        "initial": "not started",
-        "ready": "ready to start",
-        "in_progress": "in progress",
-        "complete": "complete (but unconfirmed)",
-        "complete_warnings": "complete with warnings",
-        "failed": "failed / canceled",
-        "closed": "released confirmed",
-        "closed_warnings": "complete with warnings",
-        "canceled": "canceled confirmed",
-        "skipped": "skipped or N/A",
-    }.get(status)
+    return FLOWCELL_STATUS.get(status, {}).get("title")
 
 
 @register.simple_tag

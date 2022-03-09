@@ -9,11 +9,11 @@
   {% endfor %}
 
   <button type="submit" class="btn btn-sm btn-primary" name="submit" value="submit">
-    <i class="fa fa-exclamation-triangle"></i>
+    <i class="iconify" data-icon="mdi:alert"></i>
     Show Warning
   </button>
   <button type="submit" class="btn btn-sm btn-secondary" name="lanes_suppress_{{ warning }}_warning" value="{{ selected_lanes|join:"," }}">
-    <i class="fa fa-ban"></i>
+    <i class="iconify" data-icon="mdi:cancel"></i>
     Suppress Warning
   </button>
 </form>

@@ -13,7 +13,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     title = "Flow Cells"
     urls = urlpatterns
 
-    icon = "flask"
+    icon = "mdi:flask"
 
     entry_point_url_id = "flowcells:flowcell-list"
 

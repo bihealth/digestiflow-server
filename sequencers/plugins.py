@@ -13,7 +13,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     title = "Sequencers"
     urls = urlpatterns
 
-    icon = "industry"
+    icon = "mdi:factory"
 
     entry_point_url_id = "sequencers:sequencer-list"
 

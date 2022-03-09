@@ -33,27 +33,27 @@
         >{% csrf_token %}
         {% if message_form.instance.pk %}
         <p class="alert alert-info">
-          <i class="fa fa-info-circle pr-2"></i>
+          <i class="iconify pr-2" data-icon="mdi:information"></i>
           Your message has been saved as a draft.
-          Only you can see it. 
+          Only you can see it.
           Use Send below for actually sending it.
         </p>
         {% endif %}
-   
+
         {% crispy message_form message_form.helper %}
 
         <div class="text-right pb-3">
           <div class="btn-group" role="group">
             <button type="submit" name="submit" value="discard" class="btn btn-danger">
-              <i class="fa fa-times" aria-hidden="true"></i>
+              <i class="iconify" data-icon="mdi:close-thick"></i>
               Discard
-            </a>
+            </button>
             <button type="submit" name="submit" value="save" class="btn btn-secondary">
-              <i class="fa fa-save" aria-hidden="true"></i>
+              <i class="iconify" data-icon="mdi:content-save"></i>
               Save as Draft
-            </a>
+            </button>
             <button type="submit" name="submit" value="send" class="btn btn-primary">
-              <i class="fa fa-send" aria-hidden="true"></i>
+              <i class="iconify" data-icon="mdi:send"></i>
               Send
             </button>
           </div>

@@ -13,7 +13,7 @@ class ProjectAppPlugin(ProjectAppPluginPoint):
     title = "Barcodes"
     urls = urlpatterns
 
-    icon = "barcode"
+    icon = "mdi:barcode"
 
     entry_point_url_id = "barcodes:barcodeset-list"
 

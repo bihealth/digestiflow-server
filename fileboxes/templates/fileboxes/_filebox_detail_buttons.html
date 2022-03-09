@@ -11,17 +11,17 @@
   </button>
   <div class="dropdown-menu dropdown-menu-right">
     <a class="dropdown-item" href="{% url 'fileboxes:filebox-create' project=project.sodar_uuid %}">
-      <i class="fa fa-fw fa-plus"></i> Create New
+      <i class="iconify" data-icon="mdi:plus-thick"></i> Create New
     </a>
     <a class="dropdown-item" href="{% url 'fileboxes:filebox-update' project=project.sodar_uuid filebox=object.sodar_uuid %}">
-      <i class="fa fa-fw fa-pencil"></i> Update
+      <i class="iconify" data-icon="mdi:lead-pencil"></i> Update
     </a>
     <a class="dropdown-item" href="{% url 'fileboxes:filebox-delete' project=project.sodar_uuid filebox=object.sodar_uuid %}">
-      <i class="fa fa-fw fa-times"></i> Delete
+      <i class="iconify" data-icon="mdi:close-thick"></i> Delete
     </a>
     <div class="dropdown-divider"></div>
     <a class="dropdown-item" href="{% url 'api:fileboxes' project=project.sodar_uuid filebox=object.sodar_uuid %}?format=json">
-      <i class="fa fa-fw fa-cloud-download"></i> JSON Export
+      <i class="iconify" data-icon="mdi:cloud-download"></i> JSON Export
     </a>
   </div>
 </div>

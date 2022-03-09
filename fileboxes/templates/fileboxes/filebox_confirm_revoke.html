@@ -1,4 +1,4 @@
-{% extends "projectroles/project_base.html" %}
+{% extends "projectroles/base.html" %}
 
 {% block navi_sub_project_extend %}
   <li class="breadcrumb-item">
@@ -38,10 +38,10 @@
       <div class="btn-group pull-right">
         <a role="button" class="btn btn-secondary"
             href="{{ request.session.real_referer }}">
-          <i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Cancel
+          <i class="iconify" data-icon="mdi:arrow-left-circle"></i> Cancel
         </a>
         <button type="submit" class="btn btn-danger">
-          <i class="fa fa-times" aria-hidden="true"></i> Revoke Access
+          <i class="iconify" data-icon="mdi:close-thick"></i> Revoke Access
         </button>
       </div>
     </form>

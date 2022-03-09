@@ -6,11 +6,11 @@
       {% else %}
         href="{% url 'flowcells:flowcell-list' project=project.sodar_uuid %}">
       {% endif %}
-      <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+      <i class="iconify" data-icon="mdi:arrow-left-circle"></i>
       Cancel
     </a>
     <button type="submit" class="btn btn-primary">
-      <i class="fa fa-check" aria-hidden="true"></i>
+      <i class="iconify" data-icon="mdi:check-bold"></i>
       {% if object.pk %}
         Update
       {% else %}

@@ -1,4 +1,4 @@
-{% extends "projectroles/project_base.html" %}
+{% extends "projectroles/base.html" %}
 
 {% load flowcells %}
 
@@ -29,24 +29,24 @@
 
   {% if object.get_sample_sheet_errors or object.get_reverse_index_errors or object.get_index_errors %}
     <div class="alert alert-warning">
-      <i class="fa fa-info-circle"></i>
+      <i class="iconify" data-icon="mdi:information"></i>
       Your flow cell and sample sheet have been saved.
       However, there are some issues that you <strong>should</strong> fix before demultiplexing it.
       See below for more information.
     </div>
   {% elif object.lanes_suppress_no_sample_found_for_observed_index_warning %}
     <div class="alert alert-info">
-      <i class="fa fa-info-circle"></i>
+      <i class="iconify" data-icon="mdi:information"></i>
       Some warnings have been suppressed.
     </div>
   {% elif not flowcell_libraries %}
     <div class="alert alert-info">
-      <i class="fa fa-info-circle"></i>
+      <i class="iconify" data-icon="mdi:information"></i>
       No libraries have been registered for this flow cell yet!
     </div>
   {% else %}
     <div class="alert alert-success">
-      <i class="fa fa-check-circle"></i>
+      <i class="iconify" data-icon="mdi:check-circle"></i>
       Your entered sample sheets looks correct.
       Excellent!
     </div>
@@ -61,9 +61,9 @@
         <a class="nav-link" id="sample-sheet-tab" data-toggle="tab" href="#sample-sheet" aria-controls="sample-sheet" aria-selected="true">
           Sample Sheet
           {% if object.get_sample_sheet_errors or object.get_reverse_index_errors %}
-            <i class="fa fa-fw fa-exclamation-triangle text-danger pl-1" data-toggle="tooltip" title="There were inconsistencies betwen the sample sheet and the observed indices"></i>
+            <i class="iconify text-danger pl-1" data-icon="mdi:alert" data-toggle="tooltip" title="There were inconsistencies betwen the sample sheet and the observed indices"></i>
           {% elif not flowcell_libraries %}
-            <i class="fa fa-question-circle text-muted" data-toggle="tooltip" title="No sample sheet information added so far"></i>
+            <i class="iconify text-muted" data-icon="mdi:help-box" data-toggle="tooltip" title="No sample sheet information added so far"></i>
           {% endif %}
         </a>
       </li>
@@ -71,17 +71,17 @@
         <a class="nav-link" id="index-stats-tab" data-toggle="tab" href="#index-stats" aria-controls="index-stats" aria-selected="true">
           Index Stats
           {% if num_barcodes == 0 %}
-            <i class="fa fa-info-circle text-success p-1" data-toggle="tooltip" title="No barcode read configured, not expecting histograms"></i>
+            <i class="iconify text-success pl-1" data-icon="mdi:information" data-toggle="tooltip" title="No barcode read configured, not expecting histograms"></i>
           {% elif object.get_index_errors %}
-            <i class="fa fa-exclamation-triangle text-danger pl-1" data-toggle="tooltip" title="There were inconsistencies with observed index adapters and the sample sheet"></i>
+            <i class="iconify text-danger pl-1" data-icon="mdi:alert" data-toggle="tooltip" title="There were inconsistencies with observed index adapters and the sample sheet"></i>
           {% elif lanes_with_missing_sheets %}
-            <i class="fa fa-exclamation-circle text-warning p-1" data-toggle="tooltip" title="No sample sheet information for at least one lane"></i>
+            <i class="iconify text-warning p-1" data-icon="mdi:alert-circle" data-toggle="tooltip" title="No sample sheet information for at least one lane"></i>
           {% elif object.lanes_suppress_no_sample_found_for_observed_index_warning %}
-            <i class="fa fa-exclamation-circle text-muted p-1" data-toggle="tooltip" title="Suppressed warning about at least one index in BCL missing in sample sheet"></i>
+            <i class="iconify text-muted p-1" data-icon="mdi:alert-circle" data-toggle="tooltip" title="Suppressed warning about at least one index in BCL missing in sample sheet"></i>
           {% elif object.lanes_suppress_no_sample_sheet_warning %}
-            <i class="fa fa-exclamation-circle text-muted p-1" data-toggle="tooltip" title="Suppressed warning about missing sample sheet for at least one lane"></i>
+            <i class="iconify text-muted p-1" data-icon="mdi:alert-circle" data-toggle="tooltip" title="Suppressed warning about missing sample sheet for at least one lane"></i>
           {% elif not object.index_histograms.all %}
-            <i class="fa fa-question-circle text-muted p-1" data-toggle="tooltip" title="No observed index adapters registered (yet)"></i>
+            <i class="iconify text-muted p-1" data-icon="mdi:help-circle" data-toggle="tooltip" title="No observed index adapters registered (yet)"></i>
           {% endif %}
         </a>
       </li>
