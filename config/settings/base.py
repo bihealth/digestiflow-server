@@ -73,6 +73,10 @@ THIRD_PARTY_APPS = [
     "adminalerts.apps.AdminalertsConfig",
     # SODAR background jbos app
     "bgjobs.apps.BgjobsConfig",
+    # Site Info site app
+    "siteinfo.apps.SiteinfoConfig",
+    # API Tokens site app
+    "tokens.apps.TokensConfig",
     "dal",
     "dal_select2",
     "dj_iconify.apps.DjIconifyConfig",
@@ -85,7 +89,6 @@ LOCAL_APPS = [
     "sequencers.apps.SequencersConfig",
     "barcodes.apps.BarcodesConfig",
     "flowcells.apps.FlowcellsConfig",
-    "tokens.apps.TokensConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -369,6 +372,11 @@ if ENABLE_LDAP:
             )
         )
 
+# SAML configuration
+# ------------------------------------------------------------------------------
+
+ENABLE_SAML = False
+
 
 # Logging
 # ------------------------------------------------------------------------------
@@ -442,6 +450,12 @@ FILESFOLDERS_LINK_BAD_REQUEST_MSG = "Invalid request"
 
 # Projectroles app settings
 #
+# Allow unauthenticated users to access public projects if set true
+PROJECTROLES_ALLOW_ANONYMOUS = False
+
+# Allow showing and synchronizing local non-admin users
+PROJECTROLES_ALLOW_LOCAL_USERS = False
+
 # Disable categories to get simpler structure
 PROJECTROLES_DISABLE_CATEGORIES = True
 
@@ -458,6 +472,7 @@ PROJECTROLES_TARGET_CREATE = env.bool("PROJECTROLES_TARGET_CREATE", True)
 PROJECTROLES_DEFAULT_ADMIN = env.str("PROJECTROLES_DEFAULT_ADMIN", "admin")
 
 # General projectroles settings
+PROJECTROLES_DELEGATE_LIMIT = 1
 PROJECTROLES_SECRET_LENGTH = 32
 PROJECTROLES_INVITE_EXPIRY_DAYS = env.int("PROJECTROLES_INVITE_EXPIRY_DAYS", 14)
 PROJECTROLES_SEND_EMAIL = env.bool("PROJECTROLES_SEND_EMAIL", False)
@@ -465,6 +480,12 @@ PROJECTROLES_EMAIL_SENDER_REPLY = False
 PROJECTROLES_HELP_HIGHLIGHT_DAYS = 7
 PROJECTROLES_ENABLE_SEARCH = True
 PROJECTROLES_SEARCH_PAGINATION = 5
+PROJECTROLES_BROWSER_WARNING = True
+PROJECTROLES_DISABLE_CDN_INCLUDES = False
+PROJECTROLES_INLINE_HEAD_INCLUDE = None
+PROJECTROLES_CUSTOM_JS_INCLUDES = []
+PROJECTROLES_CUSTOM_CSS_INCLUDES = []
+PROJECTROLES_ENABLE_PROFILING = False
 
 
 # Timeline app settings

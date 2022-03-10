@@ -43,11 +43,14 @@ urlpatterns = [
     url(r"^alerts/", include("adminalerts.urls")),
     # Background jobs URLs
     url(r"^bgjobs/", include("bgjobs.urls")),
+    # Site Info URLs
+    url(r"^siteinfo/", include("siteinfo.urls")),
+    # API Tokens URLs
+    url(r"^tokens/", include("tokens.urls")),
     ## Local Apps
     url(r"^sequencers/", include("sequencers.urls")),
     url(r"^barcodes/", include("barcodes.urls")),
     url(r"^flowcells/", include("flowcells.urls")),
-    url(r"^tokens/", include("tokens.urls")),
     ## Local Apps API
     url(r"^api/", include("digestiflow.api_urls")),
     # The rendered Sphinx-based manual.
