@@ -75,20 +75,24 @@ INDEX_WORKFLOWS = (
 class SequencingMachineManager(models.Manager):
     """Manager for custom table-level SequencingMachine queries"""
 
-    def find(self, search_term, _keywords=None):
-        """Return objects matching the query.
+    def find(self, search_terms, keywords=None):
+        """
+        Return SequencingMachine objects matching the query.
 
-        :param search_term: Search term (string)
+        :param search_terms: Search terms (list of strings)
         :param keywords: Optional search keywords as key/value pairs (dict)
-        :return: Python list of BaseFilesfolderClass objects
+        :return: QuerySet of SequencingMachine objects
         """
         objects = super().get_queryset()
-        objects = objects.filter(
-            Q(vendor_id__icontains=search_term)
-            | Q(label__icontains=search_term)
-            | Q(description__icontains=search_term)
-        )
-        return objects
+        query = Q()
+        for t in search_terms:
+            query = (
+                query
+                | Q(vendor_id__icontains=t)
+                | Q(label__icontains=t)
+                | Q(description__icontains=t)
+            )
+        return objects.filter(query)
 
 
 class SequencingMachine(models.Model):

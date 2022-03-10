@@ -22,20 +22,24 @@ def revcomp(s):
 class BarcodeSetManager(models.Manager):
     """Manager for custom table-level BarcodeSet queries"""
 
-    def find(self, search_term, _keywords=None):
-        """Return objects matching the query.
+    def find(self, search_terms, keywords=None):
+        """
+        Return BarcodeSet objects matching the query.
 
-        :param search_term: Search term (string)
+        :param search_terms: Search terms (list of strings)
         :param keywords: Optional search keywords as key/value pairs (dict)
-        :return: Python list of BaseFilesfolderClass objects
+        :return: QuerySet of BarcodeSet objects
         """
         objects = super().get_queryset().order_by("name")
-        objects = objects.filter(
-            Q(name__icontains=search_term)
-            | Q(short_name__icontains=search_term)
-            | Q(description__icontains=search_term)
-        )
-        return objects
+        query = Q()
+        for t in search_terms:
+            query = (
+                query
+                | Q(name__icontains=t)
+                | Q(short_name__icontains=t)
+                | Q(description__icontains=t)
+            )
+        return objects.filter(query)
 
 
 #: Generic barcode set.
@@ -119,17 +123,20 @@ class BarcodeSet(models.Model):
 class BarcodeSetEntryManager(models.Manager):
     """Manager for custom table-level ``BarcodeSetEntry`` queries"""
 
-    def find(self, search_term, _keywords=None):
-        """Return objects matching the query.
+    def find(self, search_terms, keywords=None):
+        """
+        Return BarcodeSetEntry objects matching the query.
 
-        :param search_term: Search term (string)
+        :param search_terms: Search terms (list of strings)
         :param keywords: Optional search keywords as key/value pairs (dict)
-        :return: Python list of BaseFilesfolderClass objects
+        :return: QuerySet of BarcodeSetEntry objects
         """
         objects = super().get_queryset().order_by("name")
-        query = Q(name__icontains=search_term) | Q(sequence__icontains=search_term)
-        if re.match(r"^[acgtnACGTN]+$", search_term):
-            query = query | Q(sequence__icontains=revcomp(search_term))
+        query = Q()
+        for t in search_terms:
+            query = query | Q(name__icontains=t) | Q(sequence__icontains=t)
+            if re.match(r"^[acgtnACGTN]+$", t):
+                query = query | Q(sequence__icontains=revcomp(t))
         objects = objects.filter(query)
         return objects
 

@@ -154,21 +154,25 @@ FLOWCELL_ERROR_CACHE_VERSION = 3
 class FlowCellManager(models.Manager):
     """Manager for custom table-level SequencingMachine queries"""
 
-    def find(self, search_term, keywords=None):
-        """Return objects matching the query.
+    def find(self, search_terms, keywords=None):
+        """
+        Return FlowCell objects matching the query.
 
-        :param search_term: Search term (string)
+        :param search_terms: Search terms (list of strings)
         :param keywords: Optional search keywords as key/value pairs (dict)
-        :return: Python list of BaseFilesfolderClass objects
+        :return: QuerySet of FlowCell objects
         """
         objects = super().get_queryset()
-        objects = objects.filter(
-            Q(vendor_id__icontains=search_term)
-            | Q(label__icontains=search_term)
-            | Q(manual_label__icontains=search_term)
-            | Q(description__icontains=search_term)
-        )
-        return objects
+        query = Q()
+        for t in search_terms:
+            query = (
+                query
+                | Q(vendor_id__icontains=t)
+                | Q(label__icontains=t)
+                | Q(manual_label__icontains=t)
+                | Q(description__icontains=t)
+            )
+        return objects.filter(query)
 
 
 def validate_bases_mask(value):
@@ -996,22 +1000,26 @@ REFERENCE_CHOICES = (
 class LibraryManager(models.Manager):
     """Manager for custom table-level Library queries"""
 
-    def find(self, search_term, _keywords=None):
-        """Return objects matching the query.
+    def find(self, search_terms, keywords=None):
+        """
+        Return Library objects matching the query.
 
-        :param search_term: Search term (string)
+        :param search_terms: Search terms (list of strings)
         :param keywords: Optional search keywords as key/value pairs (dict)
-        :return: Python list of BaseFilesfolderClass objects
+        :return: QuerySet of Library objects
         """
         objects = super().get_queryset()
-        objects = objects.filter(
-            Q(name__icontains=search_term)
-            | Q(barcode__sequence__icontains=search_term)
-            | Q(barcode_seq__icontains=search_term)
-            | Q(barcode2__sequence__icontains=search_term)
-            | Q(barcode_seq2__icontains=search_term)
-        )
-        return objects
+        query = Q()
+        for t in search_terms:
+            query = (
+                query
+                | Q(name__icontains=t)
+                | Q(barcode__sequence__icontains=t)
+                | Q(barcode_seq__icontains=t)
+                | Q(barcode2__sequence__icontains=t)
+                | Q(barcode_seq2__icontains=t)
+            )
+        return objects.filter(query)
 
 
 class Library(models.Model):
@@ -1202,16 +1210,19 @@ FORMAT_CHOICES = ((FORMAT_PLAIN, "Plain Text"), (FORMAT_MARKDOWN, "Markdown"))
 class MessageManager(models.Manager):
     """Manager for custom table-level Message queries"""
 
-    def find(self, search_term, _keywords=None):
-        """Return objects matching the query.
+    def find(self, search_terms, keywords=None):
+        """
+        Return Message objects matching the query.
 
-        :param search_term: Search term (string)
+        :param search_terms: Search terms (list of strings)
         :param keywords: Optional search keywords as key/value pairs (dict)
-        :return: Python list of BaseFilesfolderClass objects
+        :return: QuerySet of Message objects
         """
         objects = super().get_queryset()
-        objects = objects.filter(Q(subject__icontains=search_term) | Q(body__icontains=search_term))
-        return objects
+        query = Q()
+        for t in search_terms:
+            query = query | Q(subject__icontains=t) | Q(body__icontains=t)
+        return objects.filter(query)
 
 
 class Message(models.Model):
