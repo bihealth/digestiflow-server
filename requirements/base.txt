@@ -44,7 +44,6 @@ sphinx-rtd-theme==1.0.0
 pagerange==0.4
 
 # Required also in production for collecting static
-# TODO: Why is this required?
 django-debug-toolbar==3.2.4
 
 # Required for collectstatic
