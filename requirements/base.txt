@@ -43,12 +43,6 @@ sphinx-rtd-theme==1.0.0
 # Manipulation of integer rages
 pagerange==0.4
 
-# Required also in production for collecting static
-django-debug-toolbar==3.2.4
-
-# Required for collectstatic
-django-extensions==3.1.5
-
 # Helpful for creating emails.
 django-mail-factory==0.24
 
