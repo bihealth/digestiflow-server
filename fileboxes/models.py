@@ -72,7 +72,9 @@ class FileBox(models.Model):
     sodar_uuid = models.UUIDField(default=uuid_object.uuid4, unique=True, help_text="SODAR UUID")
 
     #: The project containing this file box.
-    project = models.ForeignKey(Project, help_text="Project that this file box belongs to")
+    project = models.ForeignKey(
+        Project, help_text="Project that this file box belongs to", on_delete=models.CASCADE
+    )
 
     #: Date when write access is lost.
     date_frozen = models.DateTimeField(null=False, blank=False, default=fourteen_days_in_the_future)
