@@ -10,7 +10,7 @@ Unreleased
 
 - Upgrade to SODAR Core v0.10.10 and Django v3.2 (#76).
 - Remove local legacy ``tokens`` app, use app from SODAR Core instead.
-- Enable Siteinfo app.
+- Enable ``siteinfo`` app.
 
 ------
 v0.3.6
