@@ -1,6 +1,9 @@
 # Wheel
 wheel==0.37.1
 
+# Setuptools
+setuptools==59.6.0
+
 # Django
 django>=3.2.12, <3.3
 
@@ -78,7 +81,7 @@ django-autocomplete-light==3.8.2
 -e git+https://github.com/mikkonie/django-plugins.git@42e86e7904e5c09f1da32173862b26843eda5dd8#egg=django-plugins
 
 # SODAR Core
-django-sodar-core==0.10.10
+django-sodar-core==0.10.11
 
 celery==5.2.3
 redis>=3.2.0  # git+https://github.com/antirez/redis
