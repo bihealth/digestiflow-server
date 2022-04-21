@@ -56,9 +56,9 @@ fi
 if [[ "$1" == wsgi ]]; then
   cd $APP_DIR
 
-  >&2 echo "VARFISH MIGRATIONS BEGIN"
+  >&2 echo "MIGRATIONS BEGIN"
   python manage.py migrate
-  >&2 echo "VARFISH MIGRATIONS END"
+  >&2 echo "MIGRATIONS END"
 
   exec gunicorn \
     --access-logfile - \
@@ -69,8 +69,9 @@ if [[ "$1" == wsgi ]]; then
 elif [[ "$1" == celeryd ]]; then
   cd $APP_DIR
 
-  exec celery worker \
+  exec celery \
     --app config.celery_app \
+    worker \
     -Q "${CELERY_QUEUES}" \
     --concurrency "${CELERY_WORKERS}" \
     --loglevel info
@@ -78,9 +79,10 @@ elif [[ "$1" == celerybeat ]]; then
   cd $APP_DIR
   rm -f celerybeat.pid
 
-  exec celery beat \
-    --max-interval 30 \
+  exec celery \
     --app config.celery_app \
+    beat \
+    --max-interval 30 \
     --loglevel info
 else
   cd $APP_DIR
