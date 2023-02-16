@@ -5,7 +5,7 @@
 django-debug-toolbar==3.2.4
 django-extensions==3.1.5
 
-Werkzeug==2.0.2
+Werkzeug==2.2.3
 django-debug-toolbar==3.2.4
 
 # improved REPL
