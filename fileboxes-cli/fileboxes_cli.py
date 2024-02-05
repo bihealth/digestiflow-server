@@ -187,7 +187,10 @@ def process_project(config: Config, project_uuid: str):
             setup_dir,
             sync_grants,
         ),
-        ("ACTIVE", "ACTIVE"): (sync_grants,),
+        ("ACTIVE", "ACTIVE"): (
+            setup_dir,
+            sync_grants,
+        ),
         ("INACTIVE", "ACTIVE"): (
             setup_dir,
             sync_grants,
@@ -199,7 +202,10 @@ def process_project(config: Config, project_uuid: str):
         ),
         # inactive in metadata
         ("INITIAL", "INACTIVE"): (),
-        ("ACTIVE", "INACTIVE"): (sync_grants,),
+        ("ACTIVE", "INACTIVE"): (
+            setup_dir,
+            sync_grants,
+        ),
         ("INACTIVE", "INACTIVE"): (),
         ("DELETING", "INACTIVE"): (),
         ("DELETED", "INACTIVE"): (),
