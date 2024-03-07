@@ -269,8 +269,6 @@ class FileBoxGrantView(
             ldap_conn = ldap.initialize(settings.AUTH_LDAP_SERVER_URI)
             ldap_conn.set_option(ldap.OPT_REFERRALS, ldap.OPT_OFF)
             ldap_conn.set_option(ldap.OPT_TIMEOUT, 5)
-            ldap_conn.set_option(ldap.OPT_X_TLS_CACERTFILE, AUTH_LDAP_CA_CERT_FILE)
-            ldap_conn.set_option(ldap.OPT_X_TLS_NEWCTX, 0)
             ldap_conn.start_tls_s()
             ldap_conn.simple_bind_s(settings.AUTH_LDAP_BIND_DN, settings.AUTH_LDAP_BIND_PASSWORD)
             ldap_conns.append(
@@ -282,6 +280,7 @@ class FileBoxGrantView(
             ldap_conn = ldap.initialize(settings.AUTH_LDAP2_SERVER_URI)
             ldap_conn.set_option(ldap.OPT_REFERRALS, ldap.OPT_OFF)
             ldap_conn.set_option(ldap.OPT_TIMEOUT, 5)
+            ldap_conn.start_tls_s()
             ldap_conn.simple_bind_s(settings.AUTH_LDAP2_BIND_DN, settings.AUTH_LDAP2_BIND_PASSWORD)
             ldap_conns.append(
                 (
