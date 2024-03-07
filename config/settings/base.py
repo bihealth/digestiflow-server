@@ -326,6 +326,10 @@ if ENABLE_LDAP:
     import ldap
     from django_auth_ldap.config import LDAPSearch
 
+    ldap.set_option(ldap.OPT_DEBUG_LEVEL, 255)
+    # Temporarily disable cert checking
+    ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
+
     # Default values
     LDAP_DEFAULT_CONN_OPTIONS = {ldap.OPT_REFERRALS: 0}
     LDAP_DEFAULT_FILTERSTR = "(sAMAccountName=%(user)s)"
@@ -335,8 +339,10 @@ if ENABLE_LDAP:
     AUTH_LDAP_SERVER_URI = env.str("AUTH_LDAP_SERVER_URI", None)
     AUTH_LDAP_BIND_DN = env.str("AUTH_LDAP_BIND_DN", None)
     AUTH_LDAP_BIND_PASSWORD = env.str("AUTH_LDAP_BIND_PASSWORD", None)
-    AUTH_LDAP_CONNECTION_OPTIONS = LDAP_DEFAULT_CONN_OPTIONS
+    AUTH_LDAP_START_TLS = env.bool("AUTH_LDAP_START_TLS", False)
+    AUTH_LDAP_CONNECTION_OPTIONS = {**LDAP_DEFAULT_CONN_OPTIONS}
 
+    AUTH_LDAP_USER_FILTER = env.str("AUTH_LDAP_USER_FILTER", "(sAMAccountName=%(user)s)")
     AUTH_LDAP_USER_SEARCH_BASE = env.str("AUTH_LDAP_USER_SEARCH_BASE", None)
     AUTH_LDAP_USER_SEARCH = LDAPSearch(
         AUTH_LDAP_USER_SEARCH_BASE, ldap.SCOPE_SUBTREE, LDAP_DEFAULT_FILTERSTR
@@ -354,6 +360,7 @@ if ENABLE_LDAP:
         AUTH_LDAP2_SERVER_URI = env.str("AUTH_LDAP2_SERVER_URI", None)
         AUTH_LDAP2_BIND_DN = env.str("AUTH_LDAP2_BIND_DN", None)
         AUTH_LDAP2_BIND_PASSWORD = env.str("AUTH_LDAP2_BIND_PASSWORD", None)
+        AUTH_LDAP_START_TLS = env.bool("AUTH_LDAP_START_TLS", False)
         AUTH_LDAP2_CONNECTION_OPTIONS = LDAP_DEFAULT_CONN_OPTIONS
 
         AUTH_LDAP2_USER_SEARCH_BASE = env.str("AUTH_LDAP2_USER_SEARCH_BASE", None)
